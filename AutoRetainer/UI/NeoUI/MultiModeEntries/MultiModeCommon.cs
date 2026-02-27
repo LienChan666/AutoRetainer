@@ -1,4 +1,4 @@
-﻿namespace AutoRetainer.UI.NeoUI.MultiModeEntries;
+namespace AutoRetainer.UI.NeoUI.MultiModeEntries;
 public class MultiModeCommon : NeoUIEntry
 {
     public override string Path => "Multi Mode/Common Settings";
@@ -23,8 +23,8 @@ public class MultiModeCommon : NeoUIEntry
             ImGui.SetNextItemWidth(150f);
             var names = C.OfflineData.Where(s => !s.Name.IsNullOrEmpty()).Select(s => $"{s.Name}@{s.World}");
             var dict = names.ToDictionary(s => s, s => Censor.Character(s));
-            dict.Add("", "Disabled");
-            dict.Add("~", "Last logged in character");
+            dict.Add("", "Disabled".Loc());
+            dict.Add("~", "Last logged in character".Loc());
             ImGuiEx.Combo(x, ref C.AutoLogin, ["", "~", .. names], names: dict);
         })
         .SliderInt(150f, "Delay", () => ref C.AutoLoginDelay.ValidateRange(0, 60), 0, 20, "Set appropriate delay to let plugins fully load before logging in and to allow yourself some time to cancel login if needed")
@@ -37,7 +37,7 @@ public class MultiModeCommon : NeoUIEntry
         .InputInt(100f, $"Deployables list: remaining repair kit warning", () => ref C.UIWarningDepRepairNum.ValidateRange(5, 1000))
 
         .Section("Teleportation")
-        .Widget(() => ImGuiEx.Text("Lifestream plugin is required"))
+        .Widget(() => ImGuiEx.Text("Lifestream plugin is required".Loc()))
         .Widget(() => ImGuiEx.PluginAvailabilityIndicator([new("Lifestream", new Version("2.2.1.1"))]))
         .TextWrapped("You must register houses in Lifestream plugin for every character you want this option to work or enable Simple Teleport.")
         .TextWrapped("You can customize these settings per character in character configuration menu.")
@@ -45,7 +45,7 @@ public class MultiModeCommon : NeoUIEntry
         {
             if(Data != null && Data.GetAreTeleportSettingsOverriden())
             {
-                ImGuiEx.TextWrapped(ImGuiColors.DalamudRed, "For current character teleport options are customized.");
+                ImGuiEx.TextWrapped(ImGuiColors.DalamudRed, "For current character teleport options are customized.".Loc());
             }
         })
         .Checkbox("Enabled", () => ref C.GlobalTeleportOptions.Enabled)
@@ -61,13 +61,10 @@ public class MultiModeCommon : NeoUIEntry
         .Checkbox("Teleport to free company house for deployables", () => ref C.GlobalTeleportOptions.Deployables)
         .Checkbox("Enable Simple Teleport", () => ref C.AllowSimpleTeleport)
         .Unindent()
-        .Widget(() => ImGuiEx.HelpMarker("""
-            Allows teleporting to houses without registering them in Lifestream. Note: the Lifestream plugin is still required for teleportation to work.
-
-            Warning: This option is less reliable than registering your houses in Lifestream. Use it only if necessary.
-            """, EColor.RedBright, FontAwesomeIcon.ExclamationTriangle.ToIconString()))
+        .Widget(() => ImGuiEx.HelpMarker("Allows teleporting to houses without registering them in Lifestream. Note: the Lifestream plugin is still required for teleportation to work.\n\nWarning: This option is less reliable than registering your houses in Lifestream. Use it only if necessary.".Loc(), EColor.RedBright, FontAwesomeIcon.ExclamationTriangle.ToIconString()))
 
         .Section("Bailout Module")
         .Checkbox("Auto-close and retry logging in on connection errors", () => ref C.ResolveConnectionErrors, "Upon disconnecting, AutoRetainer will attempt to log back in. If the session has expired, no login attempt will be made.")
         .Widget(() => ImGuiEx.PluginAvailabilityIndicator([new("NoKillPlugin")]));
 }
+

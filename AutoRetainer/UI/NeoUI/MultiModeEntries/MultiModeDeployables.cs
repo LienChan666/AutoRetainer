@@ -1,4 +1,4 @@
-﻿using ECommons.Throttlers;
+using ECommons.Throttlers;
 
 namespace AutoRetainer.UI.NeoUI.MultiModeEntries;
 public class MultiModeDeployables : NeoUIEntry
@@ -29,8 +29,8 @@ public class MultiModeDeployables : NeoUIEntry
         .Widget(() =>
         {
             ImGuiEx.HelpMarker($"""
-                Currently: {(Utils.CanShutdownForSubs() ? "Can shutdown" : "Can NOT shutdown")}
-                Remaining for force shutdown: {EzThrottler.GetRemainingTime("ForceShutdownForSubs")}
+                {"Currently".Loc()}: {(Utils.CanShutdownForSubs() ? "Can shutdown".Loc() : "Can NOT shutdown".Loc())}
+                {"Remaining for force shutdown".Loc()}: {EzThrottler.GetRemainingTime("ForceShutdownForSubs")}
                 """);
         })
         .Unindent()
@@ -40,9 +40,9 @@ public class MultiModeDeployables : NeoUIEntry
         {
             if(Data != null)
             {
-                ImGui.Checkbox($"Enable on {Data.NameWithWorldCensored}", ref Data.AutoFuelPurchase);
+                ImGui.Checkbox($"{ "Enable on".Loc()} {Data.NameWithWorldCensored}", ref Data.AutoFuelPurchase);
             }
-            ImGuiEx.TextWrapped($"In order to enable/disable fuel purchase for other characters, navigate to Functions, Exclusions, Order section.");
+            ImGuiEx.TextWrapped("In order to enable/disable fuel purchase for other characters, navigate to Functions, Exclusions, Order section.".Loc());
         })
         .InputInt(150f, "Tanks remaining to trigger purchase", () => ref C.AutoFuelPurchaseLow.ValidateRange(100, 99999))
         .InputInt(150f, "Buy until this amount in inventory", () => ref C.AutoFuelPurchaseMax)
@@ -50,3 +50,4 @@ public class MultiModeDeployables : NeoUIEntry
         .Unindent()
         ;
 }
+

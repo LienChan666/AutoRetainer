@@ -1,4 +1,4 @@
-﻿using AutoRetainerAPI.Configuration;
+using AutoRetainerAPI.Configuration;
 using System.Collections.Frozen;
 
 namespace AutoRetainer.UI.NeoUI.MultiModeEntries;
@@ -24,7 +24,8 @@ public class MultiModeContingency : NeoUIEntry
         {
             ImGui.BeginDisabled();
             ImGuiEx.SetNextItemFullWidth();
-            if(ImGui.BeginCombo("##jailsel", "Terminate the game")) { ImGui.EndCombo(); }
+            if(ImGui.BeginCombo("##jailsel", "Terminate the game".Loc())) { ImGui.EndCombo(); }
             ImGui.EndDisabled();
         }, "Applies selected fallback action in the case if you got jailed by the GM while plugin is running. Good luck!");
 }
+

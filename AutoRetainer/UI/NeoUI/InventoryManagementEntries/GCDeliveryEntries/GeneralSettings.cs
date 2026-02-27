@@ -12,22 +12,17 @@ public sealed unsafe class GeneralSettings : InventoryManagementBase
     public override NuiBuilder Builder => new NuiBuilder()
         .Section("General Settings")
         .Checkbox("Enable Expert Delivery continuation", () => ref C.AutoGCContinuation)
-        .TextWrapped($"""
-            When Expert Delivery Continuation is enabled:
-            - The plugin will automatically spend available Grand Company Seals to purchase items from the configured Exchange List.
-            - If the Exchange List is empty, only Ventures will be purchased.
-            - Make sure that "Delivery Mode" is not set to "Disabled" in "Character Configuration" section
-
-            After seals have been spent:
-            - Expert Delivery will resume automatically.
-            - The process will repeat until there are no eligible items left to deliver or no seals remaining.
-            """)
+        .TextWrapped("When Expert Delivery Continuation is enabled:")
+        .TextWrapped("- The plugin will automatically spend available Grand Company Seals to purchase items from the configured Exchange List.")
+        .TextWrapped("- If the Exchange List is empty, only Ventures will be purchased.")
+        .TextWrapped("- Make sure that \"Delivery Mode\" is not set to \"Disabled\" in \"Character Configuration\" section")
+        .TextWrapped("After seals have been spent:")
+        .TextWrapped("- Expert Delivery will resume automatically.")
+        .TextWrapped("- The process will repeat until there are no eligible items left to deliver or no seals remaining.")
 
         .Section("Multi Mode Expert Delivery")
-        .TextWrapped($"""
-        When enabled:
-        - Characters with teleportation enabled will automatically deliver items for expert delivery and buy items according to exchange plan, if their rank is sufficient, during multi mode.
-        """)
+        .TextWrapped("When enabled:")
+        .TextWrapped("- Characters with teleportation enabled will automatically deliver items for expert delivery and buy items according to exchange plan, if their rank is sufficient, during multi mode.")
         .Checkbox("Enable Multi Mode Expert Delivery", () => ref C.FullAutoGCDelivery)
         .Checkbox("Only when workstation is not locked", () => ref C.FullAutoGCDeliveryOnlyWsUnlocked)
         .InputInt(150f, "Inventory slots remaining to trigger delivery, less or equal", () => ref C.FullAutoGCDeliveryInventory, "Only primary inventory is accounted for, not armory")

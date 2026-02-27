@@ -1,4 +1,4 @@
-﻿using AutoRetainer.Modules.Voyage;
+using AutoRetainer.Modules.Voyage;
 using Dalamud.Game.ClientState.Conditions;
 using System.IO;
 
@@ -6,7 +6,7 @@ namespace AutoRetainer.UI.Overlays;
 
 internal class MultiModeOverlay : Window
 {
-    public MultiModeOverlay() : base("AutoRetainer Alert", ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoBackground, true)
+    public MultiModeOverlay() : base("AutoRetainer Alert".Loc(), ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoFocusOnAppearing | ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoBackground, true)
     {
         P.WindowSystem.AddWindow(this);
         IsOpen = true;
@@ -45,12 +45,12 @@ internal class MultiModeOverlay : Window
                     {
                         BailoutManager.IsLogOnTitleEnabled = false;
                     }
-                    ImGui.SetTooltip($"AutoRetainer was requested to temporarily wait for valid character on login screen. \nLeft click - open AutoRetainer. \nRight click - abort.");
+                    ImGui.SetTooltip("AutoRetainer was requested to temporarily wait for valid character on login screen. \nLeft click - open AutoRetainer. \nRight click - abort.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading bailoutTitleRestart.png");
+                ImGuiEx.Text("loading bailoutTitleRestart.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -72,12 +72,12 @@ internal class MultiModeOverlay : Window
                         Shutdown.ForceShutdownAt = 0;
                         Shutdown.ShutdownAt = 0;
                     }
-                    ImGui.SetTooltip($"A shutdown timer is set.\nShutting down in {TimeSpan.FromMilliseconds(Shutdown.ShutdownAt - Environment.TickCount64)}\nForce shutdown in {TimeSpan.FromMilliseconds(Shutdown.ForceShutdownAt - Environment.TickCount64)} \nLeft click - open AutoRetainer. \nRight click - clear timer.");
+                    ImGui.SetTooltip($"{ "A shutdown timer is set.".Loc()}\n{ "Shutting down in".Loc()} {TimeSpan.FromMilliseconds(Shutdown.ShutdownAt - Environment.TickCount64)}\n{ "Force shutdown in".Loc()} {TimeSpan.FromMilliseconds(Shutdown.ForceShutdownAt - Environment.TickCount64)}\n{ "Left click - open AutoRetainer.".Loc()}\n{ "Right click - clear timer.".Loc()}");
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading timer.png");
+                ImGuiEx.Text("loading timer.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -98,12 +98,12 @@ internal class MultiModeOverlay : Window
                     {
                         SchedulerMain.CharacterPostProcessLocked = false;
                     }
-                    ImGui.SetTooltip("AutoRetainer is in postprocessing. \nLeft click - open AutoRetainer. \nRight click - abort.");
+                    ImGui.SetTooltip("AutoRetainer is in postprocessing. \nLeft click - open AutoRetainer. \nRight click - abort.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading multi.png");
+                ImGuiEx.Text("loading multi.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -124,12 +124,12 @@ internal class MultiModeOverlay : Window
                     {
                         P.TaskManager.Abort();
                     }
-                    ImGui.SetTooltip("AutoRetainer is processing tasks. \nLeft click - open AutoRetainer. \nRight click - abort.");
+                    ImGui.SetTooltip("AutoRetainer is processing tasks. \nLeft click - open AutoRetainer. \nRight click - abort.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading multi.png");
+                ImGuiEx.Text("loading multi.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -146,14 +146,14 @@ internal class MultiModeOverlay : Window
                     {
                         Svc.Commands.ProcessCommand("/ays");
                     }
-                    ImGui.SetTooltip("RetainerSense is active. \nLeft click - open AutoRetainer.");
+                    ImGui.SetTooltip("RetainerSense is active. \nLeft click - open AutoRetainer.".Loc());
                 }
                 var f = (float)(Environment.TickCount64 - P.LastMovementAt) / (float)C.RetainerSenseThreshold;
                 ImGui.ProgressBar(f, new(128, 10), "");
             }
             else
             {
-                ImGuiEx.Text($"loading bellalert.png");
+                ImGuiEx.Text("loading bellalert.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -174,12 +174,12 @@ internal class MultiModeOverlay : Window
                     {
                         MultiMode.Enabled = false;
                     }
-                    ImGui.SetTooltip("MultiMode enabled. \nLeft click - open AutoRetainer. \nRight click - disable Multi Mode.");
+                    ImGui.SetTooltip("MultiMode enabled. \nLeft click - open AutoRetainer. \nRight click - disable Multi Mode.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading multi.png");
+                ImGuiEx.Text("loading multi.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -201,12 +201,12 @@ internal class MultiModeOverlay : Window
                         C.NightMode = false;
                         MultiMode.BailoutNightMode();
                     }
-                    ImGui.SetTooltip($"Night mode enabled. \nLeft click - open AutoRetainer. \nRight click - disable.");
+                    ImGui.SetTooltip("Night mode enabled. \nLeft click - open AutoRetainer. \nRight click - disable.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading Night.png");
+                ImGuiEx.Text("loading Night.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -227,12 +227,12 @@ internal class MultiModeOverlay : Window
                     {
                         VoyageScheduler.Enabled = false;
                     }
-                    ImGui.SetTooltip("Submarine module enabled. \nLeft click - open AutoRetainer. \nRight click - disable submarine module.");
+                    ImGui.SetTooltip("Submarine module enabled. \nLeft click - open AutoRetainer. \nRight click - disable submarine module.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading submarine.png");
+                ImGuiEx.Text("loading submarine.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -253,12 +253,12 @@ internal class MultiModeOverlay : Window
                     {
                         SchedulerMain.DisablePlugin();
                     }
-                    ImGui.SetTooltip("AutoRetainer enabled. \nLeft click - open AutoRetainer. \nRight click - disable AutoRetainer.");
+                    ImGui.SetTooltip("AutoRetainer enabled. \nLeft click - open AutoRetainer. \nRight click - disable AutoRetainer.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading bell.png");
+                ImGuiEx.Text("loading bell.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -280,12 +280,12 @@ internal class MultiModeOverlay : Window
                     {
                         NotificationHandler.IsHidden = true;
                     }
-                    ImGui.SetTooltip("Some retainers completed their ventures. \nLeft click - open AutoRetainer;\nRight click - dismiss.");
+                    ImGui.SetTooltip("Some retainers completed their ventures. \nLeft click - open AutoRetainer;\nRight click - dismiss.".Loc());
                 }
             }
             else
             {
-                ImGuiEx.Text($"loading notify.png");
+                ImGuiEx.Text("loading notify.png".Loc());
             }
             ImGui.SameLine();
         }
@@ -299,11 +299,11 @@ internal class MultiModeOverlay : Window
                     if(ThreadLoadImageHandler.TryGetTextureWrap(Path.Combine(Svc.PluginInterface.AssemblyLocation.DirectoryName, "res", "wait.png"), out var t))
                     {
                         ImGui.Image(t.Handle, StatusPanelSize / 2);
-                        ImGuiEx.Tooltip("Wait for all deployables is globally enabled.");
+                        ImGuiEx.Tooltip("Wait for all deployables is globally enabled.".Loc());
                     }
                     else
                     {
-                        ImGuiEx.Text($"loading wait.png");
+                        ImGuiEx.Text("loading wait.png".Loc());
                     }
                     ImGui.SameLine();
                 }
@@ -312,11 +312,11 @@ internal class MultiModeOverlay : Window
                     if(ThreadLoadImageHandler.TryGetTextureWrap(Path.Combine(Svc.PluginInterface.AssemblyLocation.DirectoryName, "res", "wait.png"), out var t))
                     {
                         ImGui.Image(t.Handle, StatusPanelSize / 2);
-                        ImGuiEx.Tooltip("Wait for all deployables is enabled for this character.");
+                        ImGuiEx.Tooltip("Wait for all deployables is enabled for this character.".Loc());
                     }
                     else
                     {
-                        ImGuiEx.Text($"loading wait.png");
+                        ImGuiEx.Text("loading wait.png".Loc());
                     }
                     ImGui.SameLine();
                 }
@@ -326,3 +326,5 @@ internal class MultiModeOverlay : Window
         Position = new(ImGuiHelpers.MainViewport.Size.X / 2 - ImGui.GetWindowSize().X / 2, 20);
     }
 }
+
+

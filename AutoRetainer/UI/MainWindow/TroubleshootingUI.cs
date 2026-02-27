@@ -1,4 +1,4 @@
-﻿using AutoRetainer.Modules.Voyage;
+using AutoRetainer.Modules.Voyage;
 using Dalamud.Game;
 using ECommons.GameHelpers;
 using ECommons.Reflection;
@@ -15,19 +15,19 @@ public static unsafe class TroubleshootingUI
 
     public static void Draw()
     {
-        ImGuiEx.TextWrapped("This tab checks your configuration for common issues that you can resolve yourself before contacting support.");
+        ImGuiEx.TextWrapped("This tab checks your configuration for common issues that you can resolve yourself before contacting support.".Loc());
 
         if(IsPluginInstalled("LightlessSync"))
 
         if(!Player.Available)
         {
-            ImGuiEx.TextWrapped($"Can not troubleshoot when not logged in.");
+            ImGuiEx.TextWrapped("Can not troubleshoot when not logged in.".Loc());
             return;
         }
 
         if(Data == null)
         {
-            ImGuiEx.TextWrapped($"No data available for current character. Access retainer bell, deployables panel or logout to create data.");
+            ImGuiEx.TextWrapped("No data available for current character. Access retainer bell, deployables panel or logout to create data.".Loc());
             return;
         }
 
@@ -281,7 +281,7 @@ public static unsafe class TroubleshootingUI
         }
 
         ImGui.Separator();
-        ImGuiEx.TextWrapped("Expert settings alter behavior that was intended by developer. Please check that your issue is not related to incorrectly configured expert settings.");
+        ImGuiEx.TextWrapped("Expert settings alter behavior that was intended by developer. Please check that your issue is not related to incorrectly configured expert settings.".Loc());
         CheckExpertSetting("Action on accessing retainer bell if no ventures available", nameof(C.OpenBellBehaviorNoVentures));
         CheckExpertSetting("Action on accessing retainer bell if any ventures available", nameof(C.OpenBellBehaviorWithVentures));
         CheckExpertSetting("Task completion behavior after accessing bell", nameof(C.TaskCompletedBehaviorAccess));
@@ -345,3 +345,5 @@ public static unsafe class TroubleshootingUI
         }
     }
 }
+
+

@@ -1,4 +1,4 @@
-﻿using AutoRetainer.Modules.Voyage;
+using AutoRetainer.Modules.Voyage;
 using AutoRetainer.UI.MainWindow.MultiModeTab;
 using AutoRetainerAPI;
 using AutoRetainerAPI.Configuration;
@@ -21,7 +21,7 @@ internal unsafe class AutoRetainerWindow : Window
             Click = OnLockButtonClick,
             Icon = C.PinWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen,
             IconOffset = new(3, 2),
-            ShowTooltip = () => ImGui.SetTooltip("Lock window position and size"),
+            ShowTooltip = () => ImGui.SetTooltip("Lock window position and size".Loc()),
         };
         SizeConstraints = new()
         {
@@ -35,7 +35,7 @@ internal unsafe class AutoRetainerWindow : Window
             Click = (m) => { if(m == ImGuiMouseButton.Left) S.NeoWindow.IsOpen = true; },
             Icon = FontAwesomeIcon.Cog,
             IconOffset = new(2, 2),
-            ShowTooltip = () => ImGui.SetTooltip("Open settings window"),
+            ShowTooltip = () => ImGui.SetTooltip("Open settings window".Loc()),
         });
         TitleBarButtons.Add(LockButton);
     }
@@ -71,23 +71,23 @@ internal unsafe class AutoRetainerWindow : Window
         {
             if(time.Days > 0)
             {
-                return $"Session expires in {time.Days} day{(time.Days == 1 ? "" : "s")}" + (time.Hours > 0 ? $" {time.Hours} hours" : "");
+                return string.Format("Session expires in {0} day(s)".Loc(), time.Days) + (time.Hours > 0 ? $" {time.Hours} {"hours".Loc()}" : "");
             }
             else
             {
                 if(time.Hours > 0)
                 {
-                    return $"Session expires in {time.Hours} hours";
+                    return string.Format("Session expires in {0} hours".Loc(), time.Hours);
                 }
                 else
                 {
-                    return $"Session expires in less than an hour";
+                    return "Session expires in less than an hour".Loc();
                 }
             }
         }
         else
         {
-            return "Session expired";
+            return "Session expired".Loc();
         }
     }
     public override void Draw()
@@ -110,7 +110,7 @@ internal unsafe class AutoRetainerWindow : Window
                     .TextWrapped(GradientColor.Get(ImGuiColors.DalamudYellow, ImGuiColors.DalamudRed), "You may not use AutoRetainer for Real Money Trading or other commercial purposes. No support will be provided if you are using it for these purposes.")
                     .Widget(() =>
                     {
-                        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Check, "Accept and continue"))
+                        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Check, "Accept and continue".Loc()))
                         {
                             C.AcceptedDisclamer = true;
                             EzConfig.Save();
@@ -126,7 +126,7 @@ internal unsafe class AutoRetainerWindow : Window
             {
                 ImGui.BeginDisabled();
             }
-            if(ImGui.Checkbox($"Enable {P.Name}", ref e))
+            if(ImGui.Checkbox($"{ "Enable".Loc()} {P.Name}", ref e))
             {
                 P.WasEnabled = false;
                 if(e)
@@ -141,22 +141,22 @@ internal unsafe class AutoRetainerWindow : Window
             if(C.ShowDeployables && (VoyageUtils.Workshops.Contains(Svc.ClientState.TerritoryType) || VoyageScheduler.Enabled))
             {
                 ImGui.SameLine();
-                ImGui.Checkbox($"Deployables", ref VoyageScheduler.Enabled);
+                ImGui.Checkbox("Deployables".Loc(), ref VoyageScheduler.Enabled);
             }
             if(disabled)
             {
                 ImGui.EndDisabled();
-                ImGuiComponents.HelpMarker($"MultiMode controls this option. Hold CTRL to override.");
+                ImGuiComponents.HelpMarker("MultiMode controls this option. Hold CTRL to override.".Loc());
             }
 
             if(P.WasEnabled)
             {
                 ImGui.SameLine();
-                ImGuiEx.Text(GradientColor.Get(ImGuiColors.DalamudGrey, ImGuiColors.DalamudGrey3, 500), $"Paused");
+                ImGuiEx.Text(GradientColor.Get(ImGuiColors.DalamudGrey, ImGuiColors.DalamudGrey3, 500), "Paused".Loc());
             }
 
             ImGui.SameLine();
-            if(ImGui.Checkbox("Multi", ref MultiMode.Enabled))
+            if(ImGui.Checkbox("Multi".Loc(), ref MultiMode.Enabled))
             {
                 MultiMode.OnMultiModeEnabled();
             }
@@ -164,7 +164,7 @@ internal unsafe class AutoRetainerWindow : Window
             if(C.ShowNightMode)
             {
                 ImGui.SameLine();
-                if(ImGui.Checkbox("Night", ref C.NightMode))
+                if(ImGui.Checkbox("Night".Loc(), ref C.NightMode))
                 {
                     MultiMode.BailoutNightMode();
                 }
@@ -178,7 +178,7 @@ internal unsafe class AutoRetainerWindow : Window
             if(C.CharEqualize && MultiMode.Enabled)
             {
                 ImGui.SameLine();
-                if(ImGui.Button("Reset counters"))
+                if(ImGui.Button("Reset counters".Loc()))
                 {
                     MultiMode.CharaCnt.Clear();
                 }
@@ -188,9 +188,9 @@ internal unsafe class AutoRetainerWindow : Window
 
             if(IPC.Suppressed)
             {
-                ImGuiEx.Text(ImGuiColors.DalamudRed, $"Plugin operation is suppressed by other plugin.");
+                ImGuiEx.Text(ImGuiColors.DalamudRed, "Plugin operation is suppressed by other plugin.".Loc());
                 ImGui.SameLine();
-                if(ImGui.SmallButton("Cancel"))
+                if(ImGui.SmallButton("Cancel".Loc()))
                 {
                     IPC.Suppressed = false;
                 }
@@ -199,7 +199,7 @@ internal unsafe class AutoRetainerWindow : Window
             if(P.TaskManager.IsBusy)
             {
                 ImGui.SameLine();
-                if(ImGui.Button($"Abort {P.TaskManager.NumQueuedTasks} tasks"))
+                if(ImGui.Button(string.Format("Abort {0} tasks".Loc(), P.TaskManager.NumQueuedTasks)))
                 {
                     P.TaskManager.Abort();
                 }
@@ -207,11 +207,11 @@ internal unsafe class AutoRetainerWindow : Window
 
             PatreonBanner.DrawRight();
             ImGuiEx.EzTabBar("tabbar", PatreonBanner.Text,
-                            ("Retainers", MultiModeUI.Draw, null, true),
-                            ("Deployables", WorkshopUI.Draw, null, true),
-                            ("Troubleshooting", TroubleshootingUI.Draw, null, true),
-                            ("Statistics", DrawStats, null, true),
-                            ("About", CustomAboutTab.Draw, null, true)
+                            ("Retainers".Loc(), MultiModeUI.Draw, null, true),
+                            ("Deployables".Loc(), WorkshopUI.Draw, null, true),
+                            ("Troubleshooting".Loc(), TroubleshootingUI.Draw, null, true),
+                            ("Statistics".Loc(), DrawStats, null, true),
+                            ("About".Loc(), CustomAboutTab.Draw, null, true)
                             );
             if(!C.PinWindow)
             {
@@ -227,7 +227,7 @@ internal unsafe class AutoRetainerWindow : Window
 
     private void DrawStats()
     {
-        NuiTools.ButtonTabs([[C.RecordStats ? new("Ventures", S.VentureStats.DrawVentures) : null, new("Gil", S.GilDisplay.Draw), new("FC Data", S.FCData.Draw)]]);
+        NuiTools.ButtonTabs([[C.RecordStats ? new("Ventures".Loc(), S.VentureStats.DrawVentures) : null, new("Gil".Loc(), S.GilDisplay.Draw), new("FC Data".Loc(), S.FCData.Draw)]]);
     }
 
     public override void OnClose()
@@ -242,3 +242,5 @@ internal unsafe class AutoRetainerWindow : Window
         MultiModeUI.JustRelogged = true;
     }
 }
+
+

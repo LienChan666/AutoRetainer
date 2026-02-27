@@ -1,4 +1,4 @@
-﻿using AutoRetainerAPI.Configuration;
+using AutoRetainerAPI.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,7 +29,7 @@ public unsafe sealed class DiscardList : InventoryManagementBase
                     ImGui.PushFont(UiBuilder.IconFont);
                     ImGuiEx.CollectionButtonCheckbox(FontAwesomeIcon.Database.ToIconString(), x, InventoryCleanupCommon.SelectedPlan.IMDiscardIgnoreStack);
                     ImGui.PopFont();
-                    ImGuiEx.Tooltip($"Ignore stack setting for this item");
+                    ImGuiEx.Tooltip("Ignore stack setting for this item".Loc());
                 }))
             .Separator()
             .Widget(() =>

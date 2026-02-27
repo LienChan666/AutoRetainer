@@ -1,4 +1,4 @@
-﻿using AutoRetainerAPI.Configuration;
+using AutoRetainerAPI.Configuration;
 
 namespace AutoRetainer.UI.NeoUI.InventoryManagementEntries.InventoryCleanupEntries;
 public class HardList : InventoryManagementBase
@@ -22,7 +22,7 @@ public class HardList : InventoryManagementBase
                     ImGui.PushFont(UiBuilder.IconFont);
                     ImGuiEx.CollectionButtonCheckbox(FontAwesomeIcon.Database.ToIconString(), x, InventoryCleanupCommon.SelectedPlan.IMAutoVendorHardIgnoreStack);
                     ImGui.PopFont();
-                    ImGuiEx.Tooltip($"Ignore stack setting for this item");
+                    ImGuiEx.Tooltip("Ignore stack setting for this item".Loc());
                 },
                 filter: item => item.PriceLow != 0))
             .Separator()
@@ -32,3 +32,4 @@ public class HardList : InventoryManagementBase
             });
     }
 }
+

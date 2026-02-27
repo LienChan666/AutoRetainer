@@ -1,4 +1,4 @@
-﻿using AutoRetainer.Modules.Voyage;
+using AutoRetainer.Modules.Voyage;
 using AutoRetainer.Modules.Voyage.VoyageCalculator;
 using AutoRetainerAPI.Configuration;
 using ECommons.GameHelpers;
@@ -13,7 +13,7 @@ internal unsafe class SubmarinePointPlanUI : Window
     internal string SelectedPlanName => VoyageUtils.GetSubmarinePointPlanByGuid(SelectedPlanGuid).GetPointPlanName();
     internal SubmarinePointPlan SelectedPlan => VoyageUtils.GetSubmarinePointPlanByGuid(SelectedPlanGuid);
 
-    public SubmarinePointPlanUI() : base("Submersible Voyage Route Planner")
+    public SubmarinePointPlanUI() : base("Submersible Voyage Route Planner".Loc())
     {
         P.WindowSystem.AddWindow(this);
     }
@@ -28,7 +28,7 @@ internal unsafe class SubmarinePointPlanUI : Window
     public static readonly string DrawButtonText = "Open Submarine Point Plan Editor";
     public static void DrawButton()
     {
-        if(ImGuiEx.IconButtonWithText((FontAwesomeIcon)Lang.IconPlanner[0], DrawButtonText))
+        if(ImGuiEx.IconButtonWithText((FontAwesomeIcon)Lang.IconPlanner[0], DrawButtonText.Loc()))
         {
             P.SubmarinePointPlanUI.IsOpen = true;
         }
@@ -52,7 +52,7 @@ internal unsafe class SubmarinePointPlanUI : Window
             }
         }, () =>
         {
-            if(ImGui.Button("New plan"))
+            if(ImGui.Button("New plan".Loc()))
             {
                 var x = new SubmarinePointPlan
                 {
@@ -65,7 +65,7 @@ internal unsafe class SubmarinePointPlanUI : Window
         ImGui.Separator();
         if(SelectedPlan == null)
         {
-            ImGuiEx.Text($"No or unknown plan is selected");
+            ImGuiEx.Text("No or unknown plan is selected".Loc());
         }
         else
         {
@@ -77,63 +77,63 @@ internal unsafe class SubmarinePointPlanUI : Window
                 {
                     if(!my.Any())
                     {
-                        ImGuiEx.TextWrapped($"This plan is not used by any submersibles.");
+                        ImGuiEx.TextWrapped("This plan is not used by any submersibles.".Loc());
                     }
                     else
                     {
-                        ImGuiEx.TextWrapped($"This plan is used by {my.Select(X => X.Key).Print()}.");
+                        ImGuiEx.TextWrapped(string.Format("This plan is used by {0}.".Loc(), my.Select(X => X.Key).Print()));
                     }
                 }
                 else
                 {
                     if(!my.Any())
                     {
-                        ImGuiEx.TextWrapped($"This plan is used by {users} submersibles of your other characters.");
+                        ImGuiEx.TextWrapped(string.Format("This plan is used by {0} submersibles of your other characters.".Loc(), users));
                     }
                     else
                     {
-                        ImGuiEx.TextWrapped($"This plan is used by {my.Select(X => X.Key).Print()} and {users} more submersibles on other characters.");
+                        ImGuiEx.TextWrapped(string.Format("This plan is used by {0} and {1} more submersibles on other characters.".Loc(), my.Select(X => X.Key).Print(), users));
                     }
                 }
             }
-            ImGuiEx.TextV("Name: ");
+            ImGuiEx.TextV("Name: ".Loc());
             ImGui.SameLine();
             ImGuiEx.SetNextItemFullWidth();
-            ImGui.InputText($"##planname", ref SelectedPlan.Name, 100);
-            ImGuiEx.LineCentered($"planbuttons", () =>
+            ImGui.InputText("##planname", ref SelectedPlan.Name, 100);
+            ImGuiEx.LineCentered("planbuttons", () =>
             {
-                ImGuiEx.TextV($"Apply this plan to:");
+                ImGuiEx.TextV("Apply this plan to:".Loc());
                 ImGui.SameLine();
-                if(ImGui.Button("ALL submersibles"))
+                if(ImGui.Button("ALL submersibles".Loc()))
                 {
                     C.OfflineData.Each(x => x.AdditionalSubmarineData.Each(s => s.Value.SelectedPointPlan = SelectedPlanGuid));
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Current character's submersibles"))
+                if(ImGui.Button("Current character's submersibles".Loc()))
                 {
                     Data.AdditionalSubmarineData.Each(s => s.Value.SelectedPointPlan = SelectedPlanGuid);
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("No submersibles"))
+                if(ImGui.Button("No submersibles".Loc()))
                 {
                     C.OfflineData.Each(x => x.AdditionalSubmarineData.Where(s => s.Value.SelectedPointPlan == SelectedPlanGuid).Each(s => s.Value.SelectedPointPlan = Guid.Empty.ToString()));
                 }
             });
-            ImGuiEx.LineCentered($"planbuttons2", () =>
+            ImGuiEx.LineCentered("planbuttons2", () =>
             {
-                if(ImGui.Button($"Copy plan settings"))
+                if(ImGui.Button("Copy plan settings".Loc()))
                 {
                     Copy(JsonConvert.SerializeObject(SelectedPlan));
                 }
                 ImGui.SameLine();
-                if(ImGui.Button($"Paste plan settings"))
+                if(ImGui.Button("Paste plan settings".Loc()))
                 {
                     try
                     {
                         var plan = JsonConvert.DeserializeObject<SubmarinePointPlan>(Paste());
                         if(!plan.IsModified())
                         {
-                            Notify.Error("Could not import clipboard content. Is it correct plan?");
+                            Notify.Error("Could not import clipboard content. Is it correct plan?".Loc());
                         }
                         else
                         {
@@ -147,7 +147,7 @@ internal unsafe class SubmarinePointPlanUI : Window
                     }
                 }
                 ImGui.SameLine();
-                if(ImGuiEx.ButtonCtrl("Delete this plan"))
+                if(ImGuiEx.ButtonCtrl("Delete this plan".Loc()))
                 {
                     SelectedPlan.Delete = true;
                 }
@@ -223,3 +223,5 @@ internal unsafe class SubmarinePointPlanUI : Window
         }
     }
 }
+
+

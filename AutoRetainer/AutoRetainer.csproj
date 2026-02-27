@@ -117,6 +117,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="LanguageChinese.ini">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 		<None Update="res\autoretainer.png">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>

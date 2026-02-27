@@ -1,4 +1,4 @@
-﻿using ECommons.Configuration;
+using ECommons.Configuration;
 using ECommons.Reflection;
 
 namespace AutoRetainer.UI.NeoUI.AdvancedEntries;
@@ -67,7 +67,7 @@ public class ExpertTab : NeoUIEntry
         .Section("Import/Export")
         .Widget(() =>
         {
-            if(ImGui.Button("Export without character data"))
+            if(ImGui.Button("Export without character data".Loc()))
             {
                 var clone = C.JSONClone();
                 clone.OfflineData = null;
@@ -78,7 +78,7 @@ public class ExpertTab : NeoUIEntry
                 clone.AutoLogin = "";
                 Copy(EzConfig.DefaultSerializationFactory.Serialize(clone, false));
             }
-            if(ImGui.Button("Import and merge with character data"))
+            if(ImGui.Button("Import and merge with character data".Loc()))
             {
                 try
                 {
@@ -100,3 +100,4 @@ public class ExpertTab : NeoUIEntry
             }
         });
 }
+
