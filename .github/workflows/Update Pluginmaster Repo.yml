@@ -1,0 +1,69 @@
+name: Update pluginmaster Repo
+
+on:
+  release:
+    types: [published, edited]
+  workflow_dispatch:
+
+jobs:
+  update-index:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Update pluginmaster.json
+        shell: pwsh
+        run: |
+          $repoOwner = "${{ github.repository_owner }}"
+          $repoName = "${{ github.event.repository.name }}"
+          $repoUrl = "https://github.com/$repoOwner/$repoName"
+          $downloadUrl = "$repoUrl/releases/latest/download/latest.zip"
+          $timestamp = [DateTimeOffset]::UtcNow.ToUnixTimeSeconds().ToString()
+
+          $pluginMeta = Get-Content "AutoRetainer/AutoRetainer.json" | ConvertFrom-Json
+          [xml]$proj = Get-Content "AutoRetainer/AutoRetainer.csproj"
+          $version = $proj.Project.PropertyGroup | Where-Object { $_.Version } | Select-Object -First 1 -ExpandProperty Version
+          if(-not $version) {
+            throw "Can not find <Version> in AutoRetainer.csproj"
+          }
+
+          $entry = [ordered]@{
+            Author = $pluginMeta.Author
+            Name = $pluginMeta.Name
+            Punchline = $pluginMeta.Punchline
+            Description = $pluginMeta.Description
+            InternalName = $pluginMeta.InternalName
+            AssemblyVersion = $version
+            RepoUrl = $repoUrl
+            ApplicableVersion = "any"
+            CategoryTags = @("utility")
+            DalamudApiLevel = $pluginMeta.DalamudApiLevel
+            IconUrl = $pluginMeta.IconUrl
+            ImageUrls = @("")
+            DownloadLinkInstall = $downloadUrl
+            DownloadLinkTesting = $downloadUrl
+            DownloadLinkUpdate = $downloadUrl
+            IsHide = $false
+            IsTestingExclusive = $false
+            DownloadCount = 0
+            LastUpdate = $timestamp
+          }
+
+          @($entry) | ConvertTo-Json -Depth 10 | Set-Content "pluginmaster.json" -Encoding UTF8
+
+      - name: Commit and push
+        shell: bash
+        run: |
+          if git diff --quiet -- pluginmaster.json; then
+            echo "pluginmaster.json unchanged."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pluginmaster.json
+          git commit -m "chore: update pluginmaster index"
+          git push

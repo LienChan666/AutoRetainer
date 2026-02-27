@@ -1,0 +1,27 @@
+[
+  {
+    "Author": "кайт машина (Puni.sh), NightmareXIV",
+    "Name": "AutoRetainer",
+    "Punchline": "Collect and assign ventures to your retainers from the comfort of your bed.",
+    "Description": "Collect and assign ventures to your retainers from the comfort of your bed.",
+    "InternalName": "AutoRetainer",
+    "AssemblyVersion": "4.5.5.11",
+    "RepoUrl": "https://github.com/LienChan666/AutoRetainer",
+    "ApplicableVersion": "any",
+    "CategoryTags": [
+      "utility"
+    ],
+    "DalamudApiLevel": 14,
+    "IconUrl": "https://s3.puni.sh/media/plugin/24/icon-drb6aywk5m9.png",
+    "ImageUrls": [
+      ""
+    ],
+    "DownloadLinkInstall": "https://github.com/LienChan666/AutoRetainer/releases/latest/download/latest.zip",
+    "DownloadLinkTesting": "https://github.com/LienChan666/AutoRetainer/releases/latest/download/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/LienChan666/AutoRetainer/releases/latest/download/latest.zip",
+    "IsHide": false,
+    "IsTestingExclusive": false,
+    "DownloadCount": 0,
+    "LastUpdate": "0"
+  }
+]
