@@ -1,4 +1,4 @@
-﻿using AutoRetainer.Internal;
+using AutoRetainer.Internal;
 using AutoRetainerAPI.Configuration;
 
 namespace AutoRetainer.UI.MainWindow.MultiModeTab;
@@ -56,14 +56,14 @@ internal static unsafe class MultiModeUI
                 data.Enabled = !data.Enabled;
             }
             if(colen) ImGui.PopStyleColor();
-            ImGuiEx.Tooltip($"Enable multi mode for this character");
+            ImGuiEx.Tooltip("Enable multi mode for this character".Loc());
             ImGuiEx.DragDropRepopulate("EnMulti", data.Enabled, ref data.Enabled);
             ImGui.SameLine(0, 3);
             if(ImGuiEx.IconButton(FontAwesomeIcon.DoorOpen))
             {
                 if(MultiMode.Relog(data, out var error, RelogReason.ConfigGUI))
                 {
-                    Notify.Success("Relogging...");
+                    Notify.Success("Relogging...".Loc());
                 }
                 else
                 {
@@ -74,13 +74,13 @@ internal static unsafe class MultiModeUI
             {
                 Copy($"/ays relog {data.Name}@{data.World}");
             }
-            ImGuiEx.Tooltip($"Left click - relog to this character\nRight click - copy relog command into clipboard");
+            ImGuiEx.Tooltip("Left click - relog to this character\nRight click - copy relog command into clipboard".Loc());
             ImGui.SameLine(0, 3);
             if(ImGuiEx.IconButton(FontAwesomeIcon.UserCog))
             {
                 ImGui.OpenPopup($"popup{data.CID}");
             }
-            ImGuiEx.Tooltip($"Configure Character");
+            ImGuiEx.Tooltip("Configure Character".Loc());
             ImGui.SameLine(0, 3);
 
             if(ImGui.BeginPopup($"popup{data.CID}"))
@@ -150,7 +150,7 @@ internal static unsafe class MultiModeUI
                 }
             }
             ImGui.SameLine(0, 0);
-            List<(bool, string)> texts = [(data.Ventures < C.UIWarningRetVentureNum, $"V: {data.Ventures}"), (data.InventorySpace < C.UIWarningRetSlotNum, $"I: {data.InventorySpace}")];
+            List<(bool, string)> texts = [(data.Ventures < C.UIWarningRetVentureNum, $"{ "Venture Tokens".Loc()}: {data.Ventures}"), (data.InventorySpace < C.UIWarningRetSlotNum, $"{ "Inventory Space".Loc()}: {data.InventorySpace}")];
             if(C.CharEqualize && MultiMode.Enabled)
             {
                 texts.Insert(0, (false, $"C: {MultiMode.CharaCnt.GetOrDefault(data.CID)}"));
@@ -163,7 +163,7 @@ internal static unsafe class MultiModeUI
         StatusTextWidth = 0f;
         UIUtils.DrawOverlayTexts(overlayTexts, ref StatusTextWidth);
 
-        if(C.Verbose && ImGui.CollapsingHeader("Debug"))
+        if(C.Verbose && ImGui.CollapsingHeader("Debug".Loc()))
         {
             ImGuiEx.Text($"GetCurrentTargetCharacter: {MultiMode.GetCurrentTargetCharacter()}");
             //ImGuiEx.Text($"Yes Already: {YesAlready.IsEnabled()}");
@@ -203,3 +203,5 @@ internal static unsafe class MultiModeUI
         }
     }
 }
+
+
