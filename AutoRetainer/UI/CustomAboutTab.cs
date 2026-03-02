@@ -53,7 +53,7 @@ namespace AutoRetainer.UI
                 ImGui.SameLine();
                 if(ImGui.Button("Repository"))
                 {
-                    ImGui.SetClipboardText("https://love.puni.sh/ment.json");
+                    ImGui.SetClipboardText("https://raw.githubusercontent.com/LienChan666/AutoRetainer/master/repo/pluginmaster.json");
                     Notify.Success("Link copied to clipboard");
                 }
                 ImGui.SameLine();

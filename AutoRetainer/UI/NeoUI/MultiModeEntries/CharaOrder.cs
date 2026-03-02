@@ -125,6 +125,6 @@ public class CharaOrder : NeoUIEntry
                 });
         }
 
-        b.Draw();
+        b.DrawL10n();
     }
 }

@@ -116,7 +116,7 @@ internal unsafe class AutoRetainerWindow : Window
                             EzConfig.Save();
                         }
                     })
-                    .Draw();
+                    .DrawL10n();
                 return;
             }
             var e = SchedulerMain.PluginEnabledInternal;

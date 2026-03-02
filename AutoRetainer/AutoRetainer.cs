@@ -156,21 +156,21 @@ public unsafe class AutoRetainer : IDalamudPlugin
         Svc.ClientState.Logout += Logout;
         Svc.Condition.ConditionChange += ConditionChange;
         EzCmd.Add("/autoretainer", CommandHandler, """
-            Open plugin interface
-            /ays - alias for /autoretainer
-            /autoretainer e|enable → Enable plugin
-            /autoretainer d|disable - Disable plugin
-            /autoretainer t|toggle - toggle plugin
-            /autoretainer m|multi - toggle MultiMode
-            /autoretainer relog Character Name@WorldName - relog to the targeted character if configured
-            /autoretainer b|browser - open venture browser
-            /autoretainer expert - toggle expert settings
-            /autoretainer debug - toggle debug menu and verbose output
-            /autoretainer shutdown <hours> [minutes] [seconds] - schedule a game shutdown in this amount of time
-            /autoretainer itemsell - begin selling items to NPC or retainer if possible
-            /autoretainer het - enter nearby own house or apartment if possible
-            /autoretainer reset - reset all pending tasks
-            /autoretainer deliver - deliver expert delivery items
+            打开插件界面
+            /ays - /autoretainer 的别名
+            /autoretainer e|enable - 启用插件
+            /autoretainer d|disable - 禁用插件
+            /autoretainer t|toggle - 切换插件开关
+            /autoretainer m|multi - 切换多角色模式
+            /autoretainer relog 角色名@服务器 - 若已配置则重登到目标角色
+            /autoretainer b|browser - 打开探险管理器
+            /autoretainer expert - 切换专家设置
+            /autoretainer debug - 切换调试菜单与详细日志输出
+            /autoretainer shutdown <小时> [分钟] [秒] - 按指定时间后关闭游戏
+            /autoretainer itemsell - 若条件允许，开始向 NPC 或雇员出售物品
+            /autoretainer het - 若条件允许，进入附近自宅或公寓
+            /autoretainer reset - 重置所有待处理任务
+            /autoretainer deliver - 执行筹备稀有品交付
             """);
         EzCmd.Add("/ays", CommandHandler);
         Svc.Toasts.ErrorToast += Toasts_ErrorToast;

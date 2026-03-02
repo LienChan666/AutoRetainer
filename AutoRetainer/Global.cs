@@ -1,4 +1,5 @@
 ﻿global using AutoRetainer.Helpers;
+global using AutoRetainer.UI.Localization;
 global using AutoRetainer.Modules;
 global using AutoRetainer.Modules.GcHandin;
 global using AutoRetainer.Modules.Multi;

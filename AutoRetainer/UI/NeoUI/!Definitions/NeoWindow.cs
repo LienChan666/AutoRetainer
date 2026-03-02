@@ -47,7 +47,7 @@ public sealed class NeoWindow : Window
     {
         P.WindowSystem.AddWindow(this);
         this.SetMinSize();
-        FileSystem = new(() => Tabs);
+        FileSystem = new(() => Tabs.Select(static entry => new LocalizedConfigEntry(entry)).ToArray());
     }
 
     public void Reload()
