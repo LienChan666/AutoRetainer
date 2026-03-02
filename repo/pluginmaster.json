@@ -1,0 +1,24 @@
+[
+  {
+    "Author": "кайт машина (Puni.sh), NightmareXIV",
+    "Name": "AutoRetainer",
+    "InternalName": "AutoRetainer",
+    "AssemblyVersion": "4.5.5.11",
+    "Description": "轻松收取并派遣雇员探险。",
+    "ApplicableVersion": "any",
+    "RepoUrl": "https://github.com/LienChan666/AutoRetainer",
+    "DalamudApiLevel": 14,
+    "LoadRequiredState": 0,
+    "LoadSync": false,
+    "CanUnloadAsync": false,
+    "LoadPriority": 0,
+    "IconUrl": "https://s3.puni.sh/media/plugin/24/icon-drb6aywk5m9.png",
+    "Punchline": "轻松收取并派遣雇员探险。",
+    "AcceptsFeedback": true,
+    "TestingAssemblyVersion": "4.5.5.11",
+    "IsTestingExclusive": false,
+    "DownloadLinkInstall": "https://raw.githubusercontent.com/LienChan666/AutoRetainer/master/repo/AutoRetainer/latest.zip",
+    "DownloadLinkTesting": "https://raw.githubusercontent.com/LienChan666/AutoRetainer/master/repo/AutoRetainer/latest.zip",
+    "DownloadLinkUpdate": "https://raw.githubusercontent.com/LienChan666/AutoRetainer/master/repo/AutoRetainer/latest.zip"
+  }
+]

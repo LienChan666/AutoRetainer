@@ -1,0 +1,147 @@
+name: Publish Plugin Repository
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - AutoRetainer/**
+      - AutoRetainerAPI/**
+      - ECommons/**
+      - ECommons.FileWriter/**
+      - NightmareUI/**
+      - NightmareUI.OtterGuiWrapper/**
+      - OtterGui/**
+      - PunishLib/**
+      - FFXIVClientStructs/**
+      - AutoRetainer.sln
+      - .github/workflows/publish-plugin-repo.yml
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-plugin-repo
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    env:
+      PUBLISH_OWNER: LienChan666
+      PUBLISH_REPO: DalamudPlugins
+      PUBLISH_BRANCH: master
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Prepare Dalamud libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/dalamud
+          curl -L --retry 3 --fail -o /tmp/dalamud.zip https://goatcorp.github.io/dalamud-distrib/latest.zip
+          python3 - <<'PY'
+          import zipfile
+          zipfile.ZipFile("/tmp/dalamud.zip").extractall("/tmp/dalamud")
+          PY
+
+      - name: Build plugin
+        env:
+          CI: true
+          DALAMUD_HOME: /tmp/dalamud
+        run: dotnet build AutoRetainer/AutoRetainer.csproj -c Release -p:EnableWindowsTargeting=true
+
+      - name: Refresh repository package
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p repo/AutoRetainer
+          cp AutoRetainer/bin/Release/AutoRetainer/latest.zip repo/AutoRetainer/latest.zip
+          cp AutoRetainer/bin/Release/AutoRetainer/AutoRetainer.json repo/AutoRetainer/AutoRetainer.json
+
+      - name: Update pluginmaster metadata
+        run: |
+          python3 - <<'PY'
+          import json
+          import os
+          import pathlib
+          import re
+
+          root = pathlib.Path(".")
+          csproj = (root / "AutoRetainer" / "AutoRetainer.csproj").read_text(encoding="utf-8")
+          match = re.search(r"<Version>([^<]+)</Version>", csproj)
+          if not match:
+              raise SystemExit("Version not found in AutoRetainer.csproj")
+
+          version = match.group(1)
+          pluginmaster_path = root / "repo" / "pluginmaster.json"
+          payload = json.loads(pluginmaster_path.read_text(encoding="utf-8"))
+          if not isinstance(payload, list) or not payload:
+              raise SystemExit("repo/pluginmaster.json must be a non-empty JSON array")
+
+          plugin = next((entry for entry in payload if entry.get("InternalName") == "AutoRetainer"), None)
+          if plugin is None:
+              raise SystemExit("AutoRetainer entry not found in repo/pluginmaster.json")
+          plugin["AssemblyVersion"] = version
+          plugin["TestingAssemblyVersion"] = version
+          plugin["RepoUrl"] = "https://github.com/LienChan666/AutoRetainer"
+          publish_owner = os.environ["PUBLISH_OWNER"]
+          publish_repo = os.environ["PUBLISH_REPO"]
+          publish_branch = os.environ["PUBLISH_BRANCH"]
+          download_link = f"https://raw.githubusercontent.com/{publish_owner}/{publish_repo}/{publish_branch}/AutoRetainer/latest.zip"
+          plugin["DownloadLinkInstall"] = download_link
+          plugin["DownloadLinkTesting"] = download_link
+          plugin["DownloadLinkUpdate"] = download_link
+
+          pluginmaster_path.write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+      - name: Validate metadata
+        run: |
+          python3 -m json.tool repo/pluginmaster.json > /dev/null
+          python3 -m json.tool repo/AutoRetainer/AutoRetainer.json > /dev/null
+
+      - name: Checkout publish repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.PUBLISH_OWNER }}/${{ env.PUBLISH_REPO }}
+          ref: ${{ env.PUBLISH_BRANCH }}
+          token: ${{ secrets.DALAMUD_PLUGINS_PAT }}
+          path: publish-repo
+
+      - name: Sync publish repository artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p publish-repo/AutoRetainer
+          cp repo/pluginmaster.json publish-repo/pluginmaster.json
+          cp repo/AutoRetainer/AutoRetainer.json publish-repo/AutoRetainer/AutoRetainer.json
+          cp repo/AutoRetainer/latest.zip publish-repo/AutoRetainer/latest.zip
+
+      - name: Commit and push artifacts to publish repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd publish-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pluginmaster.json AutoRetainer/AutoRetainer.json AutoRetainer/latest.zip
+          if git diff --cached --quiet; then
+            echo "No artifact changes detected."
+            exit 0
+          fi
+          git commit -m "chore: publish AutoRetainer artifacts [skip ci]"
+          git push origin HEAD:${PUBLISH_BRANCH}
