@@ -25,7 +25,7 @@ internal unsafe class DebugMulti : DebugSectionBase
             if(ImGui.Button("Enqueue HET")) TaskNeoHET.Enqueue(null);
             if(ImGui.Button("Enqueue workshop")) TaskNeoHET.TryEnterWorkshop(() => DuoLog.Error("Fail"));
             ImGuiEx.Text($"""
-                Can enter workshop: {S.LifestreamIPC.CanMoveToWorkshop()}
+                Can enter workshop: {Lifestream.CanMoveToWorkshop()}
                 """);
         }
         if(ImGui.CollapsingHeader("Tasks"))
@@ -72,7 +72,7 @@ internal unsafe class DebugMulti : DebugSectionBase
         if(ImGui.CollapsingHeader("Estate territories"))
         {
             ImGuiEx.Text(ResidentalAreas.List.Select(x => GenericHelpers.GetTerritoryName(x)).Join("\n"));
-            ImGuiEx.Text($"In residental area: {ResidentalAreas.List.Contains(Svc.ClientState.TerritoryType)}");
+            ImGuiEx.Text($"In residental area: {ResidentalAreas.List.Contains((ushort)Svc.ClientState.TerritoryType)}");
         }
         ImGuiEx.Text($"Is in sanctuary: {TerritoryInfo.Instance()->InSanctuary}");
         ImGuiEx.Text($"Is in sanctuary ExcelTerritoryHelper: {ExcelTerritoryHelper.IsSanctuary(Svc.ClientState.TerritoryType)}");

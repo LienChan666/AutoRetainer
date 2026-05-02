@@ -249,7 +249,7 @@ internal static unsafe class AutoGCHandin
                 GCSupplyListAddon != null
                 && IsAddonReady(GCSupplyListAddon)
                 && GCSupplyListAddon->UldManager.NodeListCount > 20
-                && GCSupplyListAddon->UldManager.NodeList[5]->IsVisible()
+                && GCSupplyListAddon->UldManager.SearchNodeById(24)->IsVisible()
                 && IsSelectedFilterValid(GCSupplyListAddon);
         }
         catch(Exception)
@@ -259,11 +259,11 @@ internal static unsafe class AutoGCHandin
     }
     internal static bool IsDone(AtkUnitBase* addon)
     {
-        return addon->UldManager.NodeList[20]->IsVisible();
+        return addon->UldManager.SearchNodeById(9)->IsVisible();
     }
     internal static bool IsSelectedFilterValid(AtkUnitBase* addon)
     {
-        var step1 = addon->UldManager.NodeList[14];
+        var step1 = addon->UldManager.SearchNodeById(14);
         var step2 = step1->GetAsAtkComponentNode()->Component->UldManager.NodeList[1];
         var step3 = step2->GetAsAtkComponentNode()->Component->UldManager.NodeList[2];
         var text = GenericHelpers.ReadSeString(&step3->GetAsAtkTextNode()->NodeText).GetText();
@@ -374,9 +374,7 @@ internal static unsafe class AutoGCHandin
 
     public static byte GetRank()
     {
-        if(GetGC() == 1) return PlayerState.Instance()->GCRankMaelstrom;
-        if(GetGC() == 2) return PlayerState.Instance()->GCRankTwinAdders;
-        if(GetGC() == 3) return PlayerState.Instance()->GCRankImmortalFlames;
+        if(GetGC() != 0) return PlayerState.Instance()->GetGrandCompanyRank();
         return 0;
     }
 
