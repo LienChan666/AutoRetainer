@@ -6,7 +6,7 @@
   "Description": "轻松收取并派遣雇员探险。",
   "ApplicableVersion": "any",
   "RepoUrl": "https://github.com/LienChan666/AutoRetainer",
-  "DalamudApiLevel": 14,
+  "DalamudApiLevel": 15,
   "LoadRequiredState": 0,
   "LoadSync": false,
   "CanUnloadAsync": false,

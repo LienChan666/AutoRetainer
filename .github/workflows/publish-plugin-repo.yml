@@ -84,6 +84,7 @@ jobs:
               raise SystemExit("Version not found in AutoRetainer.csproj")
 
           version = match.group(1)
+          source_manifest = json.loads((root / "AutoRetainer" / "AutoRetainer.json").read_text(encoding="utf-8-sig"))
           pluginmaster_path = root / "repo" / "pluginmaster.json"
           payload = json.loads(pluginmaster_path.read_text(encoding="utf-8"))
           if not isinstance(payload, list) or not payload:
@@ -94,6 +95,7 @@ jobs:
               raise SystemExit("AutoRetainer entry not found in repo/pluginmaster.json")
           plugin["AssemblyVersion"] = version
           plugin["TestingAssemblyVersion"] = version
+          plugin["DalamudApiLevel"] = source_manifest["DalamudApiLevel"]
           plugin["RepoUrl"] = "https://github.com/LienChan666/AutoRetainer"
           publish_owner = os.environ["PUBLISH_OWNER"]
           publish_repo = os.environ["PUBLISH_REPO"]
