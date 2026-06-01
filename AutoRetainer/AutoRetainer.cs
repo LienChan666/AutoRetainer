@@ -26,6 +26,7 @@ using ECommons.GameFunctions;
 using ECommons.GameHelpers;
 using ECommons.IPC;
 using ECommons.IPC.Subscribers;
+using ECommons.IPC.Subscribers.Vnavmesh;
 using ECommons.Reflection;
 using ECommons.Singletons;
 using ECommons.Throttlers;
