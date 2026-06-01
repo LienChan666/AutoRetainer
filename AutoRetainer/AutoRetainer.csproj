@@ -164,8 +164,4 @@
 		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
-
-	<ItemGroup>
-	  <Folder Include="_build\" />
-	</ItemGroup>
 </Project>
