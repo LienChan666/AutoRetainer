@@ -23,6 +23,7 @@ public class ExpertTab : NeoUIEntry
         .InputInt(150f, "Timeout before AutoRetainer will attempt to unstuck, seconds", () => ref C.BailoutTimeout)
 
         .Section("Settings")
+        .Checkbox("Allow operating on retainers without a job", () => ref C.AllowUnemployed)
         .Widget("Skip Inn Login Cutscene", text =>
         {
             ImGui.SetNextItemWidth(200);

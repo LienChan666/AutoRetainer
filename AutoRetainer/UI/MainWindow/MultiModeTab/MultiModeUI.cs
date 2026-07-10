@@ -80,6 +80,10 @@ internal static unsafe class MultiModeUI
             {
                 ImGui.OpenPopup($"popup{data.CID}");
             }
+            if(ImGui.IsItemClicked(ImGuiMouseButton.Right))
+            {
+                Copy($"{data.Name}@{data.World}");
+            }
             ImGuiEx.Tooltip($"Configure Character");
             ImGui.SameLine(0, 3);
 
