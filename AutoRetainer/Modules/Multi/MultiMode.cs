@@ -13,12 +13,10 @@ using ECommons.Events;
 using ECommons.ExcelServices.TerritoryEnumeration;
 using ECommons.EzSharedDataManager;
 using ECommons.GameFunctions;
-using ECommons.GameHelpers;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.UI.Agent;
 using FFXIVClientStructs.FFXIV.Component.GUI;
-using System.DirectoryServices.ActiveDirectory;
 using static AutoRetainer.Modules.OfflineDataManager;
 
 namespace AutoRetainer.Modules.Multi;
@@ -26,8 +24,9 @@ namespace AutoRetainer.Modules.Multi;
 internal static unsafe class MultiMode
 {
     internal static bool Active => Enabled && !IPC.Suppressed;
-
+    internal static HashSet<string> SingleMultiMide = null;
     internal static ref bool Enabled => ref C.MultiModeEnabled;
+
     public static (string Name, string World)? ExpectedCharacter = null;
 
     internal static bool WaitOnLoginScreen => C.MultiWaitOnLoginScreen || BailoutManager.IsLogOnTitleEnabled || C.NightMode;

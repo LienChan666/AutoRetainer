@@ -314,6 +314,14 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     MultiMode.OnMultiModeEnabled();
                 }
             }
+            else if(arg2.EqualsIgnoreCaseAny("single"))
+            {
+                if(!MultiMode.Enabled)
+                {
+                    MultiMode.Enabled = true;
+                    MultiMode.OnMultiModeEnabled();
+                }
+            }
         }
         else if(arguments.EqualsIgnoreCaseAny("n", "night"))
         {
