@@ -39,7 +39,6 @@ using System.Reflection;
 
 
 
-//using OtterGui.Text.EndObjects;
 using System.Text.RegularExpressions;
 using TerraFX.Interop.Windows;
 using CharaData = (string Name, ushort World);
@@ -206,7 +205,7 @@ public static unsafe class Utils
     {
         if(!Utils.IsLifestreamInstalled())
         {
-            ImGuiEx.TextWrapped(EColor.RedBright, $"Lifestream plugin is not installed or not enabled. You have to install and enable it in order for {function} to work. Click here if you would like to open an instruction on how to do so.");
+            ImGuiEx.TextWrapped(EColor.RedBright, $"未安装或未启用 Lifestream 插件。必须安装并启用后才能使用{function}。点击此处可打开安装说明。");
             if(ImGuiEx.HoveredAndClicked())
             {
                 ShellStart("https://github.com/NightmareXIV/Lifestream/?tab=readme-ov-file#installation");
@@ -214,7 +213,7 @@ public static unsafe class Utils
         }
     }
 
-    public static void NotifyIfLifestreamIsNotInstalled(string function = "this function")
+    public static void NotifyIfLifestreamIsNotInstalled(string function = "此功能")
     {
         ref var notification = ref Ref<IActiveNotification>.Get("Notification");
         if(!Utils.IsLifestreamInstalled())
@@ -232,8 +231,8 @@ public static unsafe class Utils
             }
             notification = Svc.NotificationManager.AddNotification(new()
             {
-                Title = "Lifestream is not installed",
-                Content = $"Lifestream plugin is required to use {function}. Click here for a guide on how to install it.",
+                Title = "未安装 Lifestream",
+                Content = $"使用{function}需要 Lifestream 插件。点击此处查看安装指南。",
                 InitialDuration = TimeSpan.FromSeconds(60),
                 Type = NotificationType.Error,
                 Minimized = false,
@@ -281,7 +280,7 @@ public static unsafe class Utils
             var data = ExcelItemHelper.Get(item);
             if(data == null)
             {
-                error = $"Item with identifier {item} is invalid";
+                error = $"物品标识符 {item} 无效";
                 return false;
             }
             else if(kind == IMListKind.Protect)
@@ -299,7 +298,7 @@ public static unsafe class Utils
                 }
                 else
                 {
-                    error = $"Item {data.GetName()} is already present in protection list";
+                    error = $"物品 {data.GetName()} 已在保护列表中";
                     return false;
                 }
             }
@@ -307,16 +306,11 @@ public static unsafe class Utils
             {
                 if(thisRef.IMProtectList.Contains(item))
                 {
-                    error = $"Item {data.GetName()} is protected";
+                    error = $"物品 {data.GetName()} 受保护";
                     return false;
                 }
                 else
                 {
-                    //thisRef.IMAutoVendorHard.Remove(item);
-                    //thisRef.IMAutoVendorHardIgnoreStack.Remove(item);
-                    //thisRef.IMDiscardList.Remove(item);
-                    //thisRef.IMDiscardIgnoreStack.Remove(item);
-                    //thisRef.IMDesynth.Remove(item);
                     if(!thisRef.IMAutoVendorSoft.Contains(item))
                     {
                         thisRef.IMAutoVendorSoft.Add(item);
@@ -324,7 +318,7 @@ public static unsafe class Utils
                     }
                     else
                     {
-                        error = $"Item {data.GetName()} is already present in quick venture sell list";
+                        error = $"物品 {data.GetName()} 已在自由探索委托出售列表中";
                         return false;
                     }
                 }
@@ -333,7 +327,7 @@ public static unsafe class Utils
             {
                 if(thisRef.IMProtectList.Contains(item))
                 {
-                    error = $"Item {data.GetName()} is protected";
+                    error = $"物品 {data.GetName()} 受保护";
                     return false;
                 }
                 else
@@ -349,7 +343,7 @@ public static unsafe class Utils
                     }
                     else
                     {
-                        error = $"Item {data.GetName()} is already present in unconditional sell list";
+                        error = $"物品 {data.GetName()} 已在无条件出售列表中";
                         return false;
                     }
                 }
@@ -358,7 +352,7 @@ public static unsafe class Utils
             {
                 if(thisRef.IMProtectList.Contains(item))
                 {
-                    error = $"Item {data.GetName()} is protected";
+                    error = $"物品 {data.GetName()} 受保护";
                     return false;
                 }
                 else
@@ -374,7 +368,7 @@ public static unsafe class Utils
                     }
                     else
                     {
-                        error = $"Item {data.GetName()} is already present in discard list";
+                        error = $"物品 {data.GetName()} 已在丢弃列表中";
                         return false;
                     }
                 }
@@ -383,7 +377,7 @@ public static unsafe class Utils
             {
                 if(thisRef.IMProtectList.Contains(item))
                 {
-                    error = $"Item {data.GetName()} is protected";
+                    error = $"物品 {data.GetName()} 受保护";
                     return false;
                 }
                 else
@@ -400,14 +394,14 @@ public static unsafe class Utils
                     }
                     else
                     {
-                        error = $"Item {data.GetName()} is already present in desynthesis list";
+                        error = $"物品 {data.GetName()} 已在道具分解列表中";
                         return false;
                     }
                 }
             }
             else
             {
-                error = $"Invalid command {kind}";
+                error = $"无效的命令类型：{kind}";
                 return false;
             }
         }
@@ -634,13 +628,13 @@ public static unsafe class Utils
             {
                 if(imPlan.IMProtectList.Contains(slot->ItemId))
                 {
-                    DuoLog.Warning($"Requested discard of slot {type}[{slotIndex}], item {ExcelItemHelper.GetName(expectedItem)}, is protected, can not discard");
+                    DuoLog.Warning($"请求丢弃栏位 {type}[{slotIndex}] 中的 {ExcelItemHelper.GetName(expectedItem)}，但该物品受保护，无法丢弃");
                 }
                 else
                 {
                     if(imPlan.IMDry)
                     {
-                        DuoLog.Warning($"Would discard {(nint)slot:X} {ExcelItemHelper.GetName(slot->ItemId, true)} x{slot->Quantity}, {type}[{slotIndex}]");
+                        DuoLog.Warning($"将丢弃 {(nint)slot:X} {ExcelItemHelper.GetName(slot->ItemId, true)} ×{slot->Quantity}，{type}[{slotIndex}]");
                     }
                     else
                     {
@@ -650,7 +644,7 @@ public static unsafe class Utils
             }
             else
             {
-                DuoLog.Warning($"Requested discard of slot {type}[{slotIndex}], expected item {ExcelItemHelper.GetName(expectedItem)}, contained {slotIndex}, can not discard");
+                DuoLog.Warning($"请求丢弃栏位 {type}[{slotIndex}]，预期物品为 {ExcelItemHelper.GetName(expectedItem)}，但栏位内容不符，无法丢弃");
             }
         }
     }
@@ -736,7 +730,7 @@ public static unsafe class Utils
             get
             {
                 if(plan.Name != "") return plan.Name;
-                return $"Unnamed Plan {plan.GUID.GetDisplayTag()}";
+                return $"未命名方案 {plan.GUID.GetDisplayTag()}";
             }
         }
 
@@ -760,7 +754,7 @@ public static unsafe class Utils
             get
             {
                 if(plan.Name != "") return plan.Name;
-                return $"Unnamed Plan {plan.GUID.GetDisplayTag()}";
+                return $"未命名方案 {plan.GUID.GetDisplayTag()}";
             }
         }
     }
@@ -791,7 +785,7 @@ public static unsafe class Utils
             MainCities.New_Gridania => GrandCompany.TwinAdder,
             MainCities.Uldah_Steps_of_Nald => GrandCompany.ImmortalFlames,
             MainCities.Limsa_Lominsa_Upper_Decks => GrandCompany.Maelstrom,
-            _ => throw new InvalidOperationException("Could not determite accessed grand company")
+            _ => throw new InvalidOperationException("无法确定当前访问的大国防联军")
         };
         return SharedGCExchangeListings.Where(x => x.Value.Companies.Contains(gc)).ToDictionary();
     }
@@ -847,25 +841,25 @@ public static unsafe class Utils
 
     public static readonly string[] GCRanks = [
         "",
-        "Private Third Class",
-        "Private Second Class",
-        "Private First Class",
-        "Corporal",
-        "Sergeant Third Class",
-        "Sergeant Second Class",
-        "Sergeant First Class",
-        "Chief Sergeant",
-        "Second Lieutenant",
-        "First Lieutenant",
-        "Captain",
-        "Second Commander",
-        "First Commander",
-        "High Commander",
-        "Rear Marshal",
-        "Vice Marshal",
-        "Marshal",
-        "Grand Marshal",
-        "Champion",
+        "二等漩兵 / 二等牙兵 / 二等耀兵",
+        "一等漩兵 / 一等牙兵 / 一等耀兵",
+        "上等漩兵 / 上等牙兵 / 上等耀兵",
+        "漩兵长 / 牙兵长 / 耀兵长",
+        "协漩士 / 协牙士 / 协耀士",
+        "副漩士 / 副牙士 / 副耀士",
+        "正漩士 / 正牙士 / 正耀士",
+        "漩士长 / 牙士长 / 耀士长",
+        "协漩尉 / 协牙尉 / 协耀尉",
+        "副漩尉 / 副牙尉 / 副耀尉",
+        "正漩尉 / 正牙尉 / 正耀尉",
+        "协漩校 / 协牙校 / 协耀校",
+        "副漩校 / 副牙校 / 副耀校",
+        "正漩校 / 正牙校 / 正耀校",
+        "从漩将 / 从牙将 / 从耀将",
+        "协漩将 / 协牙将 / 协耀将",
+        "副漩将 / 副牙将 / 副耀将",
+        "正漩将 / 正牙将 / 正耀将",
+        "漩涡提督 / 牙蛇将军 / 耀辉元帅",
     ];
 
     public static bool ShouldSkipNPCVendor()
@@ -883,41 +877,6 @@ public static unsafe class Utils
     {
         return GenericHelpers.IsNullOrEmpty(s);
     }
-
-    public static void EnsureEnhancedLoginIsOff()
-    {
-        /*try
-        {
-            if(Svc.PluginInterface.InstalledPlugins.Any(x => x.InternalName == "HaselTweaks" && x.IsLoaded))
-            {
-                if(DalamudReflector.TryGetDalamudPlugin("HaselTweaks", out var instance, out var context, false, true))
-                {
-                    var configWindow = ReflectionHelper.CallStatic(context.Assemblies, "HaselCommon.Service", [], "Get", ["HaselTweaks.Windows.PluginWindow"], []);
-                    var tweaks = (System.Collections.IEnumerable)configWindow.GetFoP("Tweaks");
-                    foreach(var x in tweaks)
-                    {
-                        if(x.GetFoP<string>("InternalName") == "EnhancedLoginLogout" && x.GetFoP<int>("Status") == 5)
-                        {
-                            configWindow.GetFoP("TweakManager").Call("UserDisableTweak", [x], true);
-                            new PopupWindow(() =>
-                            {
-                                ImGuiEx.Text($"""
-                                    Enhanced Login/Logout from HaselTweaks plugin has been detected.
-                                    It is not compatible with AutoRetainer and has been disabled.
-                                    """);
-                            });
-                        }
-                    }
-                }
-            }
-        }
-        catch(Exception e)
-        {
-            e.Log();
-        }*/
-    }
-
-
 
     public static void EnqueueVendorItemsByRetainer()
     {
@@ -946,42 +905,42 @@ public static unsafe class Utils
     }
 
     /// <summary>
-    /// regular retainer inventories
+    /// 雇员的常规背包
     /// </summary>
     public static InventoryType[] RetainerInventories => field ??= [InventoryType.RetainerPage1, InventoryType.RetainerPage2, InventoryType.RetainerPage3, InventoryType.RetainerPage4, InventoryType.RetainerPage5, InventoryType.RetainerPage6, InventoryType.RetainerPage7];
 
     /// <summary>
-    /// regular inventories with crystals
+    /// 雇员的常规背包及水晶
     /// </summary>
     public static InventoryType[] RetainerInventoriesWithCrystals => field ??= [.. RetainerInventories, InventoryType.RetainerCrystals];
 
     /// <summary>
-    /// regular inventories
+    /// 玩家的常规背包
     /// </summary>
     public static InventoryType[] PlayerInvetories => field ??= [InventoryType.Inventory1, InventoryType.Inventory2, InventoryType.Inventory3, InventoryType.Inventory4];
 
     /// <summary>
-    /// regular inventories, crystals
+    /// 玩家的常规背包及水晶
     /// </summary>
     public static InventoryType[] PlayerInvetoriesWithCrystals => field ??= [.. PlayerInvetories, InventoryType.Crystals];
 
     /// <summary>
-    /// only armory inventories
+    /// 仅兵装库
     /// </summary>
     public static InventoryType[] PlayerArmory => field ??= [InventoryType.ArmoryOffHand, InventoryType.ArmoryHead, InventoryType.ArmoryBody, InventoryType.ArmoryHands, InventoryType.ArmoryWaist, InventoryType.ArmoryLegs, InventoryType.ArmoryFeets, InventoryType.ArmoryEar, InventoryType.ArmoryNeck, InventoryType.ArmoryWrist, InventoryType.ArmoryRings, InventoryType.ArmorySoulCrystal, InventoryType.ArmoryMainHand];
 
     /// <summary>
-    /// regular, armory, equipped items
+    /// 常规背包、兵装库及已装备物品
     /// </summary>
     public static InventoryType[] PlayerEntireInventory => field ??= [.. PlayerInvetories, .. PlayerArmory, InventoryType.EquippedItems];
 
     /// <summary>
-    /// regular and armory
+    /// 常规背包及兵装库
     /// </summary>
     public static InventoryType[] PlayerInventoryWithArmory => field ??= [.. PlayerInvetories, .. PlayerArmory];
 
     /// <summary>
-    /// regular, crystals, market
+    /// 雇员的常规背包、水晶、市场及已装备物品
     /// </summary>
     public static InventoryType[] RetainerEntireInventory => field ??= [.. RetainerInventoriesWithCrystals, InventoryType.RetainerMarket, InventoryType.RetainerEquippedItems];
 
@@ -1006,7 +965,7 @@ public static unsafe class Utils
     }
 
     /// <summary>
-    /// Request all unique items from select inventories
+    /// 获取指定背包中的所有不重复物品
     /// </summary>
     /// <param name="inventoryTypes"></param>
     /// <returns></returns>
@@ -1029,7 +988,7 @@ public static unsafe class Utils
     }
 
     /// <summary>
-    /// Gets total item count of certain item across all inventories
+    /// 获取指定物品在所有给定背包中的总数量
     /// </summary>
     /// <param name="inventoryTypes"></param>
     /// <param name="itemId"></param>
@@ -1068,7 +1027,7 @@ public static unsafe class Utils
     }
 
     /// <summary>
-    /// Gets amount of items that can fit into inventories
+    /// 获取给定背包还能容纳的指定物品数量
     /// </summary>
     /// <param name="inventoryTypes"></param>
     /// <param name="itemId"></param>
@@ -1102,7 +1061,7 @@ public static unsafe class Utils
                     if(item->ItemId == itemId)
                     {
                         ret += (uint)(data.Value.StackSize - item->Quantity);
-                        debugData.Add($"[TED] [CrystalDebugData] in {type} slot {i} found incomplete stack: {ExcelItemHelper.GetName(itemId, true)} q={item->Quantity} canFit={ret}");
+                        debugData.Add($"[TED] [CrystalDebugData] 在 {type} 的栏位 {i} 中找到未满堆叠：{ExcelItemHelper.GetName(itemId, true)}，数量={item->Quantity}，可容纳={ret}");
                         return ret;
                     }
                 }
@@ -1121,12 +1080,12 @@ public static unsafe class Utils
                     if(item->ItemId == itemId && item->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality) == isHq && !item->Flags.HasFlag(InventoryItem.ItemFlags.Collectable))
                     {
                         if(data.Value.IsUnique) return 0;
-                        debugData.Add($"[TED] [DebugData] in {type} slot {i} found incomplete stack: {ExcelItemHelper.GetName(itemId, true)} q={item->Quantity} canFit={ret}");
+                        debugData.Add($"[TED] [DebugData] 在 {type} 的栏位 {i} 中找到未满堆叠：{ExcelItemHelper.GetName(itemId, true)}，数量={item->Quantity}，可容纳={ret}");
                         ret += (uint)(data.Value.StackSize - item->Quantity);
                     }
                     else if(item->ItemId == 0)
                     {
-                        debugData.Add($"[TED] [DebugData] in {type} slot {i} is empty, canFit={data.Value.StackSize}");
+                        debugData.Add($"[TED] [DebugData] {type} 的栏位 {i} 为空，可容纳={data.Value.StackSize}");
                         ret += data.Value.StackSize;
                     }
                 }
@@ -1169,7 +1128,7 @@ public static unsafe class Utils
     internal static void RegenerateRandom()
     {
         Random = (float)new Random().NextDouble();
-        DebugLog($"Random regenerated: {Random}");
+        DebugLog($"随机值已重新生成：{Random}");
     }
 
     internal static bool MultiModeOrArtisan => MultiMode.Active || (SchedulerMain.PluginEnabled && SchedulerMain.Reason == PluginEnableReason.Artisan);
@@ -1204,21 +1163,6 @@ public static unsafe class Utils
     internal static List<CharaData> GetCharacterNames()
     {
         List<CharaData> ret = [];
-        /*var data = CSFramework.Instance()->UIModule->GetRaptureAtkModule()->AtkModule.GetStringArrayData(1);
-        if (data != null)
-        {
-            for (int i = 60; i < data->AtkArrayData.Size; i++)
-            {
-                if (data->StringArray[i] == null) break;
-                var item = data->StringArray[i];
-                if (item != null)
-                {
-                    var str = MemoryHelper.ReadSeStringNullTerminated((nint)item).GetText();
-                    if (str == "") break;
-                    ret.Add(str);
-                }
-            }
-        }*/
         var agent = AgentLobby.Instance();
         if(agent->AgentInterface.IsAgentActive())
         {
@@ -1501,39 +1445,20 @@ public static unsafe class Utils
     internal static bool TrySelectSpecificEntry(IEnumerable<string> text, Func<bool> Throttler = null)
     {
         return TrySelectSpecificEntry((x) => x.StartsWithAny(text), Throttler);
-        /*if (TryGetAddonByName<AddonSelectString>("SelectString", out var addon) && IsAddonReady(&addon->AtkUnitBase))
-        {
-            var entry = GetEntries(addon).FirstOrDefault(x => x.EqualsAny(text));
-            if (entry != null)
-            {
-                var index = GetEntries(addon).IndexOf(entry);
-                if (index >= 0 && IsSelectItemEnabled(addon, index) && (Throttler?.Invoke() ?? GenericThrottle))
-                {
-                    ClickSelectString.Using((nint)addon).SelectItem((ushort)index);
-                    DebugLog($"TrySelectSpecificEntry: selecting {entry}/{index} as requested by {text.Print()}");
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            RethrottleGeneric();
-        }
-        return false;*/
     }
 
     internal static bool TrySelectSpecificEntry(Func<string, bool> inputTextTest, Func<bool> Throttler = null)
     {
         if(TryGetAddonByName<AddonSelectString>("SelectString", out var addon) && IsAddonReady(&addon->AtkUnitBase))
         {
-            InternalLog.Debug($"Entries: {new AddonMaster.SelectString(addon).Entries.Select(x => x.Text).Print("\n")}");
+            InternalLog.Debug($"选项：{new AddonMaster.SelectString(addon).Entries.Select(x => x.Text).Print("\n")}");
             if(new AddonMaster.SelectString(addon).Entries.TryGetFirst(x => inputTextTest(x.Text), out var entry))
             {
-                InternalLog.Debug($"Entry found: {entry}");
+                InternalLog.Debug($"已找到选项：{entry}");
                 if((Throttler?.Invoke() ?? GenericThrottle))
                 {
                     entry.Select();
-                    InternalLog.Debug($"TrySelectSpecificEntry: selecting {entry}");
+                    InternalLog.Debug($"正在选择选项：{entry}");
                     return true;
                 }
             }
@@ -1617,7 +1542,7 @@ public static unsafe class Utils
 
         foreach(var x in Svc.Objects)
         {
-            if(x.IsTargetable && x.Name.ToString().EqualsIgnoreCaseAny([.. Lang.Entrance/*, Lang.ApartmentEntrance*/]))
+            if(x.IsTargetable && x.Name.ToString().EqualsIgnoreCaseAny([.. Lang.Entrance]))
             {
                 var distance = Vector3.Distance(Svc.ClientState.LocalPlayer.Position, x.Position);
                 if(distance < currentDistance)
@@ -1664,7 +1589,7 @@ public static unsafe class Utils
                         var text = GenericHelpers.ReadSeString(&textNode->NodeText).GetText();
                         if(compare(text))
                         {
-                            PluginLog.Verbose($"SelectYesno {text} addon {i} by predicate");
+                            PluginLog.Verbose($"通过谓词在 SelectYesno 界面 {i} 中匹配 {text}");
                             return addon;
                         }
                     }
@@ -1695,7 +1620,7 @@ public static unsafe class Utils
                         var text = textNode->NodeText.GetText().Cleanup();
                         if(text.ContainsAny(s.Select(x => x.Cleanup())))
                         {
-                            PluginLog.Verbose($"SelectYesno {s.Print()} addon {i}");
+                            PluginLog.Verbose($"SelectYesno {s.Print()}，界面 {i}");
                             return addon;
                         }
                     }
@@ -1814,7 +1739,7 @@ public static unsafe class Utils
     }
 
     /// <summary>
-    /// Default check in: Utils.PlayerInvetories
+    /// 默认检查范围：Utils.PlayerInvetories
     /// </summary>
     /// <param name="types"></param>
     /// <returns></returns>
@@ -1880,26 +1805,26 @@ public static unsafe class Utils
 
     internal static IGameObject GetNearestWorkshopEntrance(out float Distance)
     {
-        Utils.ExtraLog($"GetNearestWorkshopEntrance: Begin");
+        Utils.ExtraLog($"查找最近部队工房入口：开始");
         var currentDistance = float.MaxValue;
         IGameObject currentObject = null;
         foreach(var x in Svc.Objects)
         {
-            Utils.ExtraLog($"GetNearestWorkshopEntrance: Scanning object table: object={x}, targetable={x.IsTargetable}");
+            Utils.ExtraLog($"查找最近部队工房入口：正在扫描对象表，对象={x}，可选中={Lang.Bool(x.IsTargetable)}");
             if(x.IsTargetable && x.Name.ToString().EqualsIgnoreCaseAny(Lang.AdditionalChambersEntrance))
             {
                 var distance = Vector3.Distance(Svc.ClientState.LocalPlayer.Position, x.Position);
-                Utils.ExtraLog($"GetNearestWorkshopEntrance: check passed, object={x}, targetable={x.IsTargetable}, distance={distance}");
+                Utils.ExtraLog($"查找最近部队工房入口：检查通过，对象={x}，可选中={Lang.Bool(x.IsTargetable)}，距离={distance}");
                 if(distance < currentDistance)
                 {
-                    Utils.ExtraLog($"GetNearestWorkshopEntrance: distance is less than current {currentDistance}, assigning from {currentObject}, object={x}, targetable={x.IsTargetable}, distance={distance}");
+                    Utils.ExtraLog($"查找最近部队工房入口：距离小于当前值 {currentDistance}，从 {currentObject} 更新；对象={x}，可选中={Lang.Bool(x.IsTargetable)}，距离={distance}");
                     currentDistance = distance;
                     currentObject = x;
                 }
             }
         }
         Distance = currentDistance;
-        Utils.ExtraLog($"GetNearestWorkshopEntrance: End with distance={currentDistance}, obj={currentObject}");
+        Utils.ExtraLog($"查找最近部队工房入口：结束，距离={currentDistance}，对象={currentObject}");
         return currentObject;
     }
 }

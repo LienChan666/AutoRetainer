@@ -13,7 +13,6 @@ internal unsafe class Config
     public bool EnableAssigningQuickExploration = false;
     public bool Verbose = false;
     public List<OfflineCharacterData> OfflineData = [];
-    //public bool MultipleServiceAccounts = false;
     public bool NoNames = false;
     public int UnsyncCompensation = -5;
     public bool StatsUnifyHQ = false;
@@ -58,7 +57,6 @@ internal unsafe class Config
     public TaskCompletedBehavior TaskCompletedBehaviorAuto = TaskCompletedBehavior.Stay_in_retainer_list_and_keep_plugin_enabled;
     public TaskCompletedBehavior TaskCompletedBehaviorManual = TaskCompletedBehavior.Stay_in_retainer_list_and_keep_plugin_enabled;
     public TaskCompletedBehavior TaskCompletedBehaviorAccess = TaskCompletedBehavior.Stay_in_retainer_list_and_keep_plugin_enabled;
-    //public bool AutoPause = true;
     public bool Stay5 = true;
     public bool NoCurrentCharaOnTop = false;
 
@@ -193,10 +191,6 @@ internal unsafe class Config
     public bool ManipulatePriority = false;
 
     public bool SubsAutoResend2 = true;
-    //public bool SubsAutoRepair = true;
-    //public bool SubsOnlyFinalize = false;
-    //public bool SubsAutoEnable = false;
-    //public bool SubsRepairFinalize = true;
     public MultiModeType MultiModeType = MultiModeType.Everything;
     public bool NoErrorCheckPlanner2 = true;
     public WorkshopFailAction FailureNoFuel = WorkshopFailAction.ExcludeChar;

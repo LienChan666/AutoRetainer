@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoRetainer.UI.NeoUI.AdvancedEntries;
 public unsafe sealed class CharacterSync : NeoUIEntry
 {
-    public override string Path => "Advanced/Character Synchronization";
+    public override string Path => "高级/角色同步";
 
     private List<string> ToDelete = [];
 
@@ -15,7 +15,7 @@ public unsafe sealed class CharacterSync : NeoUIEntry
     {
         if(ToDelete.Count > 0)
         {
-            if(ImGuiEx.BeginDefaultTable(["Name", "##control"]))
+            if(ImGuiEx.BeginDefaultTable(["名称", "##control"]))
             {
                 foreach(var item in ToDelete)
                 {
@@ -26,7 +26,7 @@ public unsafe sealed class CharacterSync : NeoUIEntry
                         ImGui.TableNextColumn();
                         ImGuiEx.Text($"{ocd.NameWithWorld}");
                         ImGui.TableNextColumn();
-                        if(ImGui.SmallButton("Exclude from list"))
+                        if(ImGui.SmallButton("将其从列表中排除"))
                         {
                             new TickScheduler(() => ToDelete.Remove(item));
                         }
@@ -38,40 +38,40 @@ public unsafe sealed class CharacterSync : NeoUIEntry
                 }
                 ImGui.EndTable();
             }
-            if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Trash, "Delete listed characters from AutoRetainer", enabled: ImGuiEx.Ctrl))
+            if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Trash, "从 AutoRetainer 中删除列表中的角色", enabled: ImGuiEx.Ctrl))
             {
                 C.OfflineData.RemoveAll(x => ToDelete.Contains(x.NameWithWorld));
             }
-            ImGuiEx.Tooltip("Hold CTRL and click");
-            if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Ban, "Cancel"))
+            ImGuiEx.Tooltip("按住 CTRL 并点击");
+            if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Ban, "取消"))
             {
                 ToDelete.Clear();
             }
             return;
         }
 
-        ImGuiEx.TextWrapped($"Prune deleted characters in a single click.");
+        ImGuiEx.TextWrapped($"一键清理已删除角色数据。");
         var jbInstalled = Svc.PluginInterface.InstalledPlugins.Any(x => x.InternalName == "JustBackup" && x.IsLoaded);
         if(!jbInstalled)
         {
-            ImGuiEx.TextWrapped(EColor.RedBright, "To continue, you need to install JustBackup plugin.");
-            if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.WindowMaximize, "Open Plugin Installer"))
+            ImGuiEx.TextWrapped(EColor.RedBright, "要继续操作，请先安装 JustBackup 插件。");
+            if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.WindowMaximize, "打开插件安装器"))
             {
                 Svc.PluginInterface.OpenPluginInstallerTo(PluginInstallerOpenKind.AllPlugins, "JustBackup");
             }
             return;
         }
         ImGuiEx.TextWrapped($"""
-            1. Create a backup by typing /justbackup, ensure it has succeeded and saved into a secure location.
-            2. Open your character list on FFXIV Lodestone.
+            1. 输入 /justbackup 创建备份，确认成功后保存到安全位置。
+            2. 打开 FFXIV Lodestone 的角色列表页面。
             """);
-        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.ExternalLinkSquareAlt, "Open character list now"))
+        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.ExternalLinkSquareAlt, "立即打开角色列表"))
         {
             ShellStart("https://eu.finalfantasyxiv.com/lodestone/account/select_character/");
         }
-        ImGuiEx.TextWrapped($"3. Make sure you are logged with the correct account and copy entire page's content by pressing CTRL+A then CTRL+C");
-        ImGuiEx.TextWrapped($"4. Once finished, click the following button:");
-        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Paste, "Prepare Character Cleanup"))
+        ImGuiEx.TextWrapped($"3. 请确认已登录正确账号，然后按 CTRL+A 再按 CTRL+C 复制整个页面内容");
+        ImGuiEx.TextWrapped($"4. 完成后，点击下方按钮：");
+        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Paste, "准备角色清理"))
         {
             Parse();
         }
@@ -111,18 +111,18 @@ public unsafe sealed class CharacterSync : NeoUIEntry
             }
             if(charas.Count == 0)
             {
-                Notify.Error("Did not read any characters");
+                Notify.Error("未读取到任何角色");
             }
             else
             {
                 ToDelete = [.. C.OfflineData.Select(x => x.NameWithWorld).Where(x => !charas.Contains(x))];
-                PluginLog.Debug($"To Delete: \n{ToDelete.Print("\n")}");
+                PluginLog.Debug($"待删除：\n{ToDelete.Print("\n")}");
             }
         }
         catch(Exception e)
         {
             e.Log();
-            Notify.Error("Could not parse character list");
+            Notify.Error("无法解析角色列表");
         }
     }
 }

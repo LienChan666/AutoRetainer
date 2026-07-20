@@ -28,7 +28,7 @@ internal unsafe class Calculator
             var routeBuild = RouteBuild.Value;
             if(CurrentBuild != null)
             {
-                VoyageUtils.Log($"Starting to get best path for map {mapId}");
+                VoyageUtils.Log($"开始计算航海图 {mapId} 的最佳航线");
                 var mapDictionary = new ConcurrentDictionary<int, (int, List<SubmarineExploration>)[]>();
 
                 List<SubmarineExploration> valid;
@@ -102,9 +102,7 @@ internal unsafe class Calculator
                         Sectors.CalculateExpForSectors(t.Item2, CurrentBuild.Value)
                     );
                 })
-                  //.Where(t => t.Item2 < Configuration.DurationLimit.ToTime())
                   .OrderByDescending(t => t.Item3 / t.Item2.TotalMinutes)
-                  //.Select(t => t.Item1)
                   .FirstOrDefault();
 
                 if(bestPath == null)
@@ -116,7 +114,7 @@ internal unsafe class Calculator
         }
         catch(Exception e)
         {
-            PluginLog.Error($"Error calculating best path");
+            PluginLog.Error($"计算最佳航线时出错");
             e.Log();
         }
         return null;

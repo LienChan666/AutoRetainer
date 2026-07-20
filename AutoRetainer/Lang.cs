@@ -1,10 +1,15 @@
-﻿using AutoRetainerAPI.Configuration;
+﻿using AutoRetainer.Internal;
+using AutoRetainer.Modules.Voyage;
+using AutoRetainerAPI.Configuration;
 using Dalamud.Utility;
+using ECommons.ExcelServices;
 using ECommons.ExcelServices.Sheets;
+using ECommons.Interop;
 using Lumina.Excel.Sheets;
 using System.Collections.ObjectModel;
 using System.Text.RegularExpressions;
 using System.Windows.Forms.VisualStyles;
+using GrandCompany = ECommons.ExcelServices.GrandCompany;
 
 namespace AutoRetainer;
 
@@ -36,14 +41,235 @@ internal static class Lang
     internal const string IconPath = "\uf55b";
     internal const string IconFire = "\uf06d";
 
+    internal static string Bool(bool? value) => value == null ? "未知" : value.Value ? "是" : "否";
+
     internal static string LogOutAndExitGame => Svc.Data.GetExcelSheet<Addon>().GetRow(116).Text.GetText(true).Cleanup();
 
     internal static readonly ReadOnlyDictionary<UnlockMode, string> UnlockModeNames = new(new Dictionary<UnlockMode, string>()
     {
-        { UnlockMode.MultiSelect, "Pick max amount of destinations" },
-        { UnlockMode.SpamOne, "Spam one destination" },
-        { UnlockMode.WhileLevelling, "Include one unlock destination while levelling" },
+        { UnlockMode.MultiSelect, "选择尽可能多的目的地" },
+        { UnlockMode.SpamOne, "重复派遣单一目的地" },
+        { UnlockMode.WhileLevelling, "升级时包含一个待解锁目的地" },
     });
+
+    internal static readonly ReadOnlyDictionary<VesselBehavior, string> VesselBehaviorNames = new(new Dictionary<VesselBehavior, string>()
+    {
+        { VesselBehavior.Finalize, "仅结算奖励" },
+        { VesselBehavior.Redeploy, "再次派遣" },
+        { VesselBehavior.LevelUp, "最佳经验航线" },
+        { VesselBehavior.Unlock, "解锁目的地" },
+        { VesselBehavior.Use_plan, "使用目的地方案" },
+    });
+
+    internal static readonly ReadOnlyDictionary<PlanCompleteBehavior, string> PlanCompleteBehaviorNames = new(new Dictionary<PlanCompleteBehavior, string>()
+    {
+        { PlanCompleteBehavior.Restart_plan, "重新开始方案" },
+        { PlanCompleteBehavior.Assign_Quick_Venture, "执行自由探索委托" },
+        { PlanCompleteBehavior.Do_nothing, "不执行操作" },
+        { PlanCompleteBehavior.Repeat_last_venture, "重复上次探险" },
+    });
+
+    internal static readonly ReadOnlyDictionary<UnavailableVentureDisplay, string> UnavailableVentureDisplayNames = new(new Dictionary<UnavailableVentureDisplay, string>()
+    {
+        { UnavailableVentureDisplay.Hide, "隐藏" },
+        { UnavailableVentureDisplay.Display, "显示" },
+        { UnavailableVentureDisplay.Allow_selection, "允许选择" },
+    });
+
+    internal static readonly ReadOnlyDictionary<MultiModeType, string> MultiModeTypeNames = new(new Dictionary<MultiModeType, string>()
+    {
+        { MultiModeType.Retainers, "仅雇员" },
+        { MultiModeType.Submersibles, "仅远航探索" },
+        { MultiModeType.Everything, "全部" },
+    });
+
+    internal static readonly ReadOnlyDictionary<GCDeliveryType, string> GCDeliveryTypeNames = new(new Dictionary<GCDeliveryType, string>()
+    {
+        { GCDeliveryType.Disabled, "禁用" },
+        { GCDeliveryType.Hide_Armoury_Chest_Items, "隐去兵装库中的物品" },
+        { GCDeliveryType.Hide_Gear_Set_Items, "隐去套装中的物品" },
+        { GCDeliveryType.Show_All_Items, "显示所有物品" },
+    });
+
+    internal static readonly ReadOnlyDictionary<CutsceneSkipMode, string> CutsceneSkipModeNames = new(new Dictionary<CutsceneSkipMode, string>()
+    {
+        { CutsceneSkipMode.Never, "从不" },
+        { CutsceneSkipMode.When_Multi_Mode_is_on, "仅多角色模式启用时" },
+        { CutsceneSkipMode.Always, "始终" },
+    });
+
+    internal static readonly ReadOnlyDictionary<OpenBellBehavior, string> OpenBellBehaviorNames = new(new Dictionary<OpenBellBehavior, string>()
+    {
+        { OpenBellBehavior.Do_nothing, "不执行操作" },
+        { OpenBellBehavior.Enable_AutoRetainer, "启用 AutoRetainer" },
+        { OpenBellBehavior.Disable_AutoRetainer, "禁用 AutoRetainer" },
+        { OpenBellBehavior.Pause_AutoRetainer, "暂停 AutoRetainer" },
+    });
+
+    internal static readonly ReadOnlyDictionary<TaskCompletedBehavior, string> TaskCompletedBehaviorNames = new(new Dictionary<TaskCompletedBehavior, string>()
+    {
+        { TaskCompletedBehavior.Close_retainer_list_and_disable_plugin, "关闭雇员列表并禁用插件" },
+        { TaskCompletedBehavior.Close_retainer_list_and_keep_plugin_enabled, "关闭雇员列表并保持插件启用" },
+        { TaskCompletedBehavior.Stay_in_retainer_list_and_disable_plugin, "停留在雇员列表并禁用插件" },
+        { TaskCompletedBehavior.Stay_in_retainer_list_and_keep_plugin_enabled, "停留在雇员列表并保持插件启用" },
+    });
+
+    internal static readonly ReadOnlyDictionary<PluginEnableReason, string> PluginEnableReasonNames = new(new Dictionary<PluginEnableReason, string>()
+    {
+        { PluginEnableReason.Access, "访问传唤铃" },
+        { PluginEnableReason.Manual, "手动" },
+        { PluginEnableReason.Auto, "自动" },
+        { PluginEnableReason.MultiMode, "多角色模式" },
+        { PluginEnableReason.Artisan, "Artisan 联动" },
+    });
+
+    internal static readonly ReadOnlyDictionary<RetainersVisualOrder, string> RetainersVisualOrderNames = new(new Dictionary<RetainersVisualOrder, string>()
+    {
+        { RetainersVisualOrder.Ventures, "探险币" },
+        { RetainersVisualOrder.Inventory_Slots, "背包空位" },
+        { RetainersVisualOrder.Region_JP, "日本大区" },
+        { RetainersVisualOrder.Region_NA, "北美大区" },
+        { RetainersVisualOrder.Region_EU, "欧洲大区" },
+        { RetainersVisualOrder.Region_OC, "大洋洲大区" },
+        { RetainersVisualOrder.World, "服务器" },
+        { RetainersVisualOrder.DataCenter, "数据中心" },
+        { RetainersVisualOrder.Name, "名称" },
+    });
+
+    internal static readonly ReadOnlyDictionary<DeployablesVisualOrder, string> DeployablesVisualOrderNames = new(new Dictionary<DeployablesVisualOrder, string>()
+    {
+        { DeployablesVisualOrder.Ceruleum, "桶装青磷水" },
+        { DeployablesVisualOrder.Repair_Kits, "魔导机械修理材料" },
+        { DeployablesVisualOrder.Inventory_Slots, "背包空位" },
+        { DeployablesVisualOrder.Region_JP, "日本大区" },
+        { DeployablesVisualOrder.Region_NA, "北美大区" },
+        { DeployablesVisualOrder.Region_EU, "欧洲大区" },
+        { DeployablesVisualOrder.Region_OC, "大洋洲大区" },
+        { DeployablesVisualOrder.World, "服务器" },
+        { DeployablesVisualOrder.DataCenter, "数据中心" },
+        { DeployablesVisualOrder.Name, "名称" },
+    });
+
+    internal static readonly ReadOnlyDictionary<ExcelWorldHelper.Region, string> RegionNames = new(new Dictionary<ExcelWorldHelper.Region, string>()
+    {
+        { ExcelWorldHelper.Region.JP, "日本大区" },
+        { ExcelWorldHelper.Region.NA, "北美大区" },
+        { ExcelWorldHelper.Region.EU, "欧洲大区" },
+        { ExcelWorldHelper.Region.OC, "大洋洲大区" },
+        { (ExcelWorldHelper.Region)5, "中国大区" },
+        { (ExcelWorldHelper.Region)6, "韩国大区" },
+        { (ExcelWorldHelper.Region)7, "北美云大区" },
+    });
+
+    internal static string RegionName(ExcelWorldHelper.Region region)
+        => RegionNames.TryGetValue(region, out var name) ? name : $"未知大区（{(int)region}）";
+
+    internal static readonly ReadOnlyDictionary<GCExchangeCategoryTab, string> GCExchangeCategoryNames = new(new Dictionary<GCExchangeCategoryTab, string>()
+    {
+        { GCExchangeCategoryTab.Weapons, "武具" },
+        { GCExchangeCategoryTab.Armor, "防具" },
+        { GCExchangeCategoryTab.Materiel, "军用品" },
+        { GCExchangeCategoryTab.Materials, "展示品" },
+    });
+
+    internal static readonly ReadOnlyDictionary<ItemRarity, string> ItemRarityNames = new(new Dictionary<ItemRarity, string>()
+    {
+        { ItemRarity.White, "白色" },
+        { ItemRarity.Green, "绿色" },
+        { ItemRarity.Blue, "蓝色" },
+        { ItemRarity.Purple, "紫色" },
+        { ItemRarity.Pink, "粉色" },
+    });
+
+    internal static readonly ReadOnlyDictionary<GrandCompany, string> GrandCompanyNames = new(new Dictionary<GrandCompany, string>()
+    {
+        { GrandCompany.Unemployed, "未加入" },
+        { GrandCompany.Maelstrom, "黑涡团" },
+        { GrandCompany.TwinAdder, "双蛇党" },
+        { GrandCompany.ImmortalFlames, "恒辉队" },
+    });
+
+    internal static readonly ReadOnlyDictionary<VoyageType, string> VoyageTypeNames = new(new Dictionary<VoyageType, string>()
+    {
+        { VoyageType.Airship, "飞空艇" },
+        { VoyageType.Submersible, "潜水艇" },
+    });
+
+    internal static readonly ReadOnlyDictionary<PanelType, string> PanelTypeNames = new(new Dictionary<PanelType, string>()
+    {
+        { PanelType.None, "无" },
+        { PanelType.Unknown, "未知" },
+        { PanelType.TypeSelector, "类型选择" },
+        { PanelType.Airship, "飞空艇" },
+        { PanelType.Submersible, "潜水艇" },
+    });
+
+    private static string GetKeyName(LimitedKeys key)
+    {
+        var name = key.ToString();
+        if(name.Length == 1 || (name.StartsWith('F') && int.TryParse(name.AsSpan(1), out _))) return name;
+        if(name.StartsWith("Digit_")) return name[6..];
+        if(name.StartsWith("NumPad")) return $"小键盘 {name[6..]}";
+        return key switch
+        {
+            LimitedKeys.None => "未设置",
+            LimitedKeys.LeftMouseButton => "鼠标左键",
+            LimitedKeys.RightMouseButton => "鼠标右键",
+            LimitedKeys.MiddleMouseButton => "鼠标中键",
+            LimitedKeys.XMouseButton1 => "鼠标侧键 1",
+            LimitedKeys.XMouseButton2 => "鼠标侧键 2",
+            LimitedKeys.Back => "退格键",
+            LimitedKeys.Tab => "Tab 键",
+            LimitedKeys.Clear => "清除键",
+            LimitedKeys.Enter => "回车键",
+            LimitedKeys.Pause => "暂停键",
+            LimitedKeys.CapsLock => "大写锁定键",
+            LimitedKeys.Escape => "Esc 键",
+            LimitedKeys.Space => "空格键",
+            LimitedKeys.PageUp => "上一页键",
+            LimitedKeys.PageDown => "下一页键",
+            LimitedKeys.End => "End 键",
+            LimitedKeys.Home => "Home 键",
+            LimitedKeys.Left => "左方向键",
+            LimitedKeys.Up => "上方向键",
+            LimitedKeys.Right => "右方向键",
+            LimitedKeys.Down => "下方向键",
+            LimitedKeys.PrintScreen => "截图键",
+            LimitedKeys.Insert => "插入键",
+            LimitedKeys.Delete => "删除键",
+            LimitedKeys.LeftShiftKey => "左 Shift 键",
+            LimitedKeys.RightShiftKey => "右 Shift 键",
+            LimitedKeys.LeftControlKey => "左 Ctrl 键",
+            LimitedKeys.RightControlKey => "右 Ctrl 键",
+            LimitedKeys.LeftAltKey => "左 Alt 键",
+            LimitedKeys.RightAltKey => "右 Alt 键",
+            _ => $"按键 {(int)key}",
+        };
+    }
+
+    internal static readonly ReadOnlyDictionary<LimitedKeys, string> LimitedKeyNames = new(Enum.GetValues<LimitedKeys>().Distinct().ToDictionary(x => x, GetKeyName));
+
+    private static readonly Dictionary<string, string> SubmarineClassNames = new()
+    {
+        { "Shark", "鲨鱼级" },
+        { "Unkiu", "甲鲎级" },
+        { "Whale", "须鲸级" },
+        { "Coelacanth", "腔棘鱼级" },
+        { "Syldra", "希尔德拉级" },
+        { "ModShark", "鲨鱼改级" },
+        { "ModUnkiu", "甲鲎改级" },
+        { "ModWhale", "须鲸改级" },
+        { "ModCoelacanth", "腔棘鱼改级" },
+        { "ModSyldra", "希尔德拉改级" },
+    };
+
+    private static ReadOnlyDictionary<T, string> GetSubmarinePartNames<T>() where T : struct, Enum
+        => new(Enum.GetValues<T>().ToDictionary(x => x, x => SubmarineClassNames[x.ToString()]));
+
+    internal static readonly ReadOnlyDictionary<Hull, string> HullNames = GetSubmarinePartNames<Hull>();
+    internal static readonly ReadOnlyDictionary<Stern, string> SternNames = GetSubmarinePartNames<Stern>();
+    internal static readonly ReadOnlyDictionary<Bow, string> BowNames = GetSubmarinePartNames<Bow>();
+    internal static readonly ReadOnlyDictionary<Bridge, string> BridgeNames = GetSubmarinePartNames<Bridge>();
 
     internal static readonly (string Normal, string GameFont) Digits = ("0123456789", "");
 
@@ -217,7 +443,7 @@ internal static class Lang
     //4160	60	9	0	False	Unable to retrieve extracted items. Insufficient inventory/crystal inventory space.
     internal static string VoyageInventoryError => Svc.Data.GetExcelSheet<LogMessage>().GetRow(4160).Text.ToDalamudString().GetText();
 
-    internal static string[] UnableToVisitWorld = ["Unable to execute command. Character is currently visiting the", "他のデータセンター", "无法进行该操作，其他玩家正在操作该潜水艇。", "無法進行該操作，其他玩家正在操作該潛水艇。", "Der Vorgang kann nicht ausgeführt werden, da der Charakter gerade das Datenzentrum", "Impossible d'exécuter cette commande. Le personnage se trouve dans un autre centre de traitement de données", "다른 데이터 센터"];
+    internal static string[] UnableToVisitWorld = ["Unable to execute command. Character is currently visiting the", "他のデータセンター", "无法进行该操作，角色正在访问其他数据中心", "無法進行該操作，角色正在訪問其他資料中心", "Der Vorgang kann nicht ausgeführt werden, da der Charakter gerade das Datenzentrum", "Impossible d'exécuter cette commande. Le personnage se trouve dans un autre centre de traitement de données", "다른 데이터 센터"];
 
     //4169	60	9	0	False	Unable to repair vessel component without the required <SheetEn(Item,3,IntegerParameter(1),1,1)/>.
     //4272	60	9	0	False Unable to repair vessel.Insufficient<SheetEn(Item,3,IntegerParameter(1),3,1)/>.
@@ -292,8 +518,8 @@ internal static class Lang
             "Das Tauchboot mit den gewählten Bauteilen registrieren",
             "pour équiper et enregistrer le sous-marin",
             "잠수함을 등록하시겠습니까",
-            "张下列道具登记新的潜水艇吗",
-            "張下列道具登記新的潛水艇嗎",
+            "消耗下列道具登记新的潜水艇吗",
+            "消耗下列道具登記新的潛水艇嗎",
             //"",
             //""     (Addonsheet - 6886)
     ];
@@ -305,8 +531,6 @@ internal static class Lang
     internal static string[] WillBeUnableToProcessBuyback => field ??= [
         Svc.Data.GetExcelSheet<QuestDialogueText>(name:"custom/000/CmnDefRetainerCall_00010").GetRow(215).Value.GetText(),
         ];
-
-    internal static readonly string[] LogInPartialText = ["Logging in with", "Log in with", "でログインします。", "einloggen?", "eingeloggt.", "Se connecter avec", "Vous allez vous connecter avec", "Souhaitez-vous vous connecter avec", "登入吗", "登入嗎", "登录吗", "접속하시겠습니까?", "三可以通过次级指令重新编辑角色形象"];
 
     //3290	<Sheet(Item,IntegerParameter(1),0)/>×<Value>IntegerParameter(2)</Value>を、<Format(IntegerParameter(3),FF022C)/>枚の軍票と交換します。
     //よろしいですか？

@@ -36,7 +36,7 @@ internal static unsafe class Safety
                 if(x.GCDeliveryType == GCDeliveryType.Show_All_Items)
                 {
                     x.GCDeliveryType = GCDeliveryType.Hide_Armoury_Chest_Items;
-                    Notify.Info($"Unsafe option removed: character {Censor.Character(x.Name)} - {nameof(GCDeliveryType.Show_All_Items)}");
+                    Notify.Info($"已移除不安全选项：角色 {Censor.Character(x.Name)} - {Lang.GCDeliveryTypeNames[GCDeliveryType.Show_All_Items]}");
                 }
             }
         }

@@ -1,0 +1,24 @@
+[
+  {
+    "Author": "кайт машина (Puni.sh), NightmareXIV, KindSheep（国服汉化）",
+    "Name": "AutoRetainer",
+    "InternalName": "AutoRetainer",
+    "AssemblyVersion": "4.6.1.1002",
+    "Description": "轻松领取并委托雇员进行探险。",
+    "ApplicableVersion": "any",
+    "RepoUrl": "https://github.com/LienChan666/AutoRetainer",
+    "DalamudApiLevel": 15,
+    "LoadRequiredState": 0,
+    "LoadSync": false,
+    "CanUnloadAsync": false,
+    "LoadPriority": 0,
+    "IconUrl": "https://s3.puni.sh/media/plugin/24/icon-drb6aywk5m9.png",
+    "Punchline": "轻松领取并委托雇员进行探险。",
+    "AcceptsFeedback": true,
+    "TestingAssemblyVersion": "4.6.1.1002",
+    "IsTestingExclusive": false,
+    "DownloadLinkInstall": "https://raw.githubusercontent.com/LienChan666/DalamudPlugins/refs/heads/master/AutoRetainer/AutoRetainer-4.6.1.1002.zip",
+    "DownloadLinkTesting": "https://raw.githubusercontent.com/LienChan666/DalamudPlugins/refs/heads/master/AutoRetainer/AutoRetainer-4.6.1.1002.zip",
+    "DownloadLinkUpdate": "https://raw.githubusercontent.com/LienChan666/DalamudPlugins/refs/heads/master/AutoRetainer/AutoRetainer-4.6.1.1002.zip"
+  }
+]

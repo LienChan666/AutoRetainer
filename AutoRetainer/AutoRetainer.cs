@@ -88,43 +88,39 @@ public unsafe class AutoRetainer : IDalamudPlugin
 
     public AutoRetainer(IDalamudPluginInterface pi)
     {
-        //PluginLoader.CheckAndLoad(pi, "https://love.puni.sh/plugins/AutoRetainer/blacklist.txt", delegate
-        {
-            IPCBase.DefaultWrapper = SafeWrapper.AnyException;
-            P = this;
-            ECommonsMain.Init(pi, this, Module.DalamudReflector);
-            EzIPC.OnSafeInvocationException += x => InternalLog.Error(x.ToStringFull());
+        IPCBase.DefaultWrapper = SafeWrapper.AnyException;
+        P = this;
+        ECommonsMain.Init(pi, this, Module.DalamudReflector);
+        EzIPC.OnSafeInvocationException += x => InternalLog.Error(x.ToStringFull());
 #if CUSTOMCS
-            PluginLog.Warning($"Using custom FFXIVClientStructs");
-            var gameVersion = DalamudReflector.TryGetDalamudStartInfo(out var ver) ? ver.GameVersion.ToString() : "unknown";
-            InteropGenerator.Runtime.Resolver.GetInstance.Setup(Svc.SigScanner.SearchBase, gameVersion, new(Svc.PluginInterface.ConfigDirectory.FullName + "/cs.json"));
-            FFXIVClientStructs.Interop.Generated.Addresses.Register();
-            InteropGenerator.Runtime.Resolver.GetInstance.Resolve();
+        PluginLog.Warning($"正在使用自定义 FFXIVClientStructs");
+        var gameVersion = DalamudReflector.TryGetDalamudStartInfo(out var ver) ? ver.GameVersion.ToString() : "unknown";
+        InteropGenerator.Runtime.Resolver.GetInstance.Setup(Svc.SigScanner.SearchBase, gameVersion, new(Svc.PluginInterface.ConfigDirectory.FullName + "/cs.json"));
+        FFXIVClientStructs.Interop.Generated.Addresses.Register();
+        InteropGenerator.Runtime.Resolver.GetInstance.Resolve();
 #endif
-            PunishLibMain.Init(pi, Name, PunishOption.DefaultKoFi); // Default button
-            var cnt = FFXIVInstanceMonitor.GetFFXIVCNT();
-            PluginLog.Information($"FFXIV instances: {cnt}");
-            if(FFXIVInstanceMonitor.AcquireLock() || cnt <= 1)
+        PunishLibMain.Init(pi, Name, PunishOption.DefaultKoFi); // 默认按钮
+        var cnt = FFXIVInstanceMonitor.GetFFXIVCNT();
+        PluginLog.Information($"FFXIV 实例数：{cnt}");
+        if(FFXIVInstanceMonitor.AcquireLock() || cnt <= 1)
+        {
+            new TickScheduler(Load);
+        }
+        else
+        {
+            var shouldCreateWindow = !EzConfig.LoadConfiguration<Config>(EzConfig.DefaultSerializationFactory.DefaultConfigFileName).No2ndInstanceNotify;
+            if(shouldCreateWindow)
             {
-                new TickScheduler(Load);
+                new SingletonNotifyWindow();
             }
             else
             {
-                var shouldCreateWindow = !EzConfig.LoadConfiguration<Config>(EzConfig.DefaultSerializationFactory.DefaultConfigFileName).No2ndInstanceNotify;
-                if(shouldCreateWindow)
+                for(var i = 0; i < 100; i++)
                 {
-                    new SingletonNotifyWindow();
-                }
-                else
-                {
-                    for(var i = 0; i < 100; i++)
-                    {
-                        PluginLog.Fatal($"AutoRetainer's loading was skipped because it's second instance of the game and you have \"Do not warn about second game instance running from same directory\" option enabled.");
-                    }
+                    PluginLog.Fatal($"由于这是同一目录下运行的第二个游戏实例，且已启用“不要警告同目录下运行的第二个游戏实例”选项，已跳过 AutoRetainer 加载。");
                 }
             }
         }
-        //);
     }
 
     internal void SetConfig(Config c)
@@ -137,7 +133,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         EzConfig.Migrate<Config>();
         config = EzConfig.Init<Config>();
 
-        //windows
+        // 窗口
         WindowSystem = new();
         VenturePlanner = new();
         VentureBrowser = new();
@@ -164,21 +160,21 @@ public unsafe class AutoRetainer : IDalamudPlugin
         Svc.ClientState.Logout += Logout;
         Svc.Condition.ConditionChange += ConditionChange;
         EzCmd.Add("/autoretainer", CommandHandler, """
-            Open plugin interface
-            /ays - alias for /autoretainer
-            /autoretainer e|enable → Enable plugin
-            /autoretainer d|disable - Disable plugin
-            /autoretainer t|toggle - toggle plugin
-            /autoretainer m|multi - toggle MultiMode
-            /autoretainer relog Character Name@WorldName - relog to the targeted character if configured
-            /autoretainer b|browser - open venture browser
-            /autoretainer expert - toggle expert settings
-            /autoretainer debug - toggle debug menu and verbose output
-            /autoretainer shutdown <hours> [minutes] [seconds] - schedule a game shutdown in this amount of time
-            /autoretainer itemsell - begin selling items to NPC or retainer if possible
-            /autoretainer het - enter nearby own house or apartment if possible
-            /autoretainer reset - reset all pending tasks
-            /autoretainer deliver - deliver expert delivery items
+            打开插件界面
+            /ays - /autoretainer 的别名
+            /autoretainer e|enable - 启用插件
+            /autoretainer d|disable - 禁用插件
+            /autoretainer t|toggle - 切换插件开关
+            /autoretainer m|multi - 切换多角色模式
+            /autoretainer relog 角色名@服务器 - 若已配置则重登到目标角色
+            /autoretainer b|browser - 打开探险管理器
+            /autoretainer expert - 切换专家设置
+            /autoretainer debug - 切换调试菜单与详细日志输出
+            /autoretainer shutdown <小时> [分钟] [秒] - 按指定时间后关闭游戏
+            /autoretainer itemsell - 若条件允许，开始向 NPC 或雇员出售物品
+            /autoretainer het - 若条件允许，进入附近个人房屋或公寓
+            /autoretainer reset - 重置所有待处理任务
+            /autoretainer deliver - 执行筹备稀有品
             """);
         EzCmd.Add("/ays", CommandHandler);
         Svc.Toasts.ErrorToast += Toasts_ErrorToast;
@@ -204,7 +200,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         EzSharedData.TryGet("AutoRetainer.Started", out TimeLaunched, CreationMode.CreateAndKeep, [DateTimeOffset.Now.ToUnixTimeMilliseconds()]);
         if(!C.NightModePersistent) C.NightMode = false;
         ContextMenuManager = new();
-        PluginLog.Information($"AutoRetainer v{P.GetType().Assembly.GetName().Version} is ready.");
+        PluginLog.Information($"AutoRetainer v{P.GetType().Assembly.GetName().Version} 已就绪。");
         if(!EzSharedData.TryGet<object>("AutoRetainer.WasLoaded", out _))
         {
             if(C.MultiAutoStart || C.AutoLogin != "")
@@ -230,8 +226,8 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     Minimized = false,
                     HardExpiry = DateTime.Now + TimeSpan.FromSeconds(C.MultiModeOnPluginLoadDelay),
                     InitialDuration = TimeSpan.FromSeconds(C.MultiModeOnPluginLoadDelay),
-                    Title = "AutoRetainer Startup",
-                    Content = $"Multi Mode will be enabled in {C.MultiModeOnPluginLoadDelay} seconds. Click here to cancel."
+                    Title = "AutoRetainer 启动",
+                    Content = $"将在 {C.MultiModeOnPluginLoadDelay} 秒后启用多角色模式。点击此处取消。"
                 });
                 TaskManager.EnqueueDelay(C.MultiModeOnPluginLoadDelay * 1000);
                 TaskManager.Enqueue((Action)(() => MultiMode.Enabled = true));
@@ -262,14 +258,14 @@ public unsafe class AutoRetainer : IDalamudPlugin
                 && offlineData.RetainerData.TryGetFirst(x => x.Name == ret, out var offlineRetainerData))
             {
                 offlineRetainerData.VentureBeginsAt = P.Time;
-                DebugLog($"Recorded venture start time = {offlineRetainerData.VentureBeginsAt}");
+                DebugLog($"已记录探险开始时间：{offlineRetainerData.VentureBeginsAt}");
             }
             //4578	57	33	0	False	Gil earned from market sales has been entrusted to your retainer.<If(Equal(IntegerParameter(1),1))>
             //The amount earned exceeded your retainer's gil limit. Excess gil has been discarded.<Else/></If>
             if(text.StartsWith(Svc.Data.GetExcelSheet<LogMessage>().GetRow(4578).Text.GetText(true).Cleanup()))
             {
                 TaskWithdrawGil.forceCheck = true;
-                DebugLog($"Forcing to check for gil");
+                DebugLog($"强制检查金币");
             }
         }
     }
@@ -279,7 +275,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         if(arguments.EqualsIgnoreCase("debug"))
         {
             config.Verbose = !config.Verbose;
-            DuoLog.Information($"Debug mode {(config.Verbose ? "enabled" : "disabled")}");
+            DuoLog.Information($"调试模式已{(config.Verbose ? "启用" : "禁用")}");
             S.NeoWindow.Reload();
         }
         else if(arguments.EqualsIgnoreCaseAny("e", "enable"))
@@ -326,7 +322,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         else if(arguments.EqualsIgnoreCaseAny("n", "night"))
         {
             C.NightMode = !C.NightMode;
-            DuoLog.Information($"Night mode {(C.NightMode ? "enabled" : "disabled")}");
+            DuoLog.Information($"夜间模式已{(C.NightMode ? "启用" : "禁用")}");
             if(C.NightMode)
             {
                 if(!MultiMode.Enabled)
@@ -356,7 +352,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             {
                 C.NightMode = true;
             }
-            DuoLog.Information($"Night mode {(C.NightMode ? "enabled" : "disabled")}");
+            DuoLog.Information($"夜间模式已{(C.NightMode ? "启用" : "禁用")}");
         }
         else if(arguments.EqualsIgnoreCaseAny("s", "settings"))
         {
@@ -379,22 +375,22 @@ public unsafe class AutoRetainer : IDalamudPlugin
             }
             else
             {
-                Notify.Error($"Could not find target character");
+                Notify.Error($"未找到目标角色");
             }
         }
         else if(arguments.EqualsIgnoreCase("het"))
         {
-            TaskNeoHET.Enqueue(() => DuoLog.Error("Failed to find suitable house"));
+            TaskNeoHET.Enqueue(() => DuoLog.Error("未找到合适的房屋"));
         }
         else if(arguments.EqualsIgnoreCase("wet"))
         {
             if(TaskNeoHET.GetWorkshopEntrance() != null)
             {
-                TaskNeoHET.TryEnterWorkshop(() => DuoLog.Error("Failed to enter workshop"));
+                TaskNeoHET.TryEnterWorkshop(() => DuoLog.Error("进入部队工房失败"));
             }
             else
             {
-                TaskNeoHET.Enqueue(() => DuoLog.Error("Failed to find suitable house"), true);
+                TaskNeoHET.Enqueue(() => DuoLog.Error("未找到合适的房屋"), true);
             }
         }
         else if(arguments.EqualsIgnoreCaseAny("itemsell"))
@@ -405,7 +401,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             }
             else
             {
-                DuoLog.Error($"No valid housing NPC or retainer bell were found, or AutoRetainer is busy, or sale function is disabled");
+                DuoLog.Error($"未找到可用的住宅 NPC 或传唤铃，或 AutoRetainer 正忙，或出售功能未启用");
             }
         }
         else if(arguments.StartsWith("shutdown"))
@@ -415,7 +411,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             {
                 Shutdown.ShutdownAt = 0;
                 Shutdown.ForceShutdownAt = 0;
-                Svc.Chat.Print("Shutdown timer cleared");
+                Svc.Chat.Print("已清除关机计时器");
             }
             else
             {
@@ -427,11 +423,11 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     if(str.Length > 3) time = time.Add(TimeSpan.FromSeconds(int.Parse(str[3])));
                     if(time.TotalSeconds < 10)
                     {
-                        DuoLog.Error("Timer can't be less than 10 seconds");
+                        DuoLog.Error("计时器不能少于 10 秒");
                     }
                     else
                     {
-                        Svc.Chat.Print($"Shutting down in {time}");
+                        Svc.Chat.Print($"将在 {time} 后关机");
                         Shutdown.ShutdownAt = Environment.TickCount64 + (long)time.TotalMilliseconds;
                         Shutdown.ForceShutdownAt = Environment.TickCount64 + (long)time.TotalMilliseconds + 10 * 60 * 1000;
                     }
@@ -454,7 +450,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     if(!s.IMAutoVendorSoft.Contains(id))
                     {
                         s.IMAutoVendorSoft.Add(id);
-                        PluginLog.Warning($"External addition to soft vendor list: {ExcelItemHelper.GetName(id)}");
+                        PluginLog.Warning($"外部添加至自由探索委托出售列表：{ExcelItemHelper.GetName(id)}");
                     }
                 }
                 else if(num < 0)
@@ -463,7 +459,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     if(s.IMAutoVendorSoft.Contains(id))
                     {
                         s.IMAutoVendorSoft.Remove(id);
-                        PluginLog.Warning($"External removal from soft vendor list: {ExcelItemHelper.GetName(id)}");
+                        PluginLog.Warning($"外部移出自由探索委托出售列表：{ExcelItemHelper.GetName(id)}");
                     }
                 }
             }
@@ -472,7 +468,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         {
             P.TaskManager.Abort();
             SchedulerMain.CharacterPostProcessLocked = false;
-            Notify.Success("Reset completed");
+            Notify.Success("重置完成");
         }
         else if(arguments.EqualsIgnoreCase("deliver"))
         {
@@ -494,56 +490,56 @@ public unsafe class AutoRetainer : IDalamudPlugin
             {
                 var field = arguments.Split(" ")[1];
                 var value = arguments.Split(" ")[2];
-                DuoLog.Information($"Attempting to set {field}={value}");
+                DuoLog.Information($"正在尝试设置 {field}={value}");
                 if(C.GetFoP(field).GetType() == typeof(bool))
                 {
                     C.SetFoP(field, bool.Parse(value));
-                    DuoLog.Information($"Set bool {field}={value}");
+                    DuoLog.Information($"已设置布尔值 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(int))
                 {
                     C.SetFoP(field, int.Parse(value));
-                    DuoLog.Information($"Set int {field}={value}");
+                    DuoLog.Information($"已设置整数 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(uint))
                 {
                     C.SetFoP(field, uint.Parse(value));
-                    DuoLog.Information($"Set uint {field}={value}");
+                    DuoLog.Information($"已设置无符号整数 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(float))
                 {
                     C.SetFoP(field, float.Parse(value));
-                    DuoLog.Information($"Set float {field}={value}");
+                    DuoLog.Information($"已设置单精度数值 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(double))
                 {
                     C.SetFoP(field, double.Parse(value));
-                    DuoLog.Information($"Set double {field}={value}");
+                    DuoLog.Information($"已设置双精度数值 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(nint))
                 {
                     C.SetFoP(field, nint.Parse(value));
-                    DuoLog.Information($"Set nint {field}={value}");
+                    DuoLog.Information($"已设置本机整数 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(long))
                 {
                     C.SetFoP(field, long.Parse(value));
-                    DuoLog.Information($"Set long {field}={value}");
+                    DuoLog.Information($"已设置长整数 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(ulong))
                 {
                     C.SetFoP(field, ulong.Parse(value));
-                    DuoLog.Information($"Set ulong {field}={value}");
+                    DuoLog.Information($"已设置无符号长整数 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType() == typeof(string))
                 {
                     C.SetFoP(field, value);
-                    DuoLog.Information($"Set string {field}={value}");
+                    DuoLog.Information($"已设置字符串 {field}={value}");
                 }
                 else if(C.GetFoP(field).GetType().IsEnum)
                 {
                     C.SetFoP(field, int.Parse(value));
-                    DuoLog.Information($"Set enum {field}={value}");
+                    DuoLog.Information($"已设置枚举值 {field}={value}");
                 }
             }
             catch(Exception e)
@@ -588,7 +584,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             if(!retainer.VentureID.EqualsAny(0u, LastVentureID))
             {
                 LastVentureID = retainer.VentureID;
-                DebugLog($"Retainer {retainer.Name} current venture={LastVentureID}");
+                DebugLog($"雇员 {retainer.Name} 当前探险={LastVentureID}");
             }
         }
         else
@@ -596,16 +592,11 @@ public unsafe class AutoRetainer : IDalamudPlugin
             if(LastVentureID != 0)
             {
                 LastVentureID = 0;
-                DebugLog($"Last venture ID reset");
+                DebugLog($"已重置上次探险 ID");
             }
         }
-        //if(C.RetryItemSearch) RetryItemSearch.Tick();
         if(SchedulerMain.PluginEnabled || MultiMode.Enabled || TaskManager.IsBusy)
         {
-            if(EzThrottler.Throttle("CheckHTweaks"))
-            {
-                Utils.EnsureEnhancedLoginIsOff();
-            }
             if(Svc.ClientState.TerritoryType == Prisons.Mordion_Gaol)
             {
                 Process.GetCurrentProcess().Kill();
@@ -615,7 +606,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
                 if(!ConditionWasEnabled)
                 {
                     ConditionWasEnabled = true;
-                    DebugLog($"ConditionWasEnabled = true");
+                    DebugLog($"条件状态已启用（true）");
                 }
             }
         }
@@ -672,32 +663,28 @@ public unsafe class AutoRetainer : IDalamudPlugin
 
     public void Dispose()
     {
-        //if (PluginLoader.IsLoaded)
-        {
-            Safe(() => FFXIVInstanceMonitor.ReleaseLock());
-            Safe(() => quickSellItems.Disable());
-            Safe(() => quickSellItems.Dispose());
-            Safe(() => Svc.PluginInterface.UiBuilder.Draw -= FPSLimiter.FPSLimit);
-            Safe(() => Svc.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw);
-            Safe(() => Svc.ClientState.Logout -= Logout);
-            Safe(() => Svc.Condition.ConditionChange -= ConditionChange);
-            Safe(() => Svc.Framework.Update -= Tick);
-            Safe(() => Svc.Toasts.ErrorToast -= Toasts_ErrorToast);
-            Safe(() => Svc.Toasts.Toast -= Toasts_Toast);
-            Safe(() => NewYesAlreadyManager.Unlock());
-            Safe(() => TextAdvanceManager.UnlockTA());
-            Safe(() => StatisticsManager.Shutdown());
-            Safe(() => Memory.Dispose());
-            Safe(() => IPC.Shutdown());
-            Safe(() => API.Dispose());
-            Safe(() => FPSManager.ForceRestore());
-            Safe(() => PriorityManager.RestorePriority());
-            Safe(() => VoyageMain.Shutdown());
-            Safe(() => ContextMenuManager.Dispose());
-            PunishLibMain.Dispose();
-            ECommonsMain.Dispose();
-        }
-        //PluginLoader.Dispose();
+        Safe(() => FFXIVInstanceMonitor.ReleaseLock());
+        Safe(() => quickSellItems.Disable());
+        Safe(() => quickSellItems.Dispose());
+        Safe(() => Svc.PluginInterface.UiBuilder.Draw -= FPSLimiter.FPSLimit);
+        Safe(() => Svc.PluginInterface.UiBuilder.Draw -= WindowSystem.Draw);
+        Safe(() => Svc.ClientState.Logout -= Logout);
+        Safe(() => Svc.Condition.ConditionChange -= ConditionChange);
+        Safe(() => Svc.Framework.Update -= Tick);
+        Safe(() => Svc.Toasts.ErrorToast -= Toasts_ErrorToast);
+        Safe(() => Svc.Toasts.Toast -= Toasts_Toast);
+        Safe(() => NewYesAlreadyManager.Unlock());
+        Safe(() => TextAdvanceManager.UnlockTA());
+        Safe(() => StatisticsManager.Shutdown());
+        Safe(() => Memory.Dispose());
+        Safe(() => IPC.Shutdown());
+        Safe(() => API.Dispose());
+        Safe(() => FPSManager.ForceRestore());
+        Safe(() => PriorityManager.RestorePriority());
+        Safe(() => VoyageMain.Shutdown());
+        Safe(() => ContextMenuManager.Dispose());
+        PunishLibMain.Dispose();
+        ECommonsMain.Dispose();
     }
 
     private void AddVenture(string name, uint ventureId)
@@ -737,13 +724,9 @@ public unsafe class AutoRetainer : IDalamudPlugin
         return config.SelectedRetainers[cid];
     }
 
-    internal static string LastLogMsg = string.Empty;
     internal static void DebugLog(string message)
     {
-        //if (LastLogMsg != message)
-        {
-            PluginLog.Debug(message);
-        }
+        PluginLog.Debug(message);
     }
 
     public bool SkipNextEnable = false;
@@ -754,7 +737,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
         {
             if(Player.Available)
             {
-                PluginLog.Verbose($"Writing logout offline data...");
+                PluginLog.Verbose($"正在写入登出离线数据……");
                 OfflineDataManager.WriteOfflineData(true, true);
             }
         }
@@ -764,7 +747,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
             if(!value)
             {
                 ConditionWasEnabled = false;
-                DebugLog("ConditionWasEnabled = false;");
+                DebugLog("条件状态已禁用（false）");
             }
             if(!SkipNextEnable)
             {
@@ -787,7 +770,7 @@ public unsafe class AutoRetainer : IDalamudPlugin
                             if(bellBehavior != OpenBellBehavior.Pause_AutoRetainer && IsKeyPressed(C.Suppress) && !CSFramework.Instance()->WindowInactive)
                             {
                                 bellBehavior = OpenBellBehavior.Do_nothing;
-                                Notify.Info($"Open bell action cancelled");
+                                Notify.Info($"已取消打开传唤铃");
                             }
                             if(SchedulerMain.PluginEnabled && bellBehavior == OpenBellBehavior.Pause_AutoRetainer)
                             {
@@ -819,13 +802,13 @@ public unsafe class AutoRetainer : IDalamudPlugin
                     {
                         if(WasEnabled)
                         {
-                            DebugLog($"Enabling plugin because WasEnabled is true");
+                            DebugLog($"由于先前处于启用状态，正在重新启用插件");
                             SchedulerMain.EnablePlugin(PluginEnableReason.Auto);
                             WasEnabled = false;
                         }
                         else if(!IsCloseActionAutomatic && C.AutoDisable && !Utils.MultiModeOrArtisan)
                         {
-                            DebugLog($"Disabling plugin because AutoDisable is on");
+                            DebugLog($"由于自动禁用已开启，正在禁用插件");
                             SchedulerMain.DisablePlugin();
                         }
                     }

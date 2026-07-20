@@ -5,7 +5,7 @@ namespace AutoRetainer.Modules.Voyage.VoyageCalculator;
 
 public static class Voyage
 {
-    private const int FixedVoyageTime = 43200; // 12h
+    private const int FixedVoyageTime = 43200; // 12 小时
 
     private static ExcelSheet<SubmarineExploration> ExplorationSheet = null!;
     private static List<uint> ReversedStartPoints = null!;
@@ -23,7 +23,7 @@ public static class Voyage
 
     public static uint FindVoyageStartPoint(uint point)
     {
-        // This works because we reversed the list of start points
+        // 起始点列表已经反转，因此可按此方式查找
         foreach(var possibleStart in ReversedStartPoints)
             if(point > possibleStart)
                 return possibleStart;
@@ -31,7 +31,7 @@ public static class Voyage
         return 0;
     }
 
-    #region Optimizer
+    #region 优化器
     public static uint CalculateDuration(IEnumerable<SubmarineExploration> walkingPoints, Build.SubmarineBuild build)
     {
         var walkWay = walkingPoints.ToArray();
@@ -45,12 +45,12 @@ public static class Voyage
         {
             case 0:
                 return 0;
-            case 1: // 1 point makes no sense to optimize, so just return distance
+            case 1: // 单个目的地无需优化，直接返回距离
                 {
                     var onlyPoint = points[0];
                     return VoyageTime(start, onlyPoint, (short)build.Speed) + SurveyTime(onlyPoint, (short)build.Speed) + FixedVoyageTime;
                 }
-            case > 5: // More than 5 points isn't allowed ingame
+            case > 5: // 游戏内不允许选择超过 5 个目的地
                 return 0;
         }
 
@@ -77,11 +77,11 @@ public static class Voyage
             points.Add(p);
 
 
-        // zero
+        // 无目的地
         if(points.Count == 0)
             return (0, new List<SubmarineExploration>());
 
-        // 1 point makes no sense to optimize, so just return distance
+        // 单个目的地无需优化，直接返回距离
         if(points.Count == 1)
         {
             var onlyPoint = points[0];
@@ -89,7 +89,7 @@ public static class Voyage
             return ((int)distance, new List<SubmarineExploration> { onlyPoint });
         }
 
-        // More than 5 points isn't allowed ingame
+        // 游戏内不允许选择超过 5 个目的地
         if(points.Count > 5)
             return (0, new List<SubmarineExploration>());
 

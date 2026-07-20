@@ -30,7 +30,7 @@ internal static unsafe class VoyageMain
             var txt = message.GetText();
             if(txt == Lang.VoyageInventoryError)
             {
-                DuoLog.Warning($"[Voyage] Your inventory is full!");
+                DuoLog.Warning($"[远航探索] 背包已满！");
                 VoyageScheduler.Enabled = false;
                 P.TaskManager.Abort();
                 P.TaskManager.Enqueue(VoyageScheduler.SelectQuitVesselSelectorMenu);
@@ -48,7 +48,7 @@ internal static unsafe class VoyageMain
             if(txt.ContainsAny(StringComparison.OrdinalIgnoreCase, Lang.UnableToRepairVessel))
             {
                 TaskRepairAll.Abort = true;
-                DuoLog.Warning($"[Voyage] You are out of repair components!");
+            DuoLog.Warning($"[远航探索] 魔导机械修理材料不足！");
                 if(C.FailureNoRepair == WorkshopFailAction.ExcludeVessel)
                 {
                     Data.GetEnabledVesselsData(TaskRepairAll.Type).Remove(TaskRepairAll.Name);
@@ -80,12 +80,11 @@ internal static unsafe class VoyageMain
             {
                 if(!IsInVoyagePanel)
                 {
-                    DebugLog($"Entered voyage panel");
+            DebugLog($"已进入航行管制面板");
                     IsInVoyagePanel = true;
-                    //Notify.Info($"Entered voyage panel");
                     if(IsKeyPressed(C.Suppress))
                     {
-                        Notify.Warning("No operation was requested by user");
+                        Notify.Warning("用户未请求任何操作");
                     }
                     else
                     {
@@ -94,11 +93,11 @@ internal static unsafe class VoyageMain
                             if(Data.AnyEnabledVesselsAvailable())
                             {
                                 VoyageScheduler.Enabled = true;
-                                DebugLog($"<!> Enabled voyage scheduler");
+                                DebugLog($"<!> 已启用远航探索调度器");
                             }
                             else
                             {
-                                Notify.Warning($"Warning!\nDeployables were not enabled as there are nothing to process yet");
+                                Notify.Warning($"警告！\n当前没有可处理内容，因此未启用远航探索模块");
                             }
                         }
                     }
@@ -110,9 +109,8 @@ internal static unsafe class VoyageMain
             if(IsInVoyagePanel)
             {
                 IsInVoyagePanel = false;
-                //Notify.Info("Closed voyage panel");
                 VoyageScheduler.Enabled = false;
-                DebugLog($"<!> Exited voyage panel, disabled voyage scheduler");
+            DebugLog($"<!> 已退出航行管制面板并禁用远航探索调度器");
             }
         }
 
@@ -194,7 +192,7 @@ internal static unsafe class VoyageMain
         if(next != null)
         {
             var adata = Data.GetAdditionalVesselData(next, type);
-            var data = Data.GetOfflineVesselData(next, type) ?? throw new NullReferenceException($"Offline vessel data for {next}, {type} is null");
+            var data = Data.GetOfflineVesselData(next, type) ?? throw new NullReferenceException($"{next} 的离线{Lang.VoyageTypeNames[type]}数据为空");
             if((VoyageUtils.DontReassign || adata.VesselBehavior == VesselBehavior.Finalize || (C.FinalizeBeforeResend && Data.AreAnyEnabledVesselsReturnInNext(0, false, true))) && data.ReturnTime != 0)
             {
                 if(EzThrottler.Throttle("DoWorkshopPanelTick.ScheduleResend", 1000))
@@ -230,10 +228,10 @@ internal static unsafe class VoyageMain
                                     {
                                         if(x.EnforcePlan)
                                         {
-                                            PluginLog.Information($"Unlock plan {x.Name} is set as enforced");
+                                            PluginLog.Information($"解锁方案 {x.Name} 已设为强制执行");
                                             if(TaskDeployOnUnlockRoute.GetUnlockPointsFromPlan(x, UnlockMode.SpamOne).TryGetFirst(out var unlockPoint) && !x.ExcludedRoutes.Any(s => s == unlockPoint.point))
                                             {
-                                                PluginLog.Information($"Enforcing plan {x.Name} on current submarine");
+                                                PluginLog.Information($"正在对当前{Lang.VoyageTypeNames[type]}强制执行方案 {x.Name}");
                                                 TaskDeployOnUnlockRoute.Enqueue(next, type, x, UnlockMode.SpamOne);
                                                 goto EndTask;
                                             }
@@ -249,7 +247,7 @@ internal static unsafe class VoyageMain
                                         var plan = VoyageUtils.GetSubmarineUnlockPlanByGuid(adata.SelectedUnlockPlan) ?? VoyageUtils.GetDefaultSubmarineUnlockPlan();
                                         if(plan.EnforceDSSSinglePoint && TaskDeployOnUnlockRoute.GetUnlockPointsFromPlan(plan, UnlockMode.SpamOne).TryGetFirst(out var unlockPoint) && VoyageUtils.GetSubmarineExploration(unlockPoint.point).Value.Map.RowId == 1)
                                         {
-                                            PluginLog.Information($"Override unlock mode to {UnlockMode.SpamOne}");
+                                            PluginLog.Information($"正在将解锁模式覆盖为 {Lang.UnlockModeNames[UnlockMode.SpamOne]}");
                                             mode = UnlockMode.SpamOne;
                                         }
                                         if(mode == UnlockMode.WhileLevelling)
@@ -282,7 +280,7 @@ internal static unsafe class VoyageMain
                                         }
                                         else
                                         {
-                                            DuoLog.Error($"Invalid plan selected (Points.Count={plan.Points.Count})");
+                                            DuoLog.Error($"所选方案无效（目的地数量={plan.Points.Count}）");
                                         }
                                     }
                                     else if(adata.VesselBehavior == VesselBehavior.Redeploy)
@@ -307,7 +305,7 @@ internal static unsafe class VoyageMain
         {
             if(PartSwapperScheduler.EnqueueSubmersibleRegistrationIfPossible())
             {
-                PluginLog.Information($"Enqueued submersible registration");
+                PluginLog.Information($"已加入潜水艇登记任务队列");
             }
             else if(!Data.AreAnyEnabledVesselsReturnInNext(type, 1 * 60))
             {

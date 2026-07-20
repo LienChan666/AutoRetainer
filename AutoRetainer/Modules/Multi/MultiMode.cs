@@ -65,7 +65,7 @@ internal static unsafe class MultiMode
                 {
                     if(MultiMode.ExpectedCharacter.Value.Name != Player.Name || MultiMode.ExpectedCharacter.Value.World != Player.HomeWorld)
                     {
-                        DuoLog.Warning($"[ARERRCMM] Character mismatch, expected {MultiMode.ExpectedCharacter}, but logged in on {Player.NameWithWorld}. Please report this to developer unless you have manually interfered with login process");
+                        DuoLog.Warning($"[ARERRCMM] 角色不匹配：预期登录 {MultiMode.ExpectedCharacter}，实际登录 {Player.NameWithWorld}。除非你手动干预了登录流程，否则请将此问题报告给开发者");
                     }
                 }
                 MultiMode.ExpectedCharacter = null;
@@ -74,14 +74,14 @@ internal static unsafe class MultiMode
             WriteOfflineData(true, true);
             if(LastLogin == Svc.ClientState.LocalContentId && Active)
             {
-                DuoLog.Error("Multi mode disabled as it have detected duplicate login.");
+                DuoLog.Error("检测到重复登录，已禁用多角色模式。");
                 Enabled = false;
             }
             LastLogin = MultiMode.Enabled && !C.MultiWaitOnLoginScreen ? Svc.ClientState.LocalContentId : 0;
             Interactions.Clear();
             if(CanHET)
             {
-                DebugLog($"ProperOnLogin: {Svc.ClientState.LocalPlayer}, residential area, scheduling HET");
+                DebugLog($"登录事件：{Svc.ClientState.LocalPlayer}，当前位于住宅区，正在安排房屋进入任务");
                 if(!TaskTeleportToProperty.ShouldVoidHET()) TaskNeoHET.Enqueue(null);
             }
             MultiModeUI.JustRelogged = true;
@@ -140,7 +140,7 @@ internal static unsafe class MultiMode
                 if(val != 0)
                 {
                     Svc.GameConfig.Set(SystemConfigOption.AutoAfkSwitchingTime, 0u);
-                    DuoLog.Warning($"Your Auto Afk Switching Time option was incompatible with current AutoRetainer configuration and was set to (Never). This is not an error.");
+                    DuoLog.Warning($"你的“自动切换离开状态”设置与当前 AutoRetainer 配置不兼容，已改为“从不”。这不是错误。");
                 }
             }
         }
@@ -150,7 +150,7 @@ internal static unsafe class MultiMode
                 if(val != 0)
                 {
                     Svc.GameConfig.Set(SystemConfigOption.IdlingCameraAFK, 0u);
-                    DuoLog.Warning($"Your Idling Camera AFK option was incompatible with current AutoRetainer configuration and was set to (Disabled). This is not an error.");
+                    DuoLog.Warning($"你的“离开状态闲置镜头”设置与当前 AutoRetainer 配置不兼容，已将其禁用。这不是错误。");
                 }
             }
         }
@@ -160,7 +160,7 @@ internal static unsafe class MultiMode
     {
         if(Active)
         {
-            if(EzThrottler.Throttle("MultiNotify", 15000)) Utils.NotifyIfLifestreamIsNotInstalled("Multi Mode");
+            if(EzThrottler.Throttle("MultiNotify", 15000)) Utils.NotifyIfLifestreamIsNotInstalled("多角色模式");
             ValidateAutoAfkSettings();
             var shouldDisableRender = (C.MultiDisableRender && (!C.MultiDisableRenderNightModeOnly || C.NightMode) && (!C.MultiDisableRenderOnlyInactive || TerraFX.Interop.Windows.Windows.IsIconic((TerraFX.Interop.Windows.HWND)(*ECommonsMain.MainWindowHandle)) || CSFramework.Instance()->WindowInactive)) || P.TestRenderDisable;
             if(shouldDisableRender)
@@ -207,7 +207,7 @@ internal static unsafe class MultiMode
                             InitialDuration = TimeSpan.FromSeconds(30),
                             Minimized = false,
                             HardExpiry = hexp,
-                            Content = $"Game shutdown down at {hexp}, click to cancel",
+                            Content = $"游戏将在 {hexp} 关闭，点击可取消",
                             RespectUiHidden = false,
                         });
                         notify.Click += delegate
@@ -225,7 +225,7 @@ internal static unsafe class MultiMode
                             InitialDuration = TimeSpan.FromMinutes(5),
                             Minimized = false,
                             HardExpiry = hexp,
-                            Content = $"Forced shutdown down at {hexp}, click to cancel",
+                            Content = $"游戏将在 {hexp} 强制关闭，点击可取消",
                             RespectUiHidden = false,
                         });
                         notify.Click += delegate
@@ -247,7 +247,7 @@ internal static unsafe class MultiMode
                     }
                     if(EzThrottler.Check("ForceShutdownForSubs"))
                     {
-                        PluginLog.Warning($"Could not shutdown the game normally, forcing exit");
+                        PluginLog.Warning($"无法正常关闭游戏，正在强制退出");
                         Environment.Exit(0);
                     }
                 }
@@ -268,7 +268,7 @@ internal static unsafe class MultiMode
                         {
                             if(!Relog(next, out var error, RelogReason.MultiMode))
                             {
-                                PluginLog.Error($"Error while automatically logging in: {error}");
+                                PluginLog.Error($"自动登录时发生错误：{error}");
                                 Notify.Error($"{error}");
                             }
                         }
@@ -281,7 +281,7 @@ internal static unsafe class MultiMode
                 {
                     data.Enabled = false;
                     data.WorkshopEnabled = false;
-                    DuoLog.Warning("Too many errors, current character is excluded.");
+                    DuoLog.Warning("错误次数过多，已排除当前角色。");
                     Interactions.Clear();
                     return;
                 }
@@ -289,7 +289,7 @@ internal static unsafe class MultiMode
                 {
                     Enabled = false;
                     data.WorkshopEnabled = false;
-                    DuoLog.Error("Fatal error. Please report this with logs.");
+                    DuoLog.Error("发生严重错误，请附带日志报告此问题。");
                     Interactions.Clear();
                     return;
                 }
@@ -329,7 +329,7 @@ internal static unsafe class MultiMode
                     }
                     if(next != null)
                     {
-                        DebugLog($"Enqueueing relog");
+                        DebugLog($"正在加入重新登录任务队列");
                         BlockInteraction(20);
                         if(!Relog(next, out var error, RelogReason.MultiMode))
                         {
@@ -337,16 +337,16 @@ internal static unsafe class MultiMode
                         }
                         else
                         {
-                            DebugLog($"Relog command success");
+                            DebugLog($"重新登录命令执行成功");
                         }
                         Interactions.PushBack(Environment.TickCount64);
-                        DebugLog($"Added interaction because of relogging (state: {Interactions.Print()})");
+                        DebugLog($"因重新登录加入交互任务（状态：{Interactions.Print()}）");
                     }
                     else
                     {
                         if(MultiMode.WaitOnLoginScreen)
                         {
-                            DebugLog($"Enqueueing logoff");
+                            DebugLog($"正在加入登出任务队列");
                             BlockInteraction(20);
                             if(!Relog(null, out var error, RelogReason.MultiMode))
                             {
@@ -354,10 +354,10 @@ internal static unsafe class MultiMode
                             }
                             else
                             {
-                                DebugLog($"Logoff command success");
+                                DebugLog($"登出命令执行成功");
                             }
                             Interactions.PushBack(Environment.TickCount64);
-                            DebugLog($"Added interaction because of logging off (state: {Interactions.Print()})");
+                            DebugLog($"因登出加入交互任务（状态：{Interactions.Print()}）");
                         }
                     }
                 }
@@ -371,12 +371,12 @@ internal static unsafe class MultiMode
                             {
                                 EzThrottler.Reset($"ExpertDeliver_{Data.Identity}");
                                 EzThrottler.Reset($"CabinetDeliver_{Data?.Identity}");
-                                DebugLog($"Enqueueing interaction with panel");
+                                DebugLog($"正在加入与面板交互的任务队列");
                                 BlockInteraction(10);
                                 TaskInteractWithNearestPanel.Enqueue();
                                 P.TaskManager.Enqueue(() => { VoyageScheduler.Enabled = true; });
                                 Interactions.PushBack(Environment.TickCount64);
-                                DebugLog($"Added interaction because of interacting (state: {Interactions.Print()})");
+                                DebugLog($"因交互加入任务（状态：{Interactions.Print()}）");
                             }
                         }
                     }
@@ -392,12 +392,12 @@ internal static unsafe class MultiMode
                                 {
                                     EzThrottler.Reset($"ExpertDeliver_{Data.Identity}");
                                     EzThrottler.Reset($"CabinetDeliver_{Data?.Identity}");
-                                    DebugLog($"Enqueueing interaction with bell");
+                                    DebugLog($"正在加入与传唤铃交互的任务队列");
                                     TaskInteractWithNearestBell.Enqueue();
                                     P.TaskManager.Enqueue(() => { SchedulerMain.EnablePlugin(PluginEnableReason.MultiMode); return true; });
                                     BlockInteraction(10);
                                     Interactions.PushBack(Environment.TickCount64);
-                                    DebugLog($"Added interaction because of interacting (state: {Interactions.Print()})");
+                                    DebugLog($"因交互加入任务（状态：{Interactions.Print()}）");
                                 }
                             }
                         }
@@ -446,7 +446,7 @@ internal static unsafe class MultiMode
             TaskNeoHET.TryEnterWorkshop(() =>
             {
                 Data.Enabled = false;
-                DuoLog.Error($"Due to absence of retainer bell and failure to find workshop, character is excluded from processing retainers");
+                DuoLog.Error($"附近没有传唤铃且未能找到部队工房，已排除该角色的雇员处理");
                 P.TaskManager.Abort();
             });
         }
@@ -516,33 +516,29 @@ internal static unsafe class MultiMode
                 {
                     z.Preferred = false;
                 }
-                Notify.Warning("Preferred character has been reset");
+                Notify.Warning("已重置优先角色");
             }
         }
         ErrorMessage = string.Empty;
         if(P.TaskManager.IsBusy && !allowFromTaskManager)
         {
-            ErrorMessage = "AutoRetainer is processing tasks";
+            ErrorMessage = "AutoRetainer 正在处理任务";
         }
         else if(SchedulerMain.CharacterPostProcessLocked)
         {
-            ErrorMessage = "Currently in post-processing of character";
+            ErrorMessage = "当前正在执行角色后处理";
         }
-        /*else if (data != null && !data.Index.InRange(1, 9))
-        {
-            ErrorMessage = "Invalid character index";
-        }*/
         else
         {
             if(Player.Available)
             {
                 if(IsOccupied())
                 {
-                    ErrorMessage = "Player is occupied";
+                    ErrorMessage = "玩家当前正忙";
                 }
                 else if(data != null && data.CID == Svc.ClientState.LocalContentId)
                 {
-                    ErrorMessage = "Targeted player is logged in";
+                    ErrorMessage = "目标角色已经登录";
                 }
                 else
                 {
@@ -561,7 +557,7 @@ internal static unsafe class MultiMode
                     P.TaskManager.Enqueue(() => Player.Interactable && IsScreenReady());
                     if(C.DontLogout)
                     {
-                        P.TaskManager.Enqueue(() => DuoLog.Warning($"Would change character to {data?.NameWithWorldCensored ?? "Logout"}"));
+                        P.TaskManager.Enqueue(() => DuoLog.Warning($"将切换角色至 {data?.NameWithWorldCensored ?? "登出"}"));
                         P.TaskManager.EnqueueDelay(99999999);
                     }
                     else
@@ -587,7 +583,7 @@ internal static unsafe class MultiMode
                 }
                 else
                 {
-                    ErrorMessage = "Can not log in now";
+                    ErrorMessage = "当前无法登录";
                 }
             }
         }
@@ -784,7 +780,7 @@ internal static unsafe class MultiMode
             var seconds = C.AutoLoginDelay - i;
             P.TaskManager.Enqueue(() => Svc.NotificationManager.AddNotification(new()
             {
-                Content = $"Autostart in {seconds}!",
+                Content = $"将在 {seconds} 秒后自动启动！",
                 InitialDuration = TimeSpan.FromSeconds(1),
                 HardExpiry = DateTime.Now.AddSeconds(1),
                 Type = NotificationType.Warning,
@@ -814,7 +810,7 @@ internal static unsafe class MultiMode
                     }
                     else
                     {
-                        DuoLog.Error($"Error during auto login: {error}");
+                        DuoLog.Error($"自动登录时出错：{error}");
                     }
                 }
                 return false;

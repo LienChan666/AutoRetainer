@@ -18,12 +18,12 @@ public unsafe class InnCutsceneSkip
         {
             if(C.CutsceneSkipMode == CutsceneSkipMode.Always)
             {
-                PluginLog.Information($"Inn cutscene skipped because CutsceneSkipMode is set to {C.CutsceneSkipMode}");
+                PluginLog.Information($"由于过场跳过模式设为 {Lang.CutsceneSkipModeNames[C.CutsceneSkipMode]}，已跳过旅馆过场动画");
                 return 1;
             }
             if(C.CutsceneSkipMode == CutsceneSkipMode.When_Multi_Mode_is_on && MultiMode.Enabled)
             {
-                PluginLog.Information($"Inn cutscene skipped because CutsceneSkipMode is set to {C.CutsceneSkipMode}");
+                PluginLog.Information($"由于过场跳过模式设为 {Lang.CutsceneSkipModeNames[C.CutsceneSkipMode]}，已跳过旅馆过场动画");
                 return 1;
             }
         }

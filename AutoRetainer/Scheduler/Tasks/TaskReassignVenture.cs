@@ -17,7 +17,6 @@ internal static class TaskReassignVenture
         P.TaskManager.Enqueue(RetainerHandlers.ClickResultReassign);
         P.TaskManager.Enqueue(RetainerHandlers.WaitForVentureListUpdate);
         P.TaskManager.EnqueueDelay(Utils.FrameDelay, true);
-        //P.TaskManager.DelayNext(10, true);
         P.TaskManager.Enqueue(RetainerHandlers.ClickAskAssign);
         TaskRecursiveItemDiscard.EnqueueIfNeeded();
     }

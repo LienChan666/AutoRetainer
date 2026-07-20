@@ -11,7 +11,7 @@ internal static unsafe class TaskCalculateAndPickBestExpRoute
     internal static void Enqueue(SubmarineUnlockPlan unlock = null)
     {
         Stop = false;
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskCalculateAndPickBestExpRoute)} (plan: {unlock})");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskCalculateAndPickBestExpRoute)}（方案：{unlock}）");
         P.TaskManager.Enqueue(() => Calculate(unlock));
         P.TaskManager.Enqueue(WaitUntilCalculationStopped, new(timeLimitMS: 60 * 60 * 1000));
     }
@@ -36,11 +36,11 @@ internal static unsafe class TaskCalculateAndPickBestExpRoute
                 double exp = 0;
                 uint[] path = null;
                 var selectedMap = 0;
-                if(prioList != null) VoyageUtils.Log($"Prioritized point list: {prioList.Select(x => $"{VoyageUtils.GetSubmarineExplorationName(x.point)} ({x.justification})").Print()}");
+                if(prioList != null) VoyageUtils.Log($"优先目的地列表：{prioList.Select(x => $"{VoyageUtils.GetSubmarineExplorationName(x.point)}（{x.justification}）").Print()}");
                 var calcCnt = 0;
                 void Calc()
                 {
-                    if(calcCnt > 1) throw new Exception("Could not calculate best path.");
+                    if(calcCnt > 1) throw new Exception("无法计算最佳航线。");
                     calcCnt++;
                     foreach(var map in curSubMaps)
                     {
@@ -56,7 +56,7 @@ internal static unsafe class TaskCalculateAndPickBestExpRoute
                             else
                             {
                                 doCalc = true;
-                                VoyageUtils.Log($"Adding point: {VoyageUtils.GetSubmarineExplorationName(prioList[0].point)} ({prioList[0].justification})");
+                                VoyageUtils.Log($"正在添加目的地：{VoyageUtils.GetSubmarineExplorationName(prioList[0].point)}（{prioList[0].justification}）");
                                 calc.MustInclude.Add(VoyageUtils.GetSubmarineExploration(prioList[0].point).Value);
                             }
                         }
@@ -70,7 +70,7 @@ internal static unsafe class TaskCalculateAndPickBestExpRoute
                             if(best != null && best.Value.path != null)
                             {
                                 var xptime = best.Value.exp / (double)best.Value.duration.TotalHours;
-                                VoyageUtils.Log($"Path {best.Value.path.Select(z => $"{z}/{Svc.Data.GetExcelSheet<SubmarineExploration>().GetRowOrDefault(z)?.Location}").Print()}, is best for map {map} with {best.Value.duration} duration and {best.Value.exp} exp ({xptime} exp/hour)");
+                                VoyageUtils.Log($"航线 {best.Value.path.Select(z => $"{z}/{Svc.Data.GetExcelSheet<SubmarineExploration>().GetRowOrDefault(z)?.Location}").Print()} 是航海图 {map} 的最佳航线，耗时 {best.Value.duration}，经验 {best.Value.exp}（{xptime} 经验/小时）");
                                 if(xptime > exp)
                                 {
                                     selectedMap = (int)map;
@@ -81,19 +81,19 @@ internal static unsafe class TaskCalculateAndPickBestExpRoute
                         }
                         else
                         {
-                            VoyageUtils.Log($"Map {map} skipped because it has no zones to unlock");
+                            VoyageUtils.Log($"航海图 {map} 没有待解锁目的地，已跳过");
                         }
                     }
                 }
                 Calc();
                 if(path == null)
                 {
-                    VoyageUtils.Log($"Path was null. Retrying without plan...");
+                    VoyageUtils.Log($"航线为空，正在不使用方案重试……");
                     calc.MustInclude.Clear();
                     prioList = null;
                     Calc();
                 }
-                VoyageUtils.Log($"Path {path.Select(z => $"{z}/{Svc.Data.GetExcelSheet<SubmarineExploration>().GetRowOrDefault(z)?.Location}").Print()}, is determined best on map {selectedMap} with ({exp} exp/hour)");
+                VoyageUtils.Log($"航线 {path.Select(z => $"{z}/{Svc.Data.GetExcelSheet<SubmarineExploration>().GetRowOrDefault(z)?.Location}").Print()} 被确定为航海图 {selectedMap} 的最佳航线（{exp} 经验/小时）");
                 if(path != null)
                 {
                     new TickScheduler(delegate
@@ -105,7 +105,7 @@ internal static unsafe class TaskCalculateAndPickBestExpRoute
             }
             catch(Exception e)
             {
-                DuoLog.Error($"Critical error occurred during path optimization: {e.Message}");
+                DuoLog.Error($"航线优化时发生严重错误：{e.Message}");
                 e.Log();
             }
             VoyageMain.WaitOverlay.IsProcessing = false;

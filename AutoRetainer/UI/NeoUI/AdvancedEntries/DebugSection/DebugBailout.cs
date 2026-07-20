@@ -4,9 +4,9 @@ internal class DebugBailout : DebugSectionBase
 {
     public override void Draw()
     {
-        ImGui.Checkbox(nameof(BailoutManager.SimulateStuckOnQuit), ref BailoutManager.SimulateStuckOnQuit);
-        ImGui.Checkbox(nameof(BailoutManager.SimulateStuckOnVoyagePanel), ref BailoutManager.SimulateStuckOnVoyagePanel);
-        ImGuiEx.Text($"NoSelectString: {Environment.TickCount64 - BailoutManager.NoSelectString}");
-        ImGuiEx.Text($"LobbyStuck: {Environment.TickCount64 - BailoutManager.CharaSelectStuck}");
+        ImGui.Checkbox("模拟退出时卡死", ref BailoutManager.SimulateStuckOnQuit);
+        ImGui.Checkbox("模拟航行管制面板卡死", ref BailoutManager.SimulateStuckOnVoyagePanel);
+        ImGuiEx.Text($"未出现选项窗口：{Environment.TickCount64 - BailoutManager.NoSelectString}");
+        ImGuiEx.Text($"大厅卡死：{Environment.TickCount64 - BailoutManager.CharaSelectStuck}");
     }
 }

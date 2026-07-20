@@ -10,24 +10,24 @@ internal unsafe class RetainersOld : DebugSectionBase
     {
         if(!(GameRetainerManager.Ready && Svc.ClientState.LocalPlayer != null))
         {
-            ImGuiEx.Text("Data Not Ready");
+            ImGuiEx.Text("数据尚未就绪");
             return;
         }
 
         var slots = Utils.GetInventoryFreeSlotCount();
         var ventures = InventoryManager.Instance()->GetInventoryItemCount(21072);
-        ImGuiEx.Text($"Inventory slots: ");
+        ImGuiEx.Text($"背包空位：");
         ImGui.SameLine(0, 0);
         ImGuiEx.Text(slots < GameRetainerManager.Count ? ImGuiColors.DalamudRed : slots < 14 * GameRetainerManager.Count ? ImGuiColors.DalamudOrange : ImGuiColors.ParsedGreen,
                 $"{slots}");
         ImGui.SameLine();
         ImGuiEx.Text(ImGuiColors.DalamudGrey3, "|");
         ImGui.SameLine();
-        ImGuiEx.Text("Ventures: ");
+        ImGuiEx.Text("探险币：");
         ImGui.SameLine(0, 0);
         ImGuiEx.Text(ventures < 2 * GameRetainerManager.Count ? ImGuiColors.DalamudRed : ventures < 24 * GameRetainerManager.Count ? ImGuiColors.DalamudOrange : ImGuiColors.ParsedGreen,
                 $"{ventures}");
-        ImGuiComponents.HelpMarker("The plugin will automatically disable itself at < 2 Ventures or inventory slots available.");
+        ImGuiComponents.HelpMarker("探险币少于 2 枚或背包空位不足时，插件会自动禁用。 ");
         var storePos = ImGui.GetCursorPos();
         for(var i = 0; i < GameRetainerManager.Count; i++)
         {
@@ -45,9 +45,9 @@ internal unsafe class RetainersOld : DebugSectionBase
         }
         ImGui.SetCursorPos(storePos);
         ImGui.BeginTable("##ertainertable", 3, ImGuiTableFlags.SizingFixedFit | ImGuiTableFlags.Borders);
-        ImGui.TableSetupColumn("Name", ImGuiTableColumnFlags.WidthStretch);
-        ImGui.TableSetupColumn("Venture");
-        ImGui.TableSetupColumn("Interaction");
+        ImGui.TableSetupColumn("名称", ImGuiTableColumnFlags.WidthStretch);
+        ImGui.TableSetupColumn("探险");
+        ImGui.TableSetupColumn("交互");
         ImGui.TableHeadersRow();
         var retainers = P.GetSelectedRetainers(Svc.ClientState.LocalContentId);
         for(var i = 0; i < GameRetainerManager.Count; i++)
@@ -59,7 +59,7 @@ internal unsafe class RetainersOld : DebugSectionBase
             ImGui.TableSetBgColor(ImGuiTableBgTarget.CellBg, 0);
             var start = ImGui.GetCursorPos();
             var selected = retainers.Contains(ret.Name.ToString());
-            if(ImGui.Checkbox((string)$"Retainer {(C.NoNames ? i + 1 : ret.Name)}", ref selected))
+            if(ImGui.Checkbox((string)$"雇员 {(C.NoNames ? i + 1 : ret.Name)}", ref selected))
             {
                 if(selected)
                 {
@@ -74,7 +74,7 @@ internal unsafe class RetainersOld : DebugSectionBase
             bars[i] = (start, end);
             ImGui.TableNextColumn();
             ImGui.TableSetBgColor(ImGuiTableBgTarget.CellBg, 0);
-            ImGuiEx.Text($"{(ret.VentureID == 0 ? "No Venture" : Utils.ToTimeString(ret.GetVentureSecondsRemaining(false)))}");
+            ImGuiEx.Text($"{(ret.VentureID == 0 ? "无探险" : Utils.ToTimeString(ret.GetVentureSecondsRemaining(false)))}");
             ImGui.TableNextColumn();
             ImGui.TableSetBgColor(ImGuiTableBgTarget.CellBg, 0);
             ImGuiEx.Text($"-");

@@ -77,17 +77,15 @@ internal static unsafe class VoyageUtils
     internal static bool IsUnoptimalBuild(this AdditionalVesselData adata, out string justification)
     {
         var conf = adata.GetSubmarineBuild().Trim();
-        //PluginLog.Information($"{conf}");
         foreach(var x in C.UnoptimalVesselConfigurations)
         {
             if(adata.Level >= x.MinRank && adata.Level <= x.MaxRank)
             {
                 if(x.ConfigurationsInvert)
                 {
-                    //PluginLog.Information($"{conf} vs {x.Configurations.Print()}={conf.EqualsIgnoreCaseAny(x.Configurations)}");
                     if(!conf.EqualsIgnoreCaseAny(x.Configurations))
                     {
-                        justification = $"Build is not {x.Configurations.Print()}";
+                        justification = $"配置不是 {x.Configurations.Print()}";
                         return true;
                     }
                 }
@@ -97,7 +95,7 @@ internal static unsafe class VoyageUtils
                     {
                         if(conf.EqualsIgnoreCase(inv))
                         {
-                            justification = $"Build is {conf}";
+                            justification = $"配置为 {conf}";
                             return true;
                         }
                     }
@@ -165,7 +163,7 @@ internal static unsafe class VoyageUtils
             {
                 if(!P.SubmarineUnlockPlanUI.IsMapExplored(x.Key, true) && P.SubmarineUnlockPlanUI.IsMapUnlocked(x.Key, true))
                 {
-                    ret.Add((x.Key, $"submarine slot from {VoyageUtils.GetSubmarineExplorationName(x.Key)}"));
+                    ret.Add((x.Key, $"通过 {VoyageUtils.GetSubmarineExplorationName(x.Key)} 解锁潜水艇栏位"));
                 }
             }
             foreach(var unlock in Unlocks.PointToUnlockPoint.Where(x => x.Value.Sub))
@@ -176,7 +174,7 @@ internal static unsafe class VoyageUtils
                 {
                     if(!ret.Any(z => z.point == x.Item2.Point) && !P.SubmarineUnlockPlanUI.IsMapUnlocked(x.Item1, true))
                     {
-                        ret.Add((x.Item2.Point, $"{GetSubmarineExplorationName(x.Item1)} on the path to {GetSubmarineExplorationName(unlock.Key)} not unlocked"));
+                        ret.Add((x.Item2.Point, $"前往 {GetSubmarineExplorationName(unlock.Key)} 的路径上，{GetSubmarineExplorationName(x.Item1)} 尚未解锁"));
                     }
                 }
             }
@@ -187,7 +185,7 @@ internal static unsafe class VoyageUtils
             if(ret.Count > 0 && Svc.Data.GetExcelSheet<SubmarineExploration>().GetRowOrDefault(ret.First().point)?.Map.RowId != Svc.Data.GetExcelSheet<SubmarineExploration>().GetRowOrDefault(x.Key)?.Map.RowId) break;
             if(!P.SubmarineUnlockPlanUI.IsMapUnlocked(x.Key, true) && P.SubmarineUnlockPlanUI.IsMapUnlocked(x.Value.Point, true) && !ret.Any(z => z.point == x.Value.Point))
             {
-                ret.Add((x.Value.Point, $"{VoyageUtils.GetSubmarineExplorationName(x.Key)} not unlocked"));
+                ret.Add((x.Value.Point, $"{VoyageUtils.GetSubmarineExplorationName(x.Key)} 尚未解锁"));
             }
         }
         return ret;
@@ -211,9 +209,9 @@ internal static unsafe class VoyageUtils
 
     internal static string GetPointPlanName(this SubmarinePointPlan plan)
     {
-        if(plan == null) return "No or unknown plan selected";
+        if(plan == null) return "未选择方案或方案未知";
         if(plan.Name.Length > 0) return plan.Name;
-        if(plan.Points.Count == 0) return $"Plan {plan.GUID}";
+        if(plan.Points.Count == 0) return $"方案 {plan.GUID}";
         return $"{plan.GetMap()?.Name}: {plan.Points.Select(x => Svc.Data.GetExcelSheet<SubmarineExploration>(ClientLanguage.Japanese).GetRow(x).Location.ToString()).Join("→")}";
     }
 
@@ -246,7 +244,7 @@ internal static unsafe class VoyageUtils
 
     internal static void Log(string text)
     {
-        DebugLog($"[Voyage] {text}");
+        DebugLog($"[远航探索] {text}");
     }
 
     internal static List<OfflineVesselData> GetVesselData(this OfflineCharacterData data, VoyageType type)
@@ -262,13 +260,6 @@ internal static unsafe class VoyageUtils
         if(type == VoyageType.Submersible) return data.EnabledSubs;
         throw new ArgumentOutOfRangeException(nameof(type));
     }
-
-    /*internal static HashSet<string> GetFinalizeVesselsData(this OfflineCharacterData data, VoyageType type)
-    {
-        if (type == VoyageType.Airship) return data.FinalizeAirships;
-        if (type == VoyageType.Submersible) return data.FinalizeSubs;
-        throw new ArgumentOutOfRangeException(nameof(type));
-    }*/
 
     internal static bool IsVoyagePanel(this IGameObject obj)
     {
@@ -291,7 +282,7 @@ internal static unsafe class VoyageUtils
 
     internal static bool TryGetNearestVoyagePanel(out IGameObject obj)
     {
-        //Data ID: 2007820
+        // 数据 ID：2007820
         if(Svc.Objects.TryGetFirst(x => x.Name.ToString().EqualsIgnoreCaseAny(Lang.PanelName) && x.IsTargetable, out var o))
         {
             obj = o;
@@ -323,7 +314,6 @@ internal static unsafe class VoyageUtils
 
     internal static void WriteOfflineData()
     {
-        //DebugLog($"WriteOfflineDataSub");
         if(HousingManager.Instance()->WorkshopTerritory != null && C.OfflineData.TryGetFirst(x => x.CID == Player.CID, out var ocd))
         {
             ocd.WriteOfflineInventoryData();
@@ -362,7 +352,6 @@ internal static unsafe class VoyageUtils
                         adata.Level = vessel->RankId;
                         adata.NextLevelExp = vessel->NextLevelExp;
                         adata.CurrentExp = vessel->CurrentExp;
-                        //DebugLog("Write offline sub data");
                         adata.Part1 = (int)GetVesselComponent(i, VoyageType.Submersible, 0)->ItemId;
                         adata.Part2 = (int)GetVesselComponent(i, VoyageType.Submersible, 1)->ItemId;
                         adata.Part3 = (int)GetVesselComponent(i, VoyageType.Submersible, 2)->ItemId;
@@ -375,13 +364,6 @@ internal static unsafe class VoyageUtils
                     Data.OfflineSubmarineData = temp;
                 }
                 Data.NumSubSlots = P.SubmarineUnlockPlanUI.GetNumUnlockedSubs() ?? Data.NumSubSlots;
-                /*var curSub = CurrentSubmarine.Get();
-                if (curSub != null)
-                {
-                    var adata = Data.GetAdditionalVesselData(Utils.Read(curSub->Name), VoyageType.Submersible);
-                    adata.CurrentExp = curSub->CurrentExp;
-                    adata.NextLevelExp = curSub->NextLevelExp;
-                }*/
             }
         }
     }
@@ -453,10 +435,10 @@ internal static unsafe class VoyageUtils
         for(var i = 0; i < 4; i++)
         {
             var slot = GetVesselComponent(num, type, i);
-            log.Add($"index: {i}, id: {slot->ItemId}, cond: {slot->Condition}");
+            log.Add($"索引：{i}，物品 ID：{slot->ItemId}，耐久：{slot->Condition}");
             if(slot->ItemId == 0)
             {
-                PluginLog.Warning($"Item id for airship component was 0 ({i})");
+                PluginLog.Warning($"飞空艇配件的物品 ID 为 0（{i}）");
                 continue;
             }
             if(slot->Condition == 0)
@@ -530,7 +512,7 @@ internal static unsafe class VoyageUtils
                 throw new ArgumentOutOfRangeException(nameof(type));
             }
         }
-        throw new Exception($"Could not retrieve airship's index: {name}");
+        throw new Exception($"无法获取飞空艇索引：{name}");
     }
 
     internal static string Seconds2Time(long seconds)
@@ -539,7 +521,7 @@ internal static unsafe class VoyageUtils
         var dlm = ":";
         if(t.Days > 0)
         {
-            return $"{t.Days} days {t.Hours:D2}{dlm}{t.Minutes:D2}{dlm}{t.Seconds:D2}";
+            return $"{t.Days} 天 {t.Hours:D2}{dlm}{t.Minutes:D2}{dlm}{t.Seconds:D2}";
         }
         else
         {
@@ -667,18 +649,18 @@ internal static unsafe class VoyageUtils
 
     internal static void SelectRoutePointSafe(string FullOrShortName)
     {
-        Log($"Requested selection of {FullOrShortName} point.");
+        Log($"请求选择目的地 {FullOrShortName}。");
         if(TryGetAddonByName<AtkUnitBase>("AirShipExploration", out var addon) && IsAddonReady(addon))
         {
             var reader = new ReaderAirShipExploration(addon);
-            Log($"  Reader initialized with {reader.Destinations.Count} destinations: {reader.Destinations.Select(x => $"{x}").Join("\n")}");
+            Log($"  读取器已初始化，共 {reader.Destinations.Count} 个目的地：{reader.Destinations.Select(x => $"{x}").Join("\n")}");
             for(var i = 0; i < reader.Destinations.Count; i++)
             {
                 var dest = reader.Destinations[i];
-                Log($"  Comparing {i} {dest} with {FullOrShortName}");
+                Log($"  正在比较 {i} {dest} 与 {FullOrShortName}");
                 if(FullOrShortName.EqualsIgnoreCaseAny(dest.NameFull, dest.NameShort))
                 {
-                    Log($"    Found {FullOrShortName}, CanBeSelected = {dest.CanBeSelected}");
+                    Log($"    已找到 {FullOrShortName}，可选={Lang.Bool(dest.CanBeSelected)}");
                     if(dest.CanBeSelected)
                     {
                         SelectRoutePointSafe(i);
@@ -687,7 +669,7 @@ internal static unsafe class VoyageUtils
                 }
                 else
                 {
-                    Log($"    Negative comparison result");
+                    Log($"    比较结果不匹配");
                 }
             }
         }
@@ -695,22 +677,22 @@ internal static unsafe class VoyageUtils
 
     internal static void SelectRoutePointSafe(int which)
     {
-        Log($"Requested selection of point by ID={which}.");
+        Log($"请求按 ID={which} 选择目的地。");
         if(TryGetAddonByName<AtkUnitBase>("AirShipExploration", out var addon) && IsAddonReady(addon))
         {
             var reader = new ReaderAirShipExploration(addon);
-            Log($"  Reader initialized with {reader.Destinations.Count} destinations: {reader.Destinations.Select(x => $"{x}").Join("\n")}");
+            Log($"  读取器已初始化，共 {reader.Destinations.Count} 个目的地：{reader.Destinations.Select(x => $"{x}").Join("\n")}");
             if(which >= reader.Destinations.Count) throw new ArgumentOutOfRangeException(nameof(which));
             var dest = reader.Destinations[which];
-            Log($"  Destination {dest}");
+            Log($"  目的地：{dest}");
             if(dest.CanBeSelected)
             {
-                VoyageUtils.Log($"  Selecting {dest.NameFull} / {which}");
+                VoyageUtils.Log($"  正在选择 {dest.NameFull} / {which}");
                 P.Memory.SelectRoutePointUnsafe(which);
             }
             else
             {
-                VoyageUtils.Log($"  Can't select {dest.NameFull} / {which}, skipping");
+                VoyageUtils.Log($"  无法选择 {dest.NameFull} / {which}，正在跳过");
             }
         }
     }

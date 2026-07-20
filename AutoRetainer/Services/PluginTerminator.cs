@@ -17,7 +17,7 @@ public class PluginTerminator
             if(BossMod.Presets_GetActiveList().Count > 0)
             {
                 BossMod.Presets_SetActiveList([]);
-                PluginLog.Debug($"Bossmod presets shutdown");
+                PluginLog.Debug($"BossMod 预设已关闭");
             }
         }
     }

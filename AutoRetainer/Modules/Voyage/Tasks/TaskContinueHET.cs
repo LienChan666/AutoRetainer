@@ -8,7 +8,7 @@ internal static unsafe class TaskContinueHET
     {
         if(Utils.TrySelectSpecificEntry(Lang.EnterWorkshop, () => EzThrottler.Throttle("HET.SelectEnterWorkshop")))
         {
-            DebugLog("Confirmed going to workhop");
+            DebugLog("已确认前往部队工房");
             return true;
         }
         return false;

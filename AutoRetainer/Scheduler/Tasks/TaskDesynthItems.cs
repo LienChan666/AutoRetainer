@@ -29,7 +29,7 @@ public static unsafe class TaskDesynthItems
 
         foreach(var item in eligibleItems)
         {
-            // check IsOccupied vs just Occupied39 or else it might trigger when exiting the retainer menu
+            // 检查 IsOccupied，而不是单独检查 Occupied39，否则退出雇员菜单时可能误触发
             if(Utils.AnimationLock == 0 && !IsOccupied())
             {
                 if(Utils.GenericThrottle && EzThrottler.Throttle("DesynthingItem", 1000))
@@ -73,7 +73,7 @@ public static unsafe class TaskDesynthItems
 
     private static void DesynthItem(InventoryItem* item)
     {
-        Svc.Log.Info($"Desynthing {ExcelItemHelper.GetName(ExcelItemHelper.Get(item->ItemId), true)} [Container={item->Container},Slot={item->Slot}]");
+        Svc.Log.Info($"正在分解 {ExcelItemHelper.GetName(ExcelItemHelper.Get(item->ItemId), true)}［容器={item->Container}，栏位={item->Slot}］");
         AgentSalvage.Instance()->SalvageItem(item);
         var retval = new AtkValue();
         Span<AtkValue> param = [

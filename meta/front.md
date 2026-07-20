@@ -1,8 +1,8 @@
-## Key features
-- Assign and reassign your retainer ventures in one click according to your configuration: AutoRetainer will deal with annoying confirmations.
-- Assign and reassign your deployables in one click as well.
-- Create sell lists and get rid of junk items automatically.
-- Create entrust lists and entrust valuable items to your retainers for storage efficiency.
+## 主要功能
+- 根据你的设置，一键委托或重新委托雇员进行探险；烦人的确认操作由 AutoRetainer 自动处理。
+- 同样可以一键派遣或再次派遣飞空艇和潜水艇。
+- 创建出售列表，自动处理无用物品。
+- 创建委托方案，将贵重物品交给雇员保管，以便更有效地利用储存空间。
 
-## Usage guidelines
-- You are permitted to use AutoRetainer only for non-commercial purposes. It is prohibited to sell AutoRetainer or products that have been produced with the help of AutoRetainer. Furthermore, if you are using AutoRetainer in conjunction with third party software, you must ensure that such usage will not be against terms of use of third party software in question. You will not receive support if it's found that you break these guidelines.
+## 使用准则
+- AutoRetainer 仅限用于非商业用途。禁止出售 AutoRetainer，亦禁止出售借助 AutoRetainer 生产的产品。此外，若将 AutoRetainer 与第三方软件配合使用，你必须确保这种用法不违反相关第三方软件的使用条款。如发现你违反了上述准则，将不会获得支持。

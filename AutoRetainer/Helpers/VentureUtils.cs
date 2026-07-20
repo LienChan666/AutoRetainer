@@ -24,8 +24,8 @@ internal static unsafe class VentureUtils
         {
             if(adata.VenturePlan.ListUnwrapped.Count > 500)
             {
-                ImGuiEx.Text($"The venture list is too large to show preview.");
-                ImGuiEx.Text($"Progress: {adata.VenturePlanIndex}/{adata.VenturePlan.ListUnwrapped.Count}");
+                ImGuiEx.Text($"探险列表过大，无法显示预览。");
+                ImGuiEx.Text($"进度：{adata.VenturePlanIndex}/{adata.VenturePlan.ListUnwrapped.Count}");
                 return;
             }
             List<(Vector4? col, string str)> strings = [];
@@ -49,13 +49,13 @@ internal static unsafe class VentureUtils
             }
             var min = Math.Max(focus - 8, 0);
             var max = Math.Min(focus + 10, strings.Count);
-            if(min != 0) ImGuiEx.Text($"... {min} more ...");
+            if(min != 0) ImGuiEx.Text($"... 另有 {min} 项 ...");
             for(var i = min; i < max; i++)
             {
                 var s = strings[i];
                 ImGuiEx.Text(s.col, s.str);
             }
-            if(max != strings.Count) ImGuiEx.Text($"... {strings.Count - max} more ...");
+            if(max != strings.Count) ImGuiEx.Text($"... 另有 {strings.Count - max} 项 ...");
         }
         catch(Exception e)
         {
@@ -70,56 +70,56 @@ internal static unsafe class VentureUtils
             var adj = VentureUtils.GetAdjustedRetainerTask(next, (Job)ret.ClassJob);
             if(adj != next)
             {
-                DebugLog($"Adjusted venture ID {next}->{adj}");
+                DebugLog($"已调整探险 ID：{next}->{adj}");
                 next = adj;
             }
         }
-        DebugLog($"Not completed or restarting");
+        DebugLog($"尚未完成或正在重新开始");
         if(ret.VentureID != 0)
         {
-            DebugLog($"Venture id is not zero, next={next}, ventureID={ret.VentureID}");
+            DebugLog($"探险 ID 不为零，下一项={next}，当前探险 ID={ret.VentureID}");
             if(next == ret.VentureID)
             {
-                DebugLog($"Reassigning");
+                DebugLog($"正在重新委托");
                 TaskReassignVenture.Enqueue();
             }
             else
             {
-                DebugLog($"Collecting");
+                DebugLog($"正在领取探险结果");
                 TaskCollectVenture.Enqueue();
                 if(VentureUtils.GetVentureById(next).IsFieldExploration())
                 {
-                    DebugLog($"Assigning field exploration: {next}");
+                    DebugLog($"正在委托雇员执行探索委托：{next}");
                     TaskAssignFieldExploration.Enqueue(next);
                 }
                 else if(VentureUtils.GetVentureById(next).IsQuickExploration())
                 {
-                    DebugLog($"Assigning quick: {next}");
+                    DebugLog($"正在委托雇员执行自由探索委托：{next}");
                     TaskAssignQuickVenture.Enqueue();
                 }
                 else
                 {
-                    DebugLog($"Assigning hunt: {next}");
+                    DebugLog($"正在委托雇员执行筹集委托：{next}");
                     TaskAssignHuntingVenture.Enqueue(next);
                 }
             }
         }
         else
         {
-            DebugLog($"Venture not assigned");
+            DebugLog($"当前没有进行中的探险");
             if(VentureUtils.GetVentureById(next).IsFieldExploration())
             {
-                DebugLog($"Assigning field exploration: {next}");
+                DebugLog($"正在委托雇员执行探索委托：{next}");
                 TaskAssignFieldExploration.Enqueue(next);
             }
             else if(VentureUtils.GetVentureById(next).IsQuickExploration())
             {
-                DebugLog($"Assigning quick: {next}");
+                DebugLog($"正在委托雇员执行自由探索委托：{next}");
                 TaskAssignQuickVenture.Enqueue();
             }
             else
             {
-                DebugLog($"Assigning hunt: {next}");
+                DebugLog($"正在委托雇员执行筹集委托：{next}");
                 TaskAssignHuntingVenture.Enqueue(next);
             }
         }
@@ -301,7 +301,6 @@ internal static unsafe class VentureUtils
         }
         else
         {
-            //PluginLog.Information($"{Task.GetVentureName()}, {Task.RequiredItemLevel} > {adata.Ilvl}, {Task.RequiredGathering} > {adata.Gathering}");
             if(Task.RequiredItemLevel > 0 && adata.Ilvl > -1)
             {
                 Available = Task.RequiredItemLevel <= adata.Ilvl;
@@ -372,18 +371,18 @@ internal static unsafe class VentureUtils
 
     internal static string GetHuntingVentureName(uint ClassJob)
     {
-        if(ClassJob == (int)Job.BTN) return Lang.HuntingVentureNames[2][..^1];
-        if(ClassJob == (int)Job.MIN) return Lang.HuntingVentureNames[1][..^1];
-        if(ClassJob == (int)Job.FSH) return Lang.HuntingVentureNames[3][..^1];
-        return Lang.HuntingVentureNames[0][..^1];
+        if(ClassJob == (int)Job.BTN) return "采伐筹集委托";
+        if(ClassJob == (int)Job.MIN) return "采矿筹集委托";
+        if(ClassJob == (int)Job.FSH) return "捕鱼筹集委托";
+        return "狩猎筹集委托";
     }
 
     internal static string GetFieldExVentureName(uint ClassJob)
     {
-        if(ClassJob == (int)Job.BTN) return Lang.FieldExplorationNames[2][..^1];
-        if(ClassJob == (int)Job.MIN) return Lang.FieldExplorationNames[1][..^1];
-        if(ClassJob == (int)Job.FSH) return Lang.FieldExplorationNames[3][..^1];
-        return Lang.FieldExplorationNames[0][..^1];
+        if(ClassJob == (int)Job.BTN) return "森林探索委托";
+        if(ClassJob == (int)Job.MIN) return "山岳探索委托";
+        if(ClassJob == (int)Job.FSH) return "水岸探索委托";
+        return "平地探索委托";
     }
 
     internal static bool IsDoL(uint ClassJob)

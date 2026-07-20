@@ -22,10 +22,10 @@ public unsafe static class TaskRecursiveItemDiscard
             if(Utils.InventoryContainsDiscardableItems())
             {
                 P.TaskManager.InsertMulti(
-                    new(() => !Svc.Condition[ConditionFlag.OccupiedInQuestEvent], "Wait until not occupied"),
+                    new(() => !Svc.Condition[ConditionFlag.OccupiedInQuestEvent], "等待不再处于忙碌状态"),
                     new(RecursivelyDiscardItems));
             }
-        }, $"{nameof(TaskRecursiveItemDiscard)} master task");
+        }, $"{nameof(TaskRecursiveItemDiscard)} 主任务");
     }
 
     private static bool RecursivelyDiscardItems()

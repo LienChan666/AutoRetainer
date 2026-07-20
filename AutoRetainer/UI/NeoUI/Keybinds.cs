@@ -1,22 +1,22 @@
 ﻿namespace AutoRetainer.UI.NeoUI;
 public class Keybinds : NeoUIEntry
 {
-    public override string Path => "Keybinds";
+    public override string Path => "快捷键";
 
     public override NuiBuilder Builder { get; init; } = new NuiBuilder()
-        .Section("Access summoning bell/workshop panel keybinds")
-        .Widget("Temporarily prevents AutoRetainer from being automatically enabled when using a Summoning Bell/Workshop Panel", (x) =>
+        .Section("传唤铃/航行管制面板快捷键")
+        .Widget("临时阻止在使用传唤铃/航行管制面板时自动启用 AutoRetainer", (x) =>
         {
             UIUtils.DrawKeybind(x, ref C.Suppress);
         })
-        .Widget("Temporarily set the Collect Operation mode, preventing ventures from being assigned for the current cycle/Temporarily set Deployables mode to Finalize only", (x) =>
+        .Widget("临时切换为“仅领取”模式（当前轮次不委托或重新委托探险）/临时将“远航探索”模式设为仅结算奖励", (x) =>
         {
             UIUtils.DrawKeybind(x, ref C.TempCollectB);
         })
 
-        .Section("Quick Retainer Action")
-        .Widget("Sell Item", (x) => UIUtils.QRA(x, ref C.SellKey))
-        .Widget("Entrust Item", (x) => UIUtils.QRA(x, ref C.EntrustKey))
-        .Widget("Retrieve Item", (x) => UIUtils.QRA(x, ref C.RetrieveKey))
-        .Widget("Put up For Sale", (x) => UIUtils.QRA(x, ref C.SellMarketKey));
+        .Section("雇员快速操作")
+        .Widget("出售", (x) => UIUtils.QRA(x, ref C.SellKey))
+        .Widget("交给雇员保管", (x) => UIUtils.QRA(x, ref C.EntrustKey))
+        .Widget("从雇员处取回", (x) => UIUtils.QRA(x, ref C.RetrieveKey))
+        .Widget("到市场出售", (x) => UIUtils.QRA(x, ref C.SellMarketKey));
 }

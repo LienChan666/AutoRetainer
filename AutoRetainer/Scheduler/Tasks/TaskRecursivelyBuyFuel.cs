@@ -55,7 +55,7 @@ public unsafe class TaskRecursivelyBuyFuel
         }, new(timeLimitMS: 1000 * 60 * 10));
         if(ignoreMax)
         {
-            P.TaskManager.Enqueue(() => Utils.TryNotify("Finished purchasing Ceruleum Tanks"));
+            P.TaskManager.Enqueue(() => Utils.TryNotify("桶装青磷水购买完成"));
         }
     }
 

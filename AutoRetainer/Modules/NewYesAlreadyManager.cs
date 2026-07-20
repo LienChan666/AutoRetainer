@@ -16,7 +16,7 @@ internal static class NewYesAlreadyManager
             {
                 WasChanged = false;
                 Unlock();
-                DebugLog($"YesAlready unlocked");
+                DebugLog($"已解锁 YesAlready。");
             }
         }
         else
@@ -25,7 +25,7 @@ internal static class NewYesAlreadyManager
             {
                 WasChanged = true;
                 Lock();
-                DebugLog($"YesAlready locked");
+                DebugLog($"已锁定 YesAlready。");
             }
         }
     }

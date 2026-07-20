@@ -10,7 +10,7 @@ internal static unsafe class HouseEnterTask
 {
     internal static bool? Approach()
     {
-        DebugLog($"Enabling automove");
+        DebugLog($"正在启用自动移动");
         Utils.RegenerateRandom();
         Chat.ExecuteCommand("/automove on");
         return true;
@@ -27,7 +27,7 @@ internal static unsafe class HouseEnterTask
         {
             if(IsAddonReady(addon) && EzThrottler.Throttle("HET.SelectYesno"))
             {
-                DebugLog("Select yes");
+                DebugLog("选择“是”");
                 new AddonMaster.SelectYesno((nint)addon).Yes();
                 return true;
             }
@@ -36,7 +36,7 @@ internal static unsafe class HouseEnterTask
         {
             if(Utils.TrySelectSpecificEntry(Lang.GoToYourApartment, () => EzThrottler.Throttle("HET.SelectYesno")))
             {
-                DebugLog("Confirmed going to apartment");
+                DebugLog("已确认前往公寓");
                 return true;
             }
         }
@@ -65,7 +65,7 @@ internal static unsafe class HouseEnterTask
             {
                 if(EzThrottler.Throttle("HET.SetTargetBell", 200))
                 {
-                    DebugLog($"Setting bell target ({bell})");
+                    DebugLog($"正在设置传唤铃目标（{bell}）");
                     Svc.Targets.Target = bell;
                 }
             }
@@ -77,10 +77,10 @@ internal static unsafe class HouseEnterTask
     internal static bool? AutorunOffBell()
     {
         var bell = Utils.GetReachableRetainerBell(false);
-        if(bell != null) PluginLog.Information($"Dist {Vector3.Distance(Player.Object.Position, bell.Position)}");
+        if(bell != null) PluginLog.Information($"距离：{Vector3.Distance(Player.Object.Position, bell.Position)}");
         if(bell != null && Vector3.Distance(Player.Object.Position, bell.Position) < 4f + Utils.Random * 0.25f)
         {
-            DebugLog($"Disabling automove");
+            DebugLog($"正在禁用自动移动");
             Chat.ExecuteCommand("/automove off");
             return true;
         }

@@ -7,7 +7,7 @@ internal static unsafe class TaskDeployAndSkipCutscene
 {
     internal static void Enqueue(bool validate = false)
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskDeployAndSkipCutscene)} validate={validate}");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskDeployAndSkipCutscene)}，验证={validate}");
         if(validate) P.TaskManager.Enqueue(ValidateDeployment);
         P.TaskManager.Enqueue(VoyageScheduler.DeployVessel);
         P.TaskManager.Enqueue(VoyageScheduler.WaitForCutscene);

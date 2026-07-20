@@ -6,7 +6,7 @@ namespace AutoRetainer.Helpers;
 
 internal static unsafe class ItemLevel
 {
-    //Parts of this code is authored by Caraxi https://github.com/Caraxi/SimpleTweaksPlugin/blob/main/Tweaks/UiAdjustment/ExamineItemLevel.cs
+    // 部分代码由 Caraxi 编写：https://github.com/Caraxi/SimpleTweaksPlugin/blob/main/Tweaks/UiAdjustment/ExamineItemLevel.cs
 
     private static readonly uint[] canHaveOffhand = [2, 6, 8, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32];
     private static readonly uint[] ignoreCategory = [105];

@@ -16,7 +16,7 @@ public unsafe sealed class DataMigrator
     void MigrateInventoryManagement()
     {
         if(C.IMMigrated) return;
-        PluginLog.Warning($"Starting inventory management settings migration");
+        PluginLog.Warning($"开始迁移背包管理设置");
         C.DefaultIMSettings.IMEnableCofferAutoOpen = C.IMEnableCofferAutoOpen;
         C.DefaultIMSettings.IMEnableAutoVendor = C.IMEnableAutoVendor;
         C.DefaultIMSettings.IMEnableContextMenu = C.IMEnableContextMenu;

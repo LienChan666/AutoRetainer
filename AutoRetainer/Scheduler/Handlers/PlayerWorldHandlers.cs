@@ -18,7 +18,7 @@ internal static unsafe class PlayerWorldHandlers
                 if(Utils.GenericThrottle)
                 {
                     Svc.Targets.SetTarget(x);
-                    DebugLog($"Set target to {x}");
+                    DebugLog($"已将目标设置为 {x}");
                     return true;
                 }
             }
@@ -37,7 +37,7 @@ internal static unsafe class PlayerWorldHandlers
                 if(Utils.GenericThrottle && EzThrottler.Throttle("InteractWithBell", 5000))
                 {
                     TargetSystem.Instance()->InteractWithObject((GameObject*)x.Address, false);
-                    DebugLog($"Interacted with {x}");
+                    DebugLog($"已与 {x} 交互");
                     return true;
                 }
             }

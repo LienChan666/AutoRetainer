@@ -11,13 +11,13 @@ public sealed class GilDisplayManager
     public void Draw()
     {
         ImGuiEx.SetNextItemWidthScaled(200f);
-        ImGui.InputInt("Ignore characters/retainers with gil less than", ref C.MinGilDisplay.ValidateRange(0, int.MaxValue));
-        ImGuiComponents.HelpMarker($"Ignored retainer gil still contributes to character/DC total. Character is ignored if their gil AND all retainers' gil is less than this value. Ignored characters do not contribute to DC total.");
+        ImGui.InputInt("忽略金币低于该值的角色/雇员", ref C.MinGilDisplay.ValidateRange(0, int.MaxValue));
+        ImGuiComponents.HelpMarker($"被忽略雇员的金币仍会计入角色/大区总计。仅当角色金币与其全部雇员金币都低于该值时，角色才会被忽略；被忽略角色不计入大区总计。");
         ref var filter = ref Ref<string>.Get();
-        ImGui.Checkbox("Only display character total", ref C.GilOnlyChars);
+        ImGui.Checkbox("仅显示角色总计", ref C.GilOnlyChars);
         ImGui.SameLine();
         ImGuiEx.SetNextItemFullWidth();
-        ImGui.InputTextWithHint("##fltr", "Filter...", ref filter, 50);
+        ImGui.InputTextWithHint("##fltr", "筛选...", ref filter, 50);
         Dictionary<ExcelWorldHelper.Region, List<OfflineCharacterData>> data = [];
         foreach(var x in C.OfflineData)
         {
@@ -33,7 +33,7 @@ public sealed class GilDisplayManager
         var globalTotal = 0L;
         foreach(var x in data)
         {
-            ImGuiEx.Text($"{x.Key}:");
+            ImGuiEx.Text($"{Lang.RegionName(x.Key)}：");
             var dcTotal = 0L;
             foreach(var c in x.Value)
             {
@@ -54,21 +54,21 @@ public sealed class GilDisplayManager
                 {
                     if(!C.GilOnlyChars)
                     {
-                        ImGuiEx.Text($"    {Censor.Character(c.Name, c.World)}: {c.Gil:N0}");
+                        ImGuiEx.Text($"    {Censor.Character(c.Name, c.World)}：{c.Gil:N0}");
                         foreach(var r in c.RetainerData)
                         {
                             if(r.Gil > C.MinGilDisplay)
                             {
-                                ImGuiEx.Text($"        {Censor.Retainer(r.Name)}: {r.Gil:N0}");
+                                ImGuiEx.Text($"        {Censor.Retainer(r.Name)}：{r.Gil:N0}");
                             }
                         }
                         if(fcdata != null && fcdata.Gil > 0)
                         {
-                            ImGuiEx.Text(ImGuiColors.DalamudYellow, $"        Free Company {fcdata.Name}: {fcdata.Gil:N0}");
+                            ImGuiEx.Text(ImGuiColors.DalamudYellow, $"        部队 {fcdata.Name}：{fcdata.Gil:N0}");
                         }
                     }
-                    ImGuiEx.Text(ImGuiColors.DalamudViolet, $"    {Censor.Character(c.Name, c.World)}{(fcdata != null && fcdata.Gil > 0 ? "+FC" : "")} total: {charTotal:N0}");
-                    if(ImGuiEx.HoveredAndClicked("Click to relog"))
+                    ImGuiEx.Text(ImGuiColors.DalamudViolet, $"    {Censor.Character(c.Name, c.World)}{(fcdata != null && fcdata.Gil > 0 ? "+部队" : "")} 总计：{charTotal:N0}");
+                    if(ImGuiEx.HoveredAndClicked("点击重新登录"))
                     {
                         if(!MultiMode.Relog(c, out var error, Internal.RelogReason.Command))
                         {
@@ -79,11 +79,11 @@ public sealed class GilDisplayManager
                     ImGui.Separator();
                 }
             }
-            ImGuiEx.Text(ImGuiColors.DalamudOrange, $"Data center total ({x.Key}): {dcTotal:N0}");
+            ImGuiEx.Text(ImGuiColors.DalamudOrange, $"大区总计（{Lang.RegionName(x.Key)}）：{dcTotal:N0}");
             globalTotal += dcTotal;
             ImGui.Separator();
             ImGui.Separator();
         }
-        ImGuiEx.Text(ImGuiColors.DalamudOrange, $"Overall total: {globalTotal:N0}");
+        ImGuiEx.Text(ImGuiColors.DalamudOrange, $"全局总计：{globalTotal:N0}");
     }
 }

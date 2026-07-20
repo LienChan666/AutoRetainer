@@ -10,7 +10,7 @@ internal static unsafe class TaskRedeployPreviousLog
 {
     internal static void Enqueue(string name, VoyageType type)
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskRedeployPreviousLog)}");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskRedeployPreviousLog)}");
         TaskIntelligentRepair.Enqueue(name, type);
         P.TaskManager.Enqueue(VoyageScheduler.SelectViewPreviousLog);
         P.TaskManager.Enqueue(VoyageScheduler.WaitUntilFinalizeDeployAddonExists);
@@ -35,7 +35,7 @@ internal static unsafe class TaskRedeployPreviousLog
                     if(req > have)
                     {
                         P.TaskManager.Abort();
-                        DuoLog.Warning($"[Voyage] You are out of fuel!");
+                        DuoLog.Warning($"[远航探索] 桶装青磷水不足！");
                         if(C.FailureNoFuel == WorkshopFailAction.ExcludeChar)
                         {
                             Data.WorkshopEnabled = false;

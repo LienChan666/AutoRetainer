@@ -3,10 +3,10 @@
 	url = https://github.com/PunishXIV/PunishLib
 [submodule "ECommons"]
 	path = ECommons
-	url = https://github.com/NightmareXIV/ECommons
+	url = https://github.com/LienChan666/ECommons
 [submodule "AutoRetainerAPI"]
 	path = AutoRetainerAPI
-	url = https://github.com/PunishXIV/AutoRetainerAPI
+	url = https://github.com/LienChan666/AutoRetainerAPI
 [submodule "NightmareUI"]
 	path = NightmareUI
 	url = https://github.com/NightmareXIV/NightmareUI

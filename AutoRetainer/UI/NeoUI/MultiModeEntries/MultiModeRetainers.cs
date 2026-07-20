@@ -1,17 +1,17 @@
 ﻿namespace AutoRetainer.UI.NeoUI.MultiModeEntries;
 public class MultiModeRetainers : NeoUIEntry
 {
-    public override string Path => "Multi Mode/Retainers";
+    public override string Path => "多角色模式/雇员";
 
     public override NuiBuilder Builder { get; init; } = new NuiBuilder()
-        .Section("Multi Mode - Retainers")
-        .Checkbox("Wait For Venture Completion", () => ref C.MultiModeRetainerConfiguration.MultiWaitForAll, "AutoRetainer will wait for all retainers to return before cycling to the next character in multi mode operation.")
-        .DragInt(60f, "Advance Relog Threshold", () => ref C.MultiModeRetainerConfiguration.AdvanceTimer.ValidateRange(0, 300), 0.1f, 0, 300)
-        .SliderInt(100f, "Minimum inventory slots to continue operation", () => ref C.MultiMinInventorySlots.ValidateRange(2, 9999), 2, 30)
-        .Checkbox("Synchronise Retainers (one time)", () => ref MultiMode.Synchronize, "AutoRetainer will wait until all enabled retainers have completed their ventures. After that this setting will be disabled automatically and all characters will be processed.")
-        .Checkbox($"Enforce Full Character Rotation", () => ref C.CharEqualize, "Recommended for users with > 15 characters, forces multi mode to make sure ventures are processed on all characters in order before returning to the beginning of the cycle.")
+        .Section("多角色模式 - 雇员")
+        .Checkbox("等待探险完成", () => ref C.MultiModeRetainerConfiguration.MultiWaitForAll, "多角色模式下，AutoRetainer 会等待全部雇员探险返回后再切换到下一个角色。")
+        .DragInt(60f, "提前重登阈值（秒）", () => ref C.MultiModeRetainerConfiguration.AdvanceTimer.ValidateRange(0, 300), 0.1f, 0, 300)
+        .SliderInt(100f, "继续运行所需最小背包空位", () => ref C.MultiMinInventorySlots.ValidateRange(2, 9999), 2, 30)
+        .Checkbox("同步雇员（一次）", () => ref MultiMode.Synchronize, "AutoRetainer 会等待所有已启用雇员完成探险。完成后该设置会自动关闭，并继续处理全部角色。")
+        .Checkbox($"强制完整角色轮换", () => ref C.CharEqualize, "推荐拥有 15 个以上角色的用户启用。会强制多角色模式按顺序处理完所有角色后再回到循环起点。")
         .Indent()
-        .Checkbox("Order characters by venture completion time", () => ref C.LongestVentureFirst, "Characters that have completed ventures longer time ago will be checked first")
-        .Checkbox("Order characters by retainer level and cap", () => ref C.CappedLevelsLast, "Characters with retainers that can be levelled up will be done first; then, characters with retainers at max level; and then characters with retainers less than max level and level capped.")
+        .Checkbox("按探险完成时间排序角色", () => ref C.LongestVentureFirst, "探险完成时间更久的角色会优先检查。")
+        .Checkbox("按雇员等级与等级封顶状态排序角色", () => ref C.CappedLevelsLast, "优先处理有可升级雇员的角色；其次是雇员已满级角色；最后是未满级但受等级上限限制的角色。")
         .Unindent();
 }

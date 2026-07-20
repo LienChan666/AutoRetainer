@@ -1,11 +1,11 @@
 ﻿{
-  "Author": "NightmareXIV, kawaii",
+  "Author": "NightmareXIV, kawaii, KindSheep（国服汉化）",
   "Name": "AutoRetainer",
   "InternalName": "AutoRetainer",
-  "Punchline": "Collect and assign ventures to your retainers from the comfort of your bed.",
-  "Description": "Collect and assign ventures to your retainers from the comfort of your bed.",
+  "Punchline": "轻松领取并委托雇员进行探险。",
+  "Description": "轻松领取并委托雇员进行探险。",
   "ApplicableVersion": "any",
-  "RepoUrl": "https://github.com/PunishXIV/AutoRetainer",
+  "RepoUrl": "https://github.com/LienChan666/AutoRetainer",
   "DalamudApiLevel": 15,
   "LoadPriority": 0,
   "IconUrl": "https://s3.puni.sh/media/plugin/24/icon-drb6aywk5m9.png"

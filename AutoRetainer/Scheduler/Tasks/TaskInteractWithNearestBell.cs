@@ -28,7 +28,7 @@ internal static unsafe class TaskInteractWithNearestBell
         P.TaskManager.Enqueue(PlayerWorldHandlers.SelectNearestBell);
         if(interact)
         {
-            P.TaskManager.Enqueue(() => { P.IsInteractionAutomatic = true; }, "Mark interaction as automatic");
+            P.TaskManager.Enqueue(() => { P.IsInteractionAutomatic = true; }, "将互动标记为自动");
             P.TaskManager.Enqueue(PlayerWorldHandlers.InteractWithTargetedBell);
         }
     }

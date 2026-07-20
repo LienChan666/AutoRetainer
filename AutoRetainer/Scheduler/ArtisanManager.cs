@@ -29,7 +29,7 @@ internal static class ArtisanManager
                         if(!SchedulerMain.PluginEnabled || SchedulerMain.Reason != PluginEnableReason.Artisan)
                         {
                             SchedulerMain.EnablePlugin(PluginEnableReason.Artisan);
-                            DebugLog($"Enabling AutoRetainer because of Artisan integration");
+                            DebugLog($"因 Artisan 联动而启用 AutoRetainer");
                         }
                     }
                 }

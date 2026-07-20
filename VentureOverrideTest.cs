@@ -26,7 +26,7 @@ namespace AutoRetainer
 
         void OnRetainerSend(string name)
         {
-            DuoLog.Information($"{name} is about to be sent to venture!");
+            DuoLog.Information($"雇员 {name} 即将被派去执行探险委托！");
             var randomVenture = (uint)new Random().Next(1, 27);
             Svc.PluginInterface.GetIpcSubscriber<uint, object>("AutoRetainer.SetVenture").InvokeAction(randomVenture);
         }

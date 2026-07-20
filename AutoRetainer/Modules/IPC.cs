@@ -17,7 +17,7 @@ internal static class IPC
 
     internal static void Init()
     {
-        Log("IPC init");
+        Log("IPC 初始化");
         Svc.PluginInterface.GetIpcProvider<object>("AutoRetainer.Init").RegisterAction(() => { });
         Svc.PluginInterface.GetIpcProvider<bool>("AutoRetainer.GetSuppressed").RegisterFunc(GetSuppressed);
         Svc.PluginInterface.GetIpcProvider<bool, object>("AutoRetainer.SetSuppressed").RegisterAction(SetSuppressed);
@@ -44,7 +44,7 @@ internal static class IPC
 
     internal static void Shutdown()
     {
-        Log("IPC Shutdown");
+        Log("IPC 关闭");
         Svc.PluginInterface.GetIpcProvider<object>("AutoRetainer.Init").UnregisterAction();
         Svc.PluginInterface.GetIpcProvider<bool>("AutoRetainer.GetSuppressed").UnregisterFunc();
         Svc.PluginInterface.GetIpcProvider<bool, object>("AutoRetainer.SetSuppressed").UnregisterAction();
@@ -65,13 +65,13 @@ internal static class IPC
 
     private static void FinishRetainerPostprocessRequest()
     {
-        Log("Received retainer postprocess request finish");
+        Log("已收到雇员后处理完成请求");
         SchedulerMain.RetainerPostProcessLocked = false;
     }
 
     private static void FinishCharacterPostprocessRequest()
     {
-        Log("Received character postprocess request finish");
+        Log("已收到角色后处理完成请求");
         SchedulerMain.CharacterPostProcessLocked = false;
     }
 
@@ -79,20 +79,20 @@ internal static class IPC
     {
         if(SchedulerMain.RetainerPostprocess.Contains(pluginName))
         {
-            throw new Exception($"Retainer Postprocess request from {pluginName} already exist");
+            throw new Exception($"来自 {pluginName} 的雇员后处理请求已存在");
         }
         SchedulerMain.RetainerPostprocess = SchedulerMain.RetainerPostprocess.Add(pluginName);
-        Log($"Retainer Postprocess requested from {pluginName}");
+        Log($"插件 {pluginName} 请求雇员后处理");
     }
 
     private static void RequestCharacterPostprocess(string pluginName)
     {
         if(SchedulerMain.CharacterPostprocess.Contains(pluginName))
         {
-            throw new Exception($"Character Postprocess request from {pluginName} already exist");
+            throw new Exception($"来自 {pluginName} 的角色后处理请求已存在");
         }
         SchedulerMain.CharacterPostprocess = SchedulerMain.CharacterPostprocess.Add(pluginName);
-        Log($"Character Postprocess requested from {pluginName}");
+        Log($"插件 {pluginName} 请求角色后处理");
     }
 
     private static List<ulong> GetRegisteredCIDs()
@@ -110,14 +110,13 @@ internal static class IPC
         var index = C.OfflineData.IndexOf(x => x.CID == OCD.CID);
         if(index != -1)
         {
-            //C.OfflineData[index] = OCD;
             var data = C.OfflineData[index];
             foreach(var field in OCD.GetType().GetFields(BindingFlags.Public | BindingFlags.Instance))
             {
                 if(data.GetFoP(field.Name) != null)
                 {
                     data.SetFoP(field.Name, field.GetValue(OCD));
-                    PluginLog.Verbose($"Setting {field.Name} to {field.GetValue(data)}");
+                    PluginLog.Verbose($"正在将 {field.Name} 设置为 {field.GetValue(data)}");
                 }
             }
         }
@@ -140,7 +139,7 @@ internal static class IPC
             if(x.GetFoP(field.Name) != null)
             {
                 x.SetFoP(field.Name, field.GetValue(data));
-                PluginLog.Verbose($"Setting {field.Name} to {field.GetValue(data)}");
+                PluginLog.Verbose($"正在将 {field.Name} 设置为 {field.GetValue(data)}");
             }
         }
     }
@@ -148,7 +147,7 @@ internal static class IPC
     private static void SetVenture(uint VentureID)
     {
         SchedulerMain.VentureOverride = VentureID;
-        DebugLog($"Received venture override to {VentureID} / {VentureUtils.GetVentureName(VentureID)} via IPC");
+        DebugLog($"已通过 IPC 收到探险委托覆盖：{VentureID} / {VentureUtils.GetVentureName(VentureID)}");
     }
 
     private static bool GetSuppressed()
@@ -174,31 +173,31 @@ internal static class IPC
 
     internal static void FireSendRetainerToVentureEvent(string retainer)
     {
-        Log($"Firing FireSendRetainerToVentureEvent for {retainer}");
+        Log($"正在为雇员 {retainer} 触发 FireSendRetainerToVentureEvent");
         Svc.PluginInterface.GetIpcProvider<string, object>(ApiConsts.OnSendRetainerToVenture).SendMessage(retainer);
     }
 
     internal static void FireRetainerPostprocessTaskRequestEvent(string retainer)
     {
-        Log($"Firing FireRetainerPostprocessTaskRequestEvent for {retainer}");
+        Log($"正在为雇员 {retainer} 触发 FireRetainerPostprocessTaskRequestEvent");
         Svc.PluginInterface.GetIpcProvider<string, object>(ApiConsts.OnRetainerAdditionalTask).SendMessage(retainer);
     }
 
     internal static void FireRetainerPostprocessEvent(string pluginName, string retainer)
     {
-        Log($"Firing FireRetainerPostprocessEvent for {retainer} for plugin {pluginName}");
+        Log($"正在为雇员 {retainer}、插件 {pluginName} 触发 FireRetainerPostprocessEvent");
         Svc.PluginInterface.GetIpcProvider<string, string, object>(ApiConsts.OnRetainerReadyForPostprocess).SendMessage(pluginName, retainer);
     }
 
     internal static void FireCharacterPostprocessTaskRequestEvent()
     {
-        Log($"Firing FireCharacterPostprocessTaskRequestEvent");
+        Log("正在触发 FireCharacterPostprocessTaskRequestEvent");
         Svc.PluginInterface.GetIpcProvider<object>(ApiConsts.OnCharacterAdditionalTask).SendMessage();
     }
 
     internal static void FireCharacterPostprocessEvent(string pluginName)
     {
-        Log($"Firing FireCharacterPostprocessEvent for plugin {pluginName}");
+        Log($"正在为插件 {pluginName} 触发 FireCharacterPostprocessEvent");
         Svc.PluginInterface.GetIpcProvider<string, object>(ApiConsts.OnCharacterReadyForPostprocess).SendMessage(pluginName);
     }
 }

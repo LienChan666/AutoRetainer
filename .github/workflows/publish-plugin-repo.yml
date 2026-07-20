@@ -1,0 +1,166 @@
+name: Build and Publish Plugin
+
+on:
+  push:
+    branches:
+      - master
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-and-publish-plugin
+  cancel-in-progress: false
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    env:
+      PLUGIN_NAME: AutoRetainer
+      PUBLISH_REPOSITORY: LienChan666/DalamudPlugins
+      PUBLISH_BRANCH: master
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Prepare Dalamud libraries
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/dalamud
+          curl -L --retry 3 --fail -o /tmp/dalamud.zip https://goatcorp.github.io/dalamud-distrib/latest.zip
+          python3 - <<'PY'
+          import zipfile
+
+          zipfile.ZipFile("/tmp/dalamud.zip").extractall("/tmp/dalamud")
+          PY
+
+      - name: Build plugin
+        env:
+          CI: true
+          DALAMUD_HOME: /tmp/dalamud
+        run: dotnet build AutoRetainer/AutoRetainer.csproj -c Release -p:EnableWindowsTargeting=true
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v6
+        with:
+          name: AutoRetainer-${{ github.sha }}
+          path: |
+            AutoRetainer/bin/Release/AutoRetainer/latest.zip
+            AutoRetainer/bin/Release/AutoRetainer/AutoRetainer.json
+          if-no-files-found: error
+
+      - name: Checkout plugin repository
+        uses: actions/checkout@v6
+        with:
+          repository: ${{ env.PUBLISH_REPOSITORY }}
+          ref: ${{ env.PUBLISH_BRANCH }}
+          token: ${{ secrets.DALAMUD_PLUGINS_PAT }}
+          path: publish-repo
+
+      - name: Update plugin repository
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "publish-repo/${PLUGIN_NAME}"
+          cp AutoRetainer/bin/Release/AutoRetainer/AutoRetainer.json "publish-repo/${PLUGIN_NAME}/AutoRetainer.json"
+
+          python3 - <<'PY'
+          import json
+          import os
+          import pathlib
+          import re
+          import shutil
+
+          root = pathlib.Path(".")
+          plugin_name = os.environ["PLUGIN_NAME"]
+          publish_repository = os.environ["PUBLISH_REPOSITORY"]
+          publish_branch = os.environ["PUBLISH_BRANCH"]
+
+          csproj = (root / "AutoRetainer" / "AutoRetainer.csproj").read_text(encoding="utf-8")
+          version_match = re.search(r"<Version>([^<]+)</Version>", csproj)
+          if version_match is None:
+              raise SystemExit("Version not found in AutoRetainer.csproj")
+          version = version_match.group(1)
+          if re.fullmatch(r"\d+\.\d+\.\d+\.\d+", version) is None:
+              raise SystemExit(f"Unsupported plugin version: {version}")
+
+          artifact_name = f"{plugin_name}-{version}.zip"
+          shutil.copy2(
+              root / "AutoRetainer" / "bin" / "Release" / "AutoRetainer" / "latest.zip",
+              root / "publish-repo" / plugin_name / artifact_name,
+          )
+
+          source_manifest = json.loads(
+              (root / "AutoRetainer" / "AutoRetainer.json").read_text(encoding="utf-8-sig")
+          )
+          template_payload = json.loads(
+              (root / "repo" / "pluginmaster.json").read_text(encoding="utf-8")
+          )
+          template = next(
+              (entry for entry in template_payload if entry.get("InternalName") == plugin_name),
+              None,
+          )
+          if template is None:
+              raise SystemExit(f"{plugin_name} entry not found in repo/pluginmaster.json")
+
+          pluginmaster_path = root / "publish-repo" / "pluginmaster.json"
+          payload = json.loads(pluginmaster_path.read_text(encoding="utf-8"))
+          if not isinstance(payload, list):
+              raise SystemExit("publish-repo/pluginmaster.json must be a JSON array")
+
+          plugin = next(
+              (entry for entry in payload if entry.get("InternalName") == plugin_name),
+              None,
+          )
+          if plugin is None:
+              plugin = {}
+              payload.append(plugin)
+
+          plugin.clear()
+          plugin.update(template)
+          plugin["AssemblyVersion"] = version
+          plugin["TestingAssemblyVersion"] = version
+          plugin["DalamudApiLevel"] = source_manifest["DalamudApiLevel"]
+          plugin["RepoUrl"] = source_manifest["RepoUrl"]
+          download_link = (
+              f"https://raw.githubusercontent.com/{publish_repository}/"
+              f"refs/heads/{publish_branch}/{plugin_name}/{artifact_name}"
+          )
+          plugin["DownloadLinkInstall"] = download_link
+          plugin["DownloadLinkTesting"] = download_link
+          plugin["DownloadLinkUpdate"] = download_link
+
+          pluginmaster_path.write_text(
+              json.dumps(payload, ensure_ascii=False, indent=2) + "\n",
+              encoding="utf-8",
+          )
+          PY
+
+          python3 -m json.tool publish-repo/pluginmaster.json > /dev/null
+          python3 -m json.tool "publish-repo/${PLUGIN_NAME}/AutoRetainer.json" > /dev/null
+
+      - name: Commit and push plugin artifacts
+        shell: bash
+        run: |
+          set -euo pipefail
+          cd publish-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pluginmaster.json "${PLUGIN_NAME}/AutoRetainer.json" "${PLUGIN_NAME}"/*.zip
+          if git diff --cached --quiet; then
+            echo "No plugin artifact changes detected."
+            exit 0
+          fi
+          git commit -m "chore: publish AutoRetainer artifacts [skip ci]"
+          git push origin "HEAD:${PUBLISH_BRANCH}"

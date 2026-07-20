@@ -22,22 +22,22 @@ public static unsafe class TaskDeliverItems
         var gcInfo = GCContinuation.GetFullGCInfo();
         if(gcInfo == null)
         {
-            Notify.Error("Not employed by a Grand Company");
+            Notify.Error("当前角色尚未加入大国防联军");
             return false;
         }
         if(Data.GCDeliveryType == AutoRetainerAPI.Configuration.GCDeliveryType.Disabled)
         {
-            Notify.Error("Can not enqueue GC delivery as it is disabled for current character");
+            Notify.Error("当前角色已禁用筹备稀有品，无法加入任务队列");
             return false;
         }
         if(Lifestream.IsBusy())
         {
-            Notify.Error("Lifestream is busy");
+            Notify.Error("Lifestream 正忙");
             return false;
         }
         if(!force && Utils.IsBusy)
         {
-            Notify.Error("AutoRetainer is busy");
+            Notify.Error("AutoRetainer 正忙");
             return false;
         }
         P.TaskManager.Enqueue(() =>
@@ -66,8 +66,8 @@ public static unsafe class TaskDeliverItems
             {
                 return true;
             }
-        }, "UseGCBuff", new(timeLimitMS: 30000, abortOnTimeout: false));
-        P.TaskManager.Enqueue(() => !Player.Object.IsCasting() && !Player.IsAnimationLocked, "WaitUntilNotOccupied");
+        }, "使用军票预支单", new(timeLimitMS: 30000, abortOnTimeout: false));
+        P.TaskManager.Enqueue(() => !Player.Object.IsCasting() && !Player.IsAnimationLocked, "等待角色空闲");
         P.TaskManager.Enqueue(() =>
         {
             if(UsingItemBuff) return;
@@ -89,10 +89,10 @@ public static unsafe class TaskDeliverItems
                 ECommons.ExcelServices.GrandCompany.Maelstrom => "m",
                 ECommons.ExcelServices.GrandCompany.TwinAdder => "ta",
                 _ => throw new ArgumentOutOfRangeException()
-            }), "Teleport to GC");
+            }), "传送至大国防联军总部");
         }
-        P.TaskManager.Enqueue(() => !Lifestream.IsBusy(), "Wait until teleportation completed", new(timeLimitMS: 5 * 60 * 1000) { CompanionAction = _ => EzThrottler.Throttle("GcBusy", 60000, true)});
-        P.TaskManager.Enqueue(() => GCContinuation.EnqueueInitiation(true), "Initiate GC delivery");
+        P.TaskManager.Enqueue(() => !Lifestream.IsBusy(), "等待传送完成", new(timeLimitMS: 5 * 60 * 1000) { CompanionAction = _ => EzThrottler.Throttle("GcBusy", 60000, true)});
+        P.TaskManager.Enqueue(() => GCContinuation.EnqueueInitiation(true), "开始筹备稀有品");
         return true;
     }
 }

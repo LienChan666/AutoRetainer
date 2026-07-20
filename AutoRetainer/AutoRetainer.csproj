@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<Authors>NightmareXIV, kawaii</Authors>
-		<Version>4.6.1.10</Version>
+		<Authors>NightmareXIV, kawaii, KindSheep（国服汉化）</Authors>
+		<Version>4.6.1.1002</Version>
 	</PropertyGroup>
 
 	<PropertyGroup>

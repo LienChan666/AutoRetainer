@@ -2,9 +2,9 @@
 
 namespace AutoRetainer.Modules.Voyage.VoyageCalculator;
 
-// All this data is taken from:
+// 本文件数据来源：
 // https://docs.google.com/spreadsheets/d/1-j0a-I7bQdjnXkplP9T4lOLPH2h3U_-gObxAiI4JtpA
-// Credits to Mystic Spirit and other contributors from the submarine discord
+// 感谢 Mystic Spirit 及潜水艇 Discord 社区的其他贡献者
 public static class Sectors
 {
     public record Breakpoint(int T2, int T3, int Normal, int Optimal, int Favor)
@@ -172,7 +172,7 @@ public static class Sectors
 
     public static Breakpoint CalculateBreakpoint(List<uint> points)
     {
-        // more than 5 points isn't allowed ingame
+        // 游戏内不允许选择超过 5 个目的地
         if(points.Count is 0 or > 5)
             return Breakpoint.Empty;
 
@@ -184,7 +184,7 @@ public static class Sectors
             breakpoints.Add(br);
         }
 
-        // every map can have different max, so we have to check every single one
+        // 每张航海图的最大值可能不同，因此必须逐项检查
         var t2 = breakpoints.Max(b => b.T2);
         var t3 = breakpoints.Max(b => b.T3);
         var normal = breakpoints.Max(b => b.Normal);

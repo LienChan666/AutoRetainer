@@ -7,7 +7,7 @@ internal static class TaskIntelligentComponentsChange
 {
     internal static void Enqueue(string name, VoyageType type)
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskIntelligentComponentsChange)}, name={name}, type={type}");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskIntelligentComponentsChange)}，名称={name}，类型={Lang.VoyageTypeNames[type]}");
         P.TaskManager.Enqueue(() =>
         {
             if(PartSwapperUtils.GetPlanInLevelRange(Data.GetAdditionalVesselData(name, type).Level) == null) return;
@@ -16,7 +16,7 @@ internal static class TaskIntelligentComponentsChange
             {
                 TaskChangeComponents.EnqueueImmediate(rep, name, type);
             }
-            DebugLog($"Change check log: {(log.Count > 0 ? log.Join(", ") : "None")}");
+            DebugLog($"配件更换检查日志：{(log.Count > 0 ? log.Join("，") : "无")}");
         }, "IntelligentChangeTask");
     }
 }

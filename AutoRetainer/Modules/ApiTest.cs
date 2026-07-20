@@ -18,13 +18,13 @@ internal static class ApiTest
     private static void API_OnRetainerPostprocessTask(string retainerName)
     {
         if(!Enabled) return;
-        PluginLog.Information($"Now requesting postprocess for {retainerName}");
+        PluginLog.Information($"正在请求对雇员 {retainerName} 执行后处理");
         P.API.RequestRetainerPostprocess();
     }
 
     private static void API_OnRetainerReadyToPostprocess(string retainerName)
     {
-        PluginLog.Information($"Now postprocessing {retainerName}");
+        PluginLog.Information($"正在对雇员 {retainerName} 执行后处理");
         TaskManager.Enqueue(() =>
         {
             if(GenericHelpers.IsKeyPressed(Keys.Back))

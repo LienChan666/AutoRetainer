@@ -39,14 +39,14 @@ internal static unsafe class SchedulerMain
     {
         Reason = reason;
         PluginEnabled = true;
-        DebugLog($"Plugin is enabled, reason: {reason}");
+        DebugLog($"插件已启用，原因：{reason}");
         return true;
     }
 
     internal static bool? DisablePlugin()
     {
         PluginEnabled = false;
-        DebugLog($"Plugin disabled");
+        DebugLog($"插件已禁用");
         return true;
     }
 
@@ -90,12 +90,12 @@ internal static unsafe class SchedulerMain
 
                                     if(VentureOverride > 0)
                                     {
-                                        DebugLog($"Using VentureOverride = {VentureOverride}");
+                                        DebugLog($"正在使用 VentureOverride = {VentureOverride}");
                                         ret.ProcessVenturePlanner(VentureOverride);
                                     }
                                     else if(!adata.IsVenturePlannerActive())
                                     {
-                                        //resend retainer
+                                        // 重新委托雇员
 
                                         if(ret.VentureID != 0)
                                         {
@@ -119,12 +119,12 @@ internal static unsafe class SchedulerMain
                                     else
                                     {
                                         var next = adata.GetNextPlannedVenture();
-                                        DebugLog($"Next planned venture: {next}, current venture: {ret.VentureID}");
+                                        DebugLog($"下一项计划探险：{next}，当前探险：{ret.VentureID}");
                                         var completed = adata.IsLastPlannedVenture();
-                                        DebugLog($"Is last planned venture: {completed}");
+                                        DebugLog($"是否为计划中的最后一项探险：{completed}");
                                         if(next == 0)
                                         {
-                                            var t = ($"Next venture ID is zero, planner is to be disabled");
+                                            var t = ($"下一项探险 ID 为 0，将禁用探险规划器");
                                             if(!completed)
                                             {
                                                 DuoLog.Warning(t);
@@ -136,10 +136,10 @@ internal static unsafe class SchedulerMain
                                         }
                                         if(next == 0 || (completed && adata.VenturePlan.PlanCompleteBehavior != PlanCompleteBehavior.Restart_plan))
                                         {
-                                            DebugLog($"Completed and behavior is {adata.VenturePlan.PlanCompleteBehavior}");
+                                            DebugLog($"已完成，后续行为为 {adata.VenturePlan.PlanCompleteBehavior}");
                                             if(adata.VenturePlan.PlanCompleteBehavior == PlanCompleteBehavior.Repeat_last_venture)
                                             {
-                                                DebugLog($"Reassigning this venture and disabling planner");
+                                                DebugLog($"正在重新委托本次探险并禁用规划器");
                                                 TaskReassignVenture.Enqueue();
                                             }
                                             else
@@ -147,12 +147,12 @@ internal static unsafe class SchedulerMain
                                                 TaskCollectVenture.Enqueue();
                                                 if(adata.VenturePlan.PlanCompleteBehavior == PlanCompleteBehavior.Assign_Quick_Venture)
                                                 {
-                                                    DebugLog($"Assigning quick venture");
+                                                    DebugLog($"正在执行自由探索委托");
                                                     TaskAssignQuickVenture.Enqueue();
                                                 }
                                             }
                                             adata.EnablePlanner = false;
-                                            DebugLog($"Now disabling planner");
+                                            DebugLog($"正在禁用规划器");
                                         }
                                         else
                                         {
@@ -171,7 +171,7 @@ internal static unsafe class SchedulerMain
                                         TaskEntrustDuplicates.EnqueueNew(selectedPlan);
                                     }
 
-                                    //withdraw gil
+                                    // 取出金币
                                     if(adata.WithdrawGil)
                                     {
                                         if(adata.Deposit)
@@ -189,7 +189,7 @@ internal static unsafe class SchedulerMain
                                         TaskVendorItems.Enqueue();
                                     }
 
-                                    //fire event, let other plugins deal with retainer
+                                    // 触发事件，让其他插件处理雇员
                                     TaskPostprocessRetainerIPC.Enqueue(retainer);
 
                                     if(C.RetainerMenuDelay > 0)
@@ -204,13 +204,13 @@ internal static unsafe class SchedulerMain
                             {
                                 if((C.Stay5 || MultiMode.Active) && !Utils.IsAllCurrentCharacterRetainersHaveMoreThan5Mins())
                                 {
-                                    //nothing
+                                    // 不执行操作
                                 }
                                 else
                                 {
                                     if(Reason == PluginEnableReason.MultiMode)
                                     {
-                                        DebugLog($"Scheduling closing and disabling plugin as MultiMode is running");
+                                        DebugLog($"多角色模式正在运行，安排关闭雇员列表并禁用插件");
                                         P.TaskManager.Enqueue(RetainerListHandlers.CloseRetainerList);
                                         P.TaskManager.Enqueue(DisablePlugin);
                                         if(Data.GetIMSettings().IMEnableCofferAutoOpen) TaskOpenAllCoffers.Enqueue();
@@ -218,7 +218,7 @@ internal static unsafe class SchedulerMain
                                     }
                                     else if(Reason == PluginEnableReason.Artisan)
                                     {
-                                        DebugLog($"Scheduling closing as Artisan is running");
+                                        DebugLog($"Artisan 正在运行，安排关闭雇员列表");
                                         P.TaskManager.Enqueue(RetainerListHandlers.CloseRetainerList);
                                         P.TaskManager.Enqueue(DisablePlugin);
                                     }
@@ -226,15 +226,14 @@ internal static unsafe class SchedulerMain
                                     {
                                         void Process(TaskCompletedBehavior behavior)
                                         {
-                                            //DebugLog($"Behavior: {behavior}");
                                             if(behavior.EqualsAny(TaskCompletedBehavior.Stay_in_retainer_list_and_disable_plugin, TaskCompletedBehavior.Close_retainer_list_and_disable_plugin))
                                             {
-                                                DebugLog($"Scheduling plugin disabling (behavior={behavior})");
+                                                DebugLog($"安排禁用插件（行为={Lang.TaskCompletedBehaviorNames[behavior]}）");
                                                 P.TaskManager.Enqueue(DisablePlugin);
                                             }
                                             if(behavior.EqualsAny(TaskCompletedBehavior.Close_retainer_list_and_disable_plugin, TaskCompletedBehavior.Close_retainer_list_and_keep_plugin_enabled))
                                             {
-                                                DebugLog($"Scheduling retainer list closing (behavior={behavior})");
+                                                DebugLog($"安排关闭雇员列表（行为={Lang.TaskCompletedBehaviorNames[behavior]}）");
                                                 P.TaskManager.Enqueue(RetainerListHandlers.CloseRetainerList);
                                             }
                                         }
@@ -259,20 +258,20 @@ internal static unsafe class SchedulerMain
                         {
                             if(EzThrottler.Throttle("CloseRetainerList", 1000))
                             {
-                                DuoLog.Warning($"Your inventory is full");
+                                DuoLog.Warning($"背包已满");
                                 if(MultiMode.Active)
                                 {
-                                    DebugLog($"Scheduling retainer list closing (multi mode)");
+                                    DebugLog($"安排关闭雇员列表（多角色模式）");
                                     P.TaskManager.Enqueue(RetainerListHandlers.CloseRetainerList);
                                 }
                                 else
                                 {
                                     void Process(TaskCompletedBehavior behavior)
                                     {
-                                        DebugLog($"Behavior: {behavior}");
+                                        DebugLog($"行为：{Lang.TaskCompletedBehaviorNames[behavior]}");
                                         if(behavior.EqualsAny(TaskCompletedBehavior.Close_retainer_list_and_disable_plugin, TaskCompletedBehavior.Close_retainer_list_and_keep_plugin_enabled))
                                         {
-                                            DebugLog($"Scheduling retainer list closing (behavior={behavior})");
+                                            DebugLog($"安排关闭雇员列表（行为={Lang.TaskCompletedBehaviorNames[behavior]}）");
                                             P.TaskManager.Enqueue(RetainerListHandlers.CloseRetainerList);
                                         }
                                     }
@@ -298,7 +297,6 @@ internal static unsafe class SchedulerMain
             }
             else
             {
-                //DuoLog.Information($"123");
                 if(C.OldRetainerSense || SchedulerMain.Reason == PluginEnableReason.Artisan)
                 {
                     if(Utils.AnyRetainersAvailableCurrentChara())

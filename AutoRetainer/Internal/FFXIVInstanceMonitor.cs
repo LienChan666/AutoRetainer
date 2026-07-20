@@ -16,7 +16,7 @@ public class FFXIVInstanceMonitor
         }
         catch(Exception e)
         {
-            PluginLog.Warning($"Could not acquire lock.");
+            PluginLog.Warning($"无法获取锁。");
             e.LogWarning();
             return false;
         }

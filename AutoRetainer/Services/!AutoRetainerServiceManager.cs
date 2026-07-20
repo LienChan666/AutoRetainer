@@ -13,7 +13,6 @@ public static class AutoRetainerServiceManager
     public static FcDataManager FCData;
     public static GilDisplayManager GilDisplay;
     public static VentureStatsManager VentureStats;
-    //public static EventLogger EventLogger;
     public static AutoBuyFuelOverlay AutoBuyFuelOverlay;
     public static TitleScreenButton TitleScreenButton;
     public static AddonWatcher AddonWatcher;

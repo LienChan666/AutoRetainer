@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace AutoRetainer.UI.NeoUI.InventoryManagementEntries.InventoryCleanupEntries;
 public unsafe sealed class DiscardList : InventoryManagementBase
 {
-    public override string Name => "Inventory Cleanup/Discard List";
+    public override string Name => "背包清理/丢弃列表";
     private InventoryManagementCommon InventoryManagementCommon = new();
 
     public override int DisplayPriority => -1;
@@ -17,8 +17,8 @@ public unsafe sealed class DiscardList : InventoryManagementBase
     {
         Builder = InventoryCleanupCommon.CreateCleanupHeaderBuilder()
             .Section(Name)
-            .TextWrapped("These items will always be discarded, regardless of their source, as long as their stack count does not exceeds specified amount that you can specify below. Discards occur very frequently, before and after each action that may alter inventory. Discard is always prioritized, even if same item is present in sell or desynthesis list, it will be discarded. Protected items won't be discarded. ")
-            .InputInt(150f, $"Maximum stack size to be discarded", () => ref InventoryCleanupCommon.SelectedPlan.IMDiscardStackLimit)
+            .TextWrapped("这些物品无论来源都会被丢弃，只要其堆叠数量不超过你在下方设定的阈值。每次可能变更背包的操作前后都会触发丢弃。丢弃优先级最高：即使同一物品也在出售或分解列表中，仍会优先丢弃。受保护物品不会被丢弃。")
+            .InputInt(150f, $"最大丢弃堆叠数量", () => ref InventoryCleanupCommon.SelectedPlan.IMDiscardStackLimit)
             .Widget(() => InventoryManagementCommon.DrawListNew(
                 itemId => InventoryCleanupCommon.SelectedPlan.AddItemToList(IMListKind.Discard, itemId, out _),
                 itemId => InventoryCleanupCommon.SelectedPlan.IMDiscardList.Remove(itemId),
@@ -29,7 +29,7 @@ public unsafe sealed class DiscardList : InventoryManagementBase
                     ImGui.PushFont(UiBuilder.IconFont);
                     ImGuiEx.CollectionButtonCheckbox(FontAwesomeIcon.Database.ToIconString(), x, InventoryCleanupCommon.SelectedPlan.IMDiscardIgnoreStack);
                     ImGui.PopFont();
-                    ImGuiEx.Tooltip($"Ignore stack setting for this item");
+                    ImGuiEx.Tooltip($"忽略该物品的堆叠设置");
                 }))
             .Separator()
             .Widget(() =>

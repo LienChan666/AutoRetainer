@@ -175,7 +175,7 @@ public static class Unlocks
         if(!PointToUnlockPoint.TryGetValue(finalPoint, out var final))
             return [];
 
-        // Unknown unlock at the time
+        // 当时尚不清楚的解锁条件
         if(final.Point == 9876)
             return [];
 
