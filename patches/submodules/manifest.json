@@ -1,0 +1,23 @@
+{
+  "schema": 1,
+  "submodules": [
+    {
+      "path": "ECommons",
+      "url": "https://github.com/NightmareXIV/ECommons.git",
+      "base": "6e3524d0c6d229b854d300d949b6a315aab97ab3",
+      "patch": "patches/submodules/ECommons.patch",
+      "sha256": "0f3ca819caea19f3aff25da928a61ae5875f09eef42cdad3b13dcb23bd72a5f5",
+      "result_tree": "daf11cf824e7534df5ecf4cd48fb5e0d1f13b265",
+      "source_commit": "ca3559741fbffa1ce6a4d05984dd37ea24b8be37"
+    },
+    {
+      "path": "AutoRetainerAPI",
+      "url": "https://github.com/PunishXIV/AutoRetainerAPI.git",
+      "base": "7ccf0f6b4c7923821a43ed1e92456c9d5d7132f2",
+      "patch": "patches/submodules/AutoRetainerAPI.patch",
+      "sha256": "de7bc5f5e5058d9d80855ee46d9d8bc881376194a4233af8abb110ba1fc21f1c",
+      "result_tree": "4814a82c1bf7c1447949ebb57a91483833d13787",
+      "source_commit": "62cf318e5c907885d9d38f78e61352f566a1bf00"
+    }
+  ]
+}

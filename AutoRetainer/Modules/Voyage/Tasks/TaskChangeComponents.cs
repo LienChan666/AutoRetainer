@@ -13,7 +13,7 @@ internal static unsafe class TaskChangeComponents
         P.TaskManager.BeginStack();
         try
         {
-            VoyageUtils.Log($"Task enqueued: {nameof(TaskChangeComponents)}");
+            VoyageUtils.Log($"任务已加入队列：{nameof(TaskChangeComponents)}");
             Name = vesselName;
             Type = type;
             Abort = false;
@@ -21,7 +21,7 @@ internal static unsafe class TaskChangeComponents
             foreach(var index in indexes)
             {
                 if(index.Item1 < 0 || index.Item1 > 3) throw new ArgumentOutOfRangeException(nameof(index));
-                P.TaskManager.Enqueue(() => PartSwapperTasks.ChangeComponent(index.Item1, index.Item2, Name), $"Change {index}");
+                P.TaskManager.Enqueue(() => PartSwapperTasks.ChangeComponent(index.Item1, index.Item2, Name), $"更换 {index}");
                 P.TaskManager.EnqueueDelay(Utils.FrameDelay * 2, true);
             }
             P.TaskManager.Enqueue(PartSwapperTasks.CloseChangeComponents, "CloseChangeComponents");

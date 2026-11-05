@@ -31,7 +31,7 @@ public unsafe class MirageManager
                 var item = invCont->Items[i];
                 if(item.ItemId != 0 && Svc.Data.GetExcelSheet<Item>().TryGetRow(item.ItemId, out var data) && Utils.CanItemBePartOfMirageSet(item.ItemId))
                 {
-                    if(!Utils.IsItemAlreadyMiraged(item.ItemId)) return true; 
+                    if(!Utils.IsItemAlreadyMiraged(item.ItemId)) return true;
                 }
             }
         }

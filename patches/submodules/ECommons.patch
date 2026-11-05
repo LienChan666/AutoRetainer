@@ -1,0 +1,2684 @@
+diff --git a/ECommons/Commands/CmdManager.cs b/ECommons/Commands/CmdManager.cs
+index 78ed89157e5d5c03f52a53d83a11ee46ac57e3b5..a355d88b5a9891fdaaa2de681b7ec92c3a4a7411 100644
+--- a/ECommons/Commands/CmdManager.cs
++++ b/ECommons/Commands/CmdManager.cs
+@@ -76,7 +76,7 @@ public static class CmdManager
+         }
+         if(ImGui.IsItemHovered())
+         {
+-            ImGui.SetTooltip($"Click to execute the command: {command}\nRight-click to copy the command: {command}");
++            ImGui.SetTooltip($"左键点击执行命令：{command}\n右键点击复制命令：{command}");
+ 
+             if(ImGui.IsMouseClicked(ImGuiMouseButton.Right))
+             {
+diff --git a/ECommons/Configuration/DefaultSerializationFactory.cs b/ECommons/Configuration/DefaultSerializationFactory.cs
+index a2bbde0f01153762fa20119a4c1d4a6351b84823..fdae66f5d8c17ee27a9e6db46454da3511a93e95 100644
+--- a/ECommons/Configuration/DefaultSerializationFactory.cs
++++ b/ECommons/Configuration/DefaultSerializationFactory.cs
+@@ -104,7 +104,7 @@ public class DefaultSerializationFactory : ISerializationFactory
+         {
+             var saveTo = $"{antiCorruptionPath}.{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+             PluginLog.Warning($"Detected unsuccessfully saved file {antiCorruptionPath}: moving to {saveTo}");
+-            Notify.Warning("Detected unsuccessfully saved configuration file.");
++            Notify.Warning("检测到未能成功保存的配置文件。");
+             File.Move(antiCorruptionPath, saveTo);
+             PluginLog.Warning($"Success. Please manually check {saveTo} file contents.");
+         }
+@@ -119,7 +119,7 @@ public class DefaultSerializationFactory : ISerializationFactory
+         {
+             var saveTo = $"{antiCorruptionPath}.{DateTimeOffset.Now.ToUnixTimeMilliseconds()}";
+             PluginLog.Warning($"Detected unsuccessfully saved file {antiCorruptionPath}: moving to {saveTo}");
+-            Notify.Warning("Detected unsuccessfully saved configuration file.");
++            Notify.Warning("检测到未能成功保存的配置文件。");
+             File.Move(antiCorruptionPath, saveTo);
+             PluginLog.Warning($"Success. Please manually check {saveTo} file contents.");
+         }
+diff --git a/ECommons/ECommonsMain.cs b/ECommons/ECommonsMain.cs
+index 874709e78e7f973bb8aee48441b5b8d0236ca319..abf7e6da61fd8cc95e039c6354d50acf1ac16457 100644
+--- a/ECommons/ECommonsMain.cs
++++ b/ECommons/ECommonsMain.cs
+@@ -154,7 +154,7 @@ var type = "unknown build";
+     {
+         if(Assembly.GetCallingAssembly().GetTypes().FirstOrDefault(x => x.IsAssignableTo(typeof(IDalamudPlugin))).Name == Svc.PluginInterface.InternalName)
+         {
+-            DuoLog.Error($"{Svc.PluginInterface.InternalName} name match error!");
++            DuoLog.Error($"{Svc.PluginInterface.InternalName} 名称匹配错误！");
+         }
+     }
+ 
+@@ -182,7 +182,7 @@ var type = "unknown build";
+             if(EzConfigGui.Config != null)
+             {
+                 Svc.PluginInterface.SavePluginConfig(EzConfigGui.Config);
+-                Notify.Info("Configuration saved");
++                Notify.Info("配置已保存");
+             }
+             EzConfigGui.WindowSystem.RemoveAllWindows();
+             EzConfigGui.WindowSystem = null;
+diff --git a/ECommons/Funding/PatreonBanner.cs b/ECommons/Funding/PatreonBanner.cs
+index 789ffe7d54baa702b0284996b881856e4f03f148..1840f813b3c8f7082f35be433eba073e618a2ad1 100644
+--- a/ECommons/Funding/PatreonBanner.cs
++++ b/ECommons/Funding/PatreonBanner.cs
+@@ -9,7 +9,7 @@ namespace ECommons.Funding;
+ public static class PatreonBanner
+ {
+     public static Func<bool> IsOfficialPlugin = () => false;
+-    public static string Text = "♥ Patreon/KoFi";
++    public static string Text = "♥ 赞助";
+     public static string DonateLink => "https://www.patreon.com/NightmareXIV";
+     public static void DrawRaw()
+     {
+@@ -81,19 +81,19 @@ public static class PatreonBanner
+     }
+ 
+     private static string PatreonButtonTooltip => $"""
+-				If you like {Svc.PluginInterface.Manifest.Name}, please consider supporting it's developer via Patreon or via other means! 
++				如果你喜欢 {Svc.PluginInterface.Manifest.Name}，欢迎考虑通过 Patreon 或其他方式支持开发者！
+ 				
+-				This will help me to update the plugin while granting you access to priority feature requests, priority support, early plugin builds, participation in votes for features and more.
++				这将帮助我持续更新插件，同时你还可以获得功能请求优先处理、优先支持、插件抢先体验版本、参与功能投票等权益。
+ 
+-				Left click - to go to Patreon;
+-				Right click - Ko-Fi and other options.
++				左键：前往 Patreon；
++				右键：打开 Ko-Fi 等其他选项。
+ 				""";
+ 
+     private static string SmallPatreonButtonTooltip => $"""
+-				If you like {Svc.PluginInterface.Manifest.Name}, please consider supporting it's developer via Patreon.
++				如果你喜欢 {Svc.PluginInterface.Manifest.Name}，欢迎考虑通过 Patreon 支持开发者。
+ 
+-				Left click - to go to Patreon;
+-				Right click - Ko-Fi and other options.
++				左键：前往 Patreon；
++				右键：打开 Ko-Fi 等其他选项。
+ 				""";
+ 
+     private static void Popup()
+@@ -113,25 +113,25 @@ public static class PatreonBanner
+         }
+         if(ImGui.BeginPopup("NXPS"))
+         {
+-            if(ImGui.Selectable("Subscribe on Patreon"))
++            if(ImGui.Selectable("在 Patreon 上订阅"))
+             {
+                 GenericHelpers.ShellStart("https://subscribe.nightmarexiv.org");
+             }
+-            if(ImGui.Selectable("Donate one-time via Ko-Fi"))
++            if(ImGui.Selectable("通过 Ko-Fi 单次赞助"))
+             {
+                 GenericHelpers.ShellStart("https://donate.nightmarexiv.org");
+             }
+-            if(ImGui.Selectable("Donate via Cryptocurrency"))
++            if(ImGui.Selectable("使用加密货币赞助"))
+             {
+                 GenericHelpers.ShellStart($"https://crypto.nightmarexiv.org/{(IsOfficialPlugin() ? "?" + Svc.PluginInterface.Manifest.Name : "")}");
+             }
+             if(!IsOfficialPlugin())
+             {
+-                if(ImGui.Selectable("Join NightmareXIV Discord"))
++                if(ImGui.Selectable("加入 NightmareXIV Discord"))
+                 {
+                     GenericHelpers.ShellStart("https://discord.nightmarexiv.org");
+                 }
+-                if(ImGui.Selectable("Explore other NightmareXIV plugins"))
++                if(ImGui.Selectable("查看 NightmareXIV 的其他插件"))
+                 {
+                     GenericHelpers.ShellStart("https://explore.nightmarexiv.org");
+                 }
+diff --git a/ECommons/GenericHelpers/GenericHelpers.Forms.cs b/ECommons/GenericHelpers/GenericHelpers.Forms.cs
+index 4e4ae323e94e664722c5e5f2814f4c147edc1a1a..2808598ff5451a81d2069210a93d32f7ab307d8d 100644
+--- a/ECommons/GenericHelpers/GenericHelpers.Forms.cs
++++ b/ECommons/GenericHelpers/GenericHelpers.Forms.cs
+@@ -21,12 +21,12 @@ public static partial class GenericHelpers
+             if(text.IsNullOrEmpty())
+             {
+                 Winforms.Clipboard.Clear();
+-                if(!silent) Notify.Success("Clipboard cleared");
++                if(!silent) Notify.Success("已清空剪贴板");
+             }
+             else
+             {
+                 Winforms.Clipboard.SetText(text);
+-                if(!silent) Notify.Success("Text copied to clipboard");
++                if(!silent) Notify.Success("文本已复制到剪贴板");
+             }
+             return true;
+         }
+@@ -34,7 +34,7 @@ public static partial class GenericHelpers
+         {
+             if(!silent)
+             {
+-                Notify.Error($"Error copying to clipboard:\n{e.Message}\nPlease try again");
++                Notify.Error($"复制到剪贴板时出错：\n{e.Message}\n请重试");
+             }
+             PluginLog.Warning($"Error copying to clipboard:");
+             e.LogWarning();
+@@ -58,7 +58,7 @@ public static partial class GenericHelpers
+         {
+             if(!silent)
+             {
+-                Notify.Error($"Error pasting from clipboard:\n{e.Message}\nPlease try again");
++                Notify.Error($"从剪贴板粘贴时出错：\n{e.Message}\n请重试");
+             }
+             PluginLog.Warning($"Error pasting from clipboard:");
+             e.LogWarning();
+@@ -82,4 +82,4 @@ public static partial class GenericHelpers
+         }
+         return false;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/GenericHelpers/GenericHelpers.cs b/ECommons/GenericHelpers/GenericHelpers.cs
+index cff3e45261d9d25ecbf74dade5d71cbda83601c4..f69dcd96d93a51987ee5944757e246a07da538f8 100644
+--- a/ECommons/GenericHelpers/GenericHelpers.cs
++++ b/ECommons/GenericHelpers/GenericHelpers.cs
+@@ -656,7 +656,7 @@ public static unsafe partial class GenericHelpers
+             });
+         }, (e) =>
+         {
+-            Notify.Error($"Could not open {s.Cut(60)}\n{e}");
++            Notify.Error($"无法打开 {s.Cut(60)}\n{e}");
+         });
+     }
+ 
+diff --git a/ECommons/ImGuiMethods/ChangelogWindow.cs b/ECommons/ImGuiMethods/ChangelogWindow.cs
+index 035929b503c2fadd7ee9fc5441430aae23a152e4..8752c30f8f18e82f735cfb5e7277ab38e293185e 100644
+--- a/ECommons/ImGuiMethods/ChangelogWindow.cs
++++ b/ECommons/ImGuiMethods/ChangelogWindow.cs
+@@ -17,7 +17,7 @@ public class ChangelogWindow : Window
+     private WindowSystem ws = new();
+     private int version;
+ 
+-    public ChangelogWindow(IPluginConfiguration Configuration, int version, Action func, Action onClose = null) : base($"{DalamudReflector.GetPluginName()} was updated",
++    public ChangelogWindow(IPluginConfiguration Configuration, int version, Action func, Action onClose = null) : base($"{DalamudReflector.GetPluginName()} 已更新",
+         ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoCollapse)
+     {
+         try
+diff --git a/ECommons/ImGuiMethods/ImGuiEx/Button.cs b/ECommons/ImGuiMethods/ImGuiEx/Button.cs
+index 24135cf1e3ec2b0170142e4ff6cfc8c7d0a20a84..1dabbde189bb451a34b2f8778bc85d3e2b92313a 100644
+--- a/ECommons/ImGuiMethods/ImGuiEx/Button.cs
++++ b/ECommons/ImGuiMethods/ImGuiEx/Button.cs
+@@ -189,7 +189,7 @@ public static partial class ImGuiEx
+         return ImGui.Button(label);
+     }
+ 
+-    public static bool ButtonCtrl(string text, string affix = " (Hold CTRL)")
++    public static bool ButtonCtrl(string text, string affix = "（按住 CTRL）")
+     {
+         return ButtonCtrl(text, null, affix);
+     }
+@@ -201,7 +201,7 @@ public static partial class ImGuiEx
+     /// <param name="size">Optional size of the button, null if size is to be calculated automatically</param>
+     /// <param name="affix">Button affix</param>
+     /// <returns></returns>
+-    public static bool ButtonCtrl(string text, Vector2? size, string affix = " (Hold CTRL)")
++    public static bool ButtonCtrl(string text, Vector2? size, string affix = "（按住 CTRL）")
+     {
+         var disabled = !ImGui.GetIO().KeyCtrl;
+         if(disabled)
+@@ -231,7 +231,7 @@ public static partial class ImGuiEx
+         return ret;
+     }
+ 
+-    public static bool ButtonCtrlScaled(string text, Vector2? size, string affix = " (Hold CTRL)")
++    public static bool ButtonCtrlScaled(string text, Vector2? size, string affix = "（按住 CTRL）")
+     {
+         return ButtonCtrl(text, size.Scale(), affix);
+     }
+diff --git a/ECommons/ImGuiMethods/ImGuiEx/DragDrop.cs b/ECommons/ImGuiMethods/ImGuiEx/DragDrop.cs
+index 47567f35b7a458a717236ab26b36a1d5b2505bb9..37fdc8ff0edf9d3bf047c9bc9f2e7e31b5743bbd 100644
+--- a/ECommons/ImGuiMethods/ImGuiEx/DragDrop.cs
++++ b/ECommons/ImGuiMethods/ImGuiEx/DragDrop.cs
+@@ -137,12 +137,12 @@ public static unsafe partial class ImGuiEx
+                 {
+                     ImGuiDragDrop.SetDragDropPayload(DragDropID, uniqueId);
+                     CurrentDrag = uniqueId;
+-                    InternalLog.Verbose($"DragDropSource = {uniqueId}");
++                    InternalLog.Verbose($"拖放源 = {uniqueId}");
+                     ImGui.EndDragDropSource();
+                 }
+                 else if(CurrentDrag == uniqueId)
+                 {
+-                    InternalLog.Verbose($"Current drag reset!");
++                    InternalLog.Verbose("已重置当前拖放状态！");
+                     CurrentDrag = null;
+                 }
+             }
+diff --git a/ECommons/ImGuiMethods/ImGuiEx/EnumCombo.cs b/ECommons/ImGuiMethods/ImGuiEx/EnumCombo.cs
+index a769d1bda253f40e2769241120e6e2aad90d4611..75d59d4113c9f3a45f18aba89e1eb9fb8d9d306b 100644
+--- a/ECommons/ImGuiMethods/ImGuiEx/EnumCombo.cs
++++ b/ECommons/ImGuiMethods/ImGuiEx/EnumCombo.cs
+@@ -52,7 +52,7 @@ public static partial class ImGuiEx
+                 if(!EnumComboSearch.ContainsKey(name)) EnumComboSearch.Add(name, new(""));
+                 fltr = EnumComboSearch[name];
+                 ImGuiEx.SetNextItemFullWidth();
+-                ImGui.InputTextWithHint($"##{name.Replace("#", "_")}", "Filter...", ref fltr.Value, 50);
++                ImGui.InputTextWithHint($"##{name.Replace("#", "_")}", "筛选...", ref fltr.Value, 50);
+             }
+             foreach(var x in values)
+             {
+@@ -74,7 +74,7 @@ public static partial class ImGuiEx
+     }
+ 
+ 
+-    public static bool EnumCombo<T>(string name, ICollection<T> collection, Func<T, bool> filter = null, IDictionary<T, string> names = null, string nameOfNoneSelected = "Not selected", T[]? valuesList = null) where T : Enum, IConvertible
++    public static bool EnumCombo<T>(string name, ICollection<T> collection, Func<T, bool> filter = null, IDictionary<T, string> names = null, string nameOfNoneSelected = "未选择", T[]? valuesList = null) where T : Enum, IConvertible
+     {
+         var ret = false;
+         string comboName;
+@@ -95,7 +95,7 @@ public static partial class ImGuiEx
+                 if(!EnumComboSearch.ContainsKey(name)) EnumComboSearch.Add(name, new(""));
+                 fltr = EnumComboSearch[name];
+                 ImGuiEx.SetNextItemFullWidth();
+-                ImGui.InputTextWithHint($"##{name.Replace("#", "_")}", "Filter...", ref fltr.Value, 50);
++                ImGui.InputTextWithHint($"##{name.Replace("#", "_")}", "筛选...", ref fltr.Value, 50);
+             }
+             foreach(var x in values)
+             {
+@@ -144,7 +144,7 @@ public static partial class ImGuiEx
+         return ret;
+     }
+ 
+-    public static bool EnumCombo<T>(string name, ref Nullable<T> refConfigField, Func<T, bool> filter = null, IDictionary<T, string> names = null, string nullName = "Not selected", T[]? valuesList = null) where T : struct, Enum, IConvertible
++    public static bool EnumCombo<T>(string name, ref Nullable<T> refConfigField, Func<T, bool> filter = null, IDictionary<T, string> names = null, string nullName = "未选择", T[]? valuesList = null) where T : struct, Enum, IConvertible
+     {
+         var ret = false;
+         if(ImGui.BeginCombo(name, refConfigField == null ? nullName : ((names != null && names.TryGetValue(refConfigField.Value, out var n)) ? n : refConfigField.Value.ToString().Replace("_", " ")), ImGuiComboFlags.HeightLarge))
+@@ -156,7 +156,7 @@ public static partial class ImGuiEx
+                 if(!EnumComboSearch.ContainsKey(name)) EnumComboSearch.Add(name, new(""));
+                 fltr = EnumComboSearch[name];
+                 ImGuiEx.SetNextItemFullWidth();
+-                ImGui.InputTextWithHint($"##{name.Replace("#", "_")}", "Filter...", ref fltr.Value, 50);
++                ImGui.InputTextWithHint($"##{name.Replace("#", "_")}", "筛选...", ref fltr.Value, 50);
+             }
+             if(ImGui.Selectable(nullName, refConfigField == null))
+             {
+diff --git a/ECommons/ImGuiMethods/ImGuiEx/EzTable.cs b/ECommons/ImGuiMethods/ImGuiEx/EzTable.cs
+index 5e929b72672a43a2e2ec4744336f1a4bedbba2c9..18d7146d420207c21f4f17d3984f2193b688d77d 100644
+--- a/ECommons/ImGuiMethods/ImGuiEx/EzTable.cs
++++ b/ECommons/ImGuiMethods/ImGuiEx/EzTable.cs
+@@ -14,7 +14,7 @@ public static unsafe partial class ImGuiEx
+     {
+         if(!entries.Any())
+         {
+-            ImGuiEx.Text(EColor.RedBright, $"Table contains no elements!");
++            ImGuiEx.Text(EColor.RedBright, $"表格中没有内容！");
+             return;
+         }
+         var entriesArray = entries.ToArray();
+@@ -71,4 +71,4 @@ public static unsafe partial class ImGuiEx
+             ColumnFlags = stretch ? ImGuiTableColumnFlags.WidthStretch : ImGuiTableColumnFlags.WidthFixed;
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/ImGuiMethods/ImGuiEx/ImGuiEx.cs b/ECommons/ImGuiMethods/ImGuiEx/ImGuiEx.cs
+index 2094c4a1ef8fb95e807357806520362b49955f8c..af41bd5b9e695019f302173e3a8a3092c849976a 100644
+--- a/ECommons/ImGuiMethods/ImGuiEx/ImGuiEx.cs
++++ b/ECommons/ImGuiMethods/ImGuiEx/ImGuiEx.cs
+@@ -246,7 +246,7 @@ public static unsafe partial class ImGuiEx
+     /// <param name="callback">A callback that will be executed when one item is dragged onto another. It's parameter is a value of an item that is dragged. Assign it to the current item. </param>
+     public static void DragDropRepopulate<T>(string dragDropIdentifier, T data, Action<T> callback) where T : struct
+     {
+-        ImGuiEx.Tooltip("Drag this selector to other selectors to set their values to the same");
++        ImGuiEx.Tooltip("将此选择器拖到其他选择器上，可将它们设为相同值");
+         if(ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceNoPreviewTooltip))
+         {
+             try
+@@ -290,7 +290,7 @@ public static unsafe partial class ImGuiEx
+         table.TryAdd(data, new(Guid.NewGuid()));
+         if(table.TryGetValue(data, out var box))
+         {
+-            ImGuiEx.Tooltip("Drag this selector to other selectors to set their values to the same");
++            ImGuiEx.Tooltip("将此选择器拖到其他选择器上，可将它们设为相同值");
+             if(ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceNoPreviewTooltip))
+             {
+                 try
+@@ -383,7 +383,7 @@ public static unsafe partial class ImGuiEx
+     /// <param name="field">A field which will be assigned data value when dragged onto.</param>
+     public static void DragDropRepopulate<T>(string dragDropIdentifier, T data, ref T field) where T : struct
+     {
+-        ImGuiEx.Tooltip("Drag this selector to other selectors to set their values to the same");
++        ImGuiEx.Tooltip("将此选择器拖到其他选择器上，可将它们设为相同值");
+         if(ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceNoPreviewTooltip))
+         {
+             try
+@@ -423,7 +423,7 @@ public static unsafe partial class ImGuiEx
+     /// <param name="field">A field which will be assigned data value when dragged onto.</param>
+     public static void DragDropRepopulate<T>(string dragDropIdentifier, T? data, ref T? field) where T : struct
+     {
+-        ImGuiEx.Tooltip("Drag this selector to other selectors to set their values to the same");
++        ImGuiEx.Tooltip("将此选择器拖到其他选择器上，可将它们设为相同值");
+         if(ImGui.BeginDragDropSource(ImGuiDragDropFlags.SourceNoPreviewTooltip))
+         {
+             try
+@@ -758,7 +758,7 @@ public static unsafe partial class ImGuiEx
+     /// <param name="all">Whether to check for all plugins from the list or just one of them</param>
+     public static void PluginAvailabilityIndicator(IEnumerable<RequiredPluginInfo> pluginInfos, string? prependText = null, bool all = true)
+     {
+-        prependText ??= all ? "The following plugins are required to be installed and enabled:" : "One of the following plugins is required to be installed and enabled";
++        prependText ??= all ? "需要安装并启用以下插件：" : "需要安装并启用以下任一插件：";
+         bool pass;
+         if(all)
+         {
+@@ -794,14 +794,14 @@ public static unsafe partial class ImGuiEx
+                         ImGui.SameLine(0, 0);
+                         Text(ImGuiColors.DalamudRed, $"{info.MinVersion}+ ");
+                         ImGui.SameLine(0, 0);
+-                        Text($"(outdated)");
++                        Text("（版本过旧）");
+                     }
+                 }
+                 else
+                 {
+                     Text(ImGuiColors.DalamudRed, $"- {info.VanityName ?? info.InternalName} " + (info.MinVersion == null ? "" : $"{info.MinVersion}+ "));
+                     ImGui.SameLine(0, 0);
+-                    Text($"(not installed)");
++                    Text("（未安装）");
+                 }
+             }
+             ImGui.EndTooltip();
+@@ -924,7 +924,7 @@ public static unsafe partial class ImGuiEx
+     /// <param name="noJobSelectedPreview">Preview value that should be displayed when no job is selected.</param>
+     /// <param name="jobDisplayFilter">Optional extra filter for jobs to be displayed.</param>
+     /// <returns><see langword="true"/> every time <paramref name="selectedJobs"/> is modified.</returns>
+-    public static bool JobSelector(string id, ICollection<Job> selectedJobs, JobSelectorOption[] options = null, int maxPreviewJobs = 3, string noJobSelectedPreview = "None", Func<Job, bool> jobDisplayFilter = null)
++    public static bool JobSelector(string id, ICollection<Job> selectedJobs, JobSelectorOption[] options = null, int maxPreviewJobs = 3, string noJobSelectedPreview = "无", Func<Job, bool> jobDisplayFilter = null)
+     {
+         var ret = false;
+         var baseJobs = options?.Contains(JobSelectorOption.IncludeBase) == true;
+@@ -935,46 +935,47 @@ public static unsafe partial class ImGuiEx
+         }
+         else if(selectedJobs.Count > maxPreviewJobs)
+         {
+-            preview = $"{selectedJobs.Count} selected";
++            preview = $"已选择 {selectedJobs.Count} 个职业";
+         }
+         else
+         {
+-            preview = selectedJobs.Select(x => x.ToString().Replace("_", " ")).Print();
++            preview = selectedJobs.Select(GetJobDisplayName).Print();
+         }
+         if(ImGui.BeginCombo(id, preview, ImGuiComboFlags.HeightLarge))
+         {
+             if(ImGui.IsWindowAppearing() && options?.Contains(JobSelectorOption.ClearFilterOnOpen) == true)
+                 ImGui.SetNextItemWidth(150f);
+-            ImGui.InputTextWithHint("##filter", "Filter...", ref JobSelectorFilter, 50);
++            ImGui.InputTextWithHint("##filter", "筛选...", ref JobSelectorFilter, 50);
+             if(options?.Contains(JobSelectorOption.BulkSelectors) == true)
+             {
+-                ImGuiEx.CollectionCheckbox("DoW/DoM", Enum.GetValues<Job>().Where(x => x.IsCombat()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("战斗职业", Enum.GetValues<Job>().Where(x => x.IsCombat()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("DoL", Enum.GetValues<Job>().Where(x => x.IsDol()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("采集职业", Enum.GetValues<Job>().Where(x => x.IsDol()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Tanks", Enum.GetValues<Job>().Where(x => x.IsTank()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("防护职业", Enum.GetValues<Job>().Where(x => x.IsTank()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Healers", Enum.GetValues<Job>().Where(x => x.IsHealer()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("治疗职业", Enum.GetValues<Job>().Where(x => x.IsHealer()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("DPS", Enum.GetValues<Job>().Where(x => x.IsDps()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("进攻职业", Enum.GetValues<Job>().Where(x => x.IsDps()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Melee DPS", Enum.GetValues<Job>().Where(x => x.IsMeleeDps()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("近战物理职业", Enum.GetValues<Job>().Where(x => x.IsMeleeDps()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Ranged DPS", Enum.GetValues<Job>().Where(x => x.IsRangedDps()), selectedJobs);
+-                ImGuiEx.CollectionCheckbox("Magical ranged DPS", Enum.GetValues<Job>().Where(x => x.IsMagicalRangedDps()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("远程进攻职业", Enum.GetValues<Job>().Where(x => x.IsRangedDps()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("远程魔法职业", Enum.GetValues<Job>().Where(x => x.IsMagicalRangedDps()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Physical ranged DPS", Enum.GetValues<Job>().Where(x => x.IsPhysicalRangedDps()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("远程物理职业", Enum.GetValues<Job>().Where(x => x.IsPhysicalRangedDps()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Ranged jobs", Enum.GetValues<Job>().Where(x => x.IsHealer() || x.IsRangedDps()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("远程职业", Enum.GetValues<Job>().Where(x => x.IsHealer() || x.IsRangedDps()), selectedJobs);
+                 ImGui.SameLine();
+-                ImGuiEx.CollectionCheckbox("Melee jobs", Enum.GetValues<Job>().Where(x => x.IsMeleeDps() || x.IsTank()), selectedJobs);
++                ImGuiEx.CollectionCheckbox("近战职业", Enum.GetValues<Job>().Where(x => x.IsMeleeDps() || x.IsTank()), selectedJobs);
+             }
+             foreach(var cond in Enum.GetValues<Job>().Where(x => baseJobs || !x.IsUpgradeable()).OrderByDescending(x => Svc.Data.GetExcelSheet<ClassJob>().GetRow((uint)x).Role))
+             {
+                 if(cond == Job.ADV) continue;
+                 if(jobDisplayFilter != null && !jobDisplayFilter(cond)) continue;
+-                var name = cond.ToString().Replace("_", " ");
+-                if(JobSelectorFilter == "" || name.Contains(JobSelectorFilter, StringComparison.OrdinalIgnoreCase))
++                var name = GetJobDisplayName(cond);
++                var enumName = cond.ToString().Replace("_", " ");
++                if(JobSelectorFilter == "" || name.Contains(JobSelectorFilter, StringComparison.OrdinalIgnoreCase) || enumName.Contains(JobSelectorFilter, StringComparison.OrdinalIgnoreCase))
+                 {
+                     if(ThreadLoadImageHandler.TryGetIconTextureWrap((uint)cond.GetIcon(), false, out var texture))
+                     {
+@@ -989,6 +990,13 @@ public static unsafe partial class ImGuiEx
+         return ret;
+     }
+ 
++    private static string GetJobDisplayName(Job job)
++    {
++        if(job == Job.ADV) return "冒险者";
++        var name = job.GetData().Name.ToString();
++        return name.Length == 0 ? $"未知职业（{(int)job}）" : name;
++    }
++
+     ///<inheritdoc cref="ImGuiEx.InfoMarker(string, Vector4?, string, bool, bool)"/>
+     public static void HelpMarker(string helpText, Vector4? color = null, string symbolOverride = null, bool sameLine = true, bool preserveCursor = false) => InfoMarker(helpText, color, symbolOverride, sameLine, preserveCursor);
+ 
+@@ -1522,4 +1530,3 @@ public static unsafe partial class ImGuiEx
+         }
+     }
+ }
+-
+diff --git a/ECommons/ImGuiMethods/ImGuiEx/Inputs.cs b/ECommons/ImGuiMethods/ImGuiEx/Inputs.cs
+index e743bc797ded795c9ce790ca8b2c3aea5c1251dd..d94c6ab4768fb61503a4e8457f79799ebfe1302a 100644
+--- a/ECommons/ImGuiMethods/ImGuiEx/Inputs.cs
++++ b/ECommons/ImGuiMethods/ImGuiEx/Inputs.cs
+@@ -438,11 +438,11 @@ public static partial class ImGuiEx
+         if(!InputListValuesString.ContainsKey(name)) InputListValuesString[name] = new("");
+         InputList(name, list, overrideValues, delegate
+         {
+-            var buttonSize = ImGuiHelpers.GetButtonSize("Add");
++            var buttonSize = ImGuiHelpers.GetButtonSize("添加");
+             ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - buttonSize.X - ImGui.GetStyle().ItemSpacing.X);
+             ImGui.InputText($"##{name.Replace("#", "_")}", ref InputListValuesString[name].Value, 100);
+             ImGui.SameLine();
+-            if(ImGui.Button("Add"))
++            if(ImGui.Button("添加"))
+             {
+                 list.Add(InputListValuesString[name].Value);
+                 InputListValuesString[name].Value = "";
+@@ -456,11 +456,11 @@ public static partial class ImGuiEx
+         if(!InputListValuesUint.ContainsKey(name)) InputListValuesUint[name] = new(0);
+         InputList(name, list, overrideValues, delegate
+         {
+-            var buttonSize = ImGuiHelpers.GetButtonSize("Add");
++            var buttonSize = ImGuiHelpers.GetButtonSize("添加");
+             ImGui.SetNextItemWidth(ImGui.GetContentRegionAvail().X - buttonSize.X - ImGui.GetStyle().ItemSpacing.X);
+             ImGuiEx.InputUint($"##{name.Replace("#", "_")}", ref InputListValuesUint[name].Value);
+             ImGui.SameLine();
+-            if(ImGui.Button("Add"))
++            if(ImGui.Button("添加"))
+             {
+                 list.Add(InputListValuesUint[name].Value);
+                 InputListValuesUint[name].Value = 0;
+@@ -470,7 +470,7 @@ public static partial class ImGuiEx
+ 
+     public static void InputList<T>(string name, List<T> list, Dictionary<T, string> overrideValues, Action addFunction)
+     {
+-        var text = list.Count == 0 ? "- No values -" : (list.Count == 1 ? $"{(overrideValues != null && overrideValues.ContainsKey(list[0]) ? overrideValues[list[0]] : list[0])}" : $"- {list.Count} elements -");
++        var text = list.Count == 0 ? "- 无值 -" : (list.Count == 1 ? $"{(overrideValues != null && overrideValues.ContainsKey(list[0]) ? overrideValues[list[0]] : list[0])}" : $"- {list.Count} 项 -");
+         if(ImGui.BeginCombo(name, text, ImGuiComboFlags.HeightLarge))
+         {
+             addFunction();
+@@ -486,11 +486,11 @@ public static partial class ImGuiEx
+                 }
+                 if(ImGui.BeginPopup(id))
+                 {
+-                    if(ImGui.Selectable("Delete##ECommonsDeleItem"))
++                    if(ImGui.Selectable("删除##ECommonsDeleItem"))
+                     {
+                         rem = i;
+                     }
+-                    if(ImGui.Selectable("Clear (hold shift+ctrl)##ECommonsDeleItem")
++                    if(ImGui.Selectable("清空（按住 Shift+Ctrl）##ECommonsDeleItem")
+                         && ImGui.GetIO().KeyShift && ImGui.GetIO().KeyCtrl)
+                     {
+                         rem = -2;
+@@ -578,7 +578,7 @@ public static partial class ImGuiEx
+                 if(!ComboSearch.ContainsKey(name)) ComboSearch.Add(name, new(""));
+                 fltr = ComboSearch[name];
+                 ImGuiEx.SetNextItemFullWidth();
+-                ImGui.InputTextWithHint($"##{name}fltr", "Filter...", ref fltr.Value, 50);
++                ImGui.InputTextWithHint($"##{name}fltr", "筛选...", ref fltr.Value, 50);
+             }
+             foreach(var x in values)
+             {
+diff --git a/ECommons/ImGuiMethods/ItemSelection/ItemSelectorWindow.cs b/ECommons/ImGuiMethods/ItemSelection/ItemSelectorWindow.cs
+index 2948ef97c6707d929a1db6ed22c2fd38fa04883f..b0fdbd267a3aba0a71d34dad31b7680caa783d2a 100644
+--- a/ECommons/ImGuiMethods/ItemSelection/ItemSelectorWindow.cs
++++ b/ECommons/ImGuiMethods/ItemSelection/ItemSelectorWindow.cs
+@@ -33,7 +33,7 @@ public class ItemSelectorWindow : Window
+     /// <param name="itemCollection">A collection where selected items will be stored. </param>
+     /// <param name="windowSystem">If specified, window will be registered to the window system and opened, and unregistered and removed upon closing.</param>
+     /// <param name="name">Title of the window.</param>
+-    public ItemSelectorWindow(ICollection<uint> itemCollection, WindowSystem? windowSystem = null, string name = "Select Items") : base(name, ImGuiWindowFlags.NoSavedSettings)
++    public ItemSelectorWindow(ICollection<uint> itemCollection, WindowSystem? windowSystem = null, string name = "选择物品") : base(name, ImGuiWindowFlags.NoSavedSettings)
+     {
+         this.ItemCollection = itemCollection;
+         Setup(windowSystem);
+@@ -46,7 +46,7 @@ public class ItemSelectorWindow : Window
+     /// <param name="name">Title of the window.</param>
+     /// <param name="itemSelected">Function that will be triggered upon user selecting an item. Return true to close window, return false to keep it open.</param>
+     /// <param name="isItemSelected">Whether item is selected or not. Can be null - no items will be highlighted as selected in that case. </param>
+-    public ItemSelectorWindow(Func<uint> itemSelected, Predicate<uint>? isItemSelected, WindowSystem? windowSystem = null, string name = "Select Items") : base(name, ImGuiWindowFlags.NoSavedSettings)
++    public ItemSelectorWindow(Func<uint> itemSelected, Predicate<uint>? isItemSelected, WindowSystem? windowSystem = null, string name = "选择物品") : base(name, ImGuiWindowFlags.NoSavedSettings)
+     {
+         ItemSelected = itemSelected;
+         IsItemSelected = isItemSelected;
+@@ -65,6 +65,23 @@ public class ItemSelectorWindow : Window
+         [Obfuscation] Other,
+     }
+ 
++    private static string GetDisplayCategoryName(string key)
++    {
++        if(!Enum.TryParse<DisplayCategory>(key, out var category)) return key;
++        return category switch
++        {
++            DisplayCategory.Weapons => "武器",
++            DisplayCategory.Armor => "防具",
++            DisplayCategory.Consumable => "消耗品",
++            DisplayCategory.Materials => "材料",
++            DisplayCategory.Housing => "房屋用品",
++            DisplayCategory.Crystals => "水晶",
++            DisplayCategory.Special => "特殊物品",
++            DisplayCategory.Other => "其他",
++            _ => key,
++        };
++    }
++
+     /// <summary>
+     /// If you want, add, remove or completely override categories that are being displayed. Keep in mind that items that do not belong to any of these categories will not be displayed. If you want to get rid of category selector at all, clear it completely, then all items will be displayed. Set it to null to reset it to defaults. 
+     /// </summary>
+@@ -74,6 +91,7 @@ public class ItemSelectorWindow : Window
+         {
+             if(field == null)
+             {
++                field = [];
+                 field[DisplayCategory.Weapons.ToString()] = [.. ItemUICategory.Values.Where(x => x.OrderMajor == 1 || x.OrderMajor == 2 || x.RowId == 11).Select(x => x.RowId)];
+                 field[DisplayCategory.Armor.ToString()] = [.. ItemUICategory.Values.Where(x => x.RowId != 11 && x.RowId != 62).Where(x => x.OrderMajor == 3 || x.OrderMajor == 4).Select(x => x.RowId)];
+                 field[DisplayCategory.Consumable.ToString()] = [.. ItemUICategory.Values.Where(x => x.RowId.EqualsAny<uint>(44, 46, 33)).Select(x => x.RowId)];
+@@ -181,7 +199,7 @@ public class ItemSelectorWindow : Window
+     public sealed override void Draw()
+     {
+         ImGuiEx.SetNextItemFullWidth();
+-        ImGui.InputTextWithHint("##filter", "Search...", ref SearchStr);
++        ImGui.InputTextWithHint("##filter", "搜索...", ref SearchStr);
+         if(ImGui.IsItemDeactivated())
+         {
+             RebuildItemList();
+@@ -190,10 +208,11 @@ public class ItemSelectorWindow : Window
+         foreach(var catGroup in this.CategoryGroups)
+         {
+             if(catGroup.Value.Length == 0) continue;
++            var categoryName = GetDisplayCategoryName(catGroup.Key);
+             if(catcnt > 0)
+             {
+                 var avail = ImGui.GetContentRegionAvail().X;
+-                var len = ImGui.GetFrameHeight() * 2 + ImGui.GetStyle().ItemSpacing.X * 3 + ImGui.CalcTextSize(catGroup.Key).X;
++                var len = ImGui.GetFrameHeight() * 2 + ImGui.GetStyle().ItemSpacing.X * 3 + ImGui.CalcTextSize(categoryName).X;
+                 if(len < avail)
+                 {
+                     ImGui.SameLine();
+@@ -210,11 +229,11 @@ public class ItemSelectorWindow : Window
+                 ImGui.Image(tex.Handle, new(ImGui.GetFrameHeight()));
+                 ImGui.SameLine();
+             }
+-            if(ImGuiEx.CollectionCheckbox(catGroup.Key, catGroup.Value, Categories))
++            if(ImGuiEx.CollectionCheckbox($"{categoryName}##{catGroup.Key}", catGroup.Value, Categories))
+             {
+                 RebuildItemList();
+             }
+-            if(catGroup.Value.Length > 1 && ImGuiEx.HoveredAndClicked("Right-click to select categories one by one", ImGuiMouseButton.Right))
++            if(catGroup.Value.Length > 1 && ImGuiEx.HoveredAndClicked("右键点击可逐个选择分类", ImGuiMouseButton.Right))
+             {
+                 ImGui.OpenPopup($"Cat{catGroup.Key}");
+             }
+@@ -240,7 +259,7 @@ public class ItemSelectorWindow : Window
+         }
+         if(this.ItemList.Count == 0)
+         {
+-            ImGuiEx.Text("No items matching your filters were found");
++            ImGuiEx.Text("没有符合筛选条件的物品");
+         }
+         else
+         {
+@@ -255,7 +274,7 @@ public class ItemSelectorWindow : Window
+             {
+ 
+             }
+-            if(ImGuiEx.BeginDefaultTable("ItemSelectTable", ["Item"], false, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, true))
++            if(ImGuiEx.BeginDefaultTable("ItemSelectTable", ["物品"], false, ImGuiTableFlags.SizingStretchSame | ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.RowBg | ImGuiTableFlags.BordersInner, true))
+             {
+                 if(PageNum < 0) PageNum = 0;
+                 var startNum = PageNum * perPage;
+@@ -311,7 +330,7 @@ public class ItemSelectorWindow : Window
+         }
+ 
+         if(maxItemsPerPage <= 0)
+-            throw new ArgumentException("Max items per page must be greater than 0", nameof(maxItemsPerPage));
++            throw new ArgumentException("每页最大物品数必须大于 0", nameof(maxItemsPerPage));
+ 
+         if(ItemList.Count <= maxItemsPerPage)
+         {
+@@ -341,4 +360,4 @@ public class ItemSelectorWindow : Window
+         public int ItemsPerPage;
+         public int TotalPages;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/ImGuiMethods/TerritorySelection/TerritorySelector.cs b/ECommons/ImGuiMethods/TerritorySelection/TerritorySelector.cs
+index 0b6221aff6d35c05f5de1e13ff6b426cd757d728..e7a13ae4d48eb8a0702f52266a202f65fd2c622e 100644
+--- a/ECommons/ImGuiMethods/TerritorySelection/TerritorySelector.cs
++++ b/ECommons/ImGuiMethods/TerritorySelection/TerritorySelector.cs
+@@ -22,6 +22,80 @@ public unsafe class TerritorySelector : Window
+     public enum Column { ID, Zone, Region, IntendedUse }
+     public enum DisplayMode { PlaceNameDutyUnion, PlaceNameAndDuty, PlaceNameOnly }
+ 
++    private static string GetCategoryName(Category category) => category switch
++    {
++        Category.World => "世界",
++        Category.Housing => "住宅区",
++        Category.Inn => "旅馆",
++        Category.Dungeon => "迷宫",
++        Category.Raid => "大型任务与团队任务",
++        Category.Trial => "讨伐歼灭战",
++        Category.Deep_Dungeon => "深层迷宫",
++        Category.Other => "其他",
++        Category.All => "全部",
++        _ => $"未知分类（{(int)category}）",
++    };
++
++    private static string GetIntendedUseName(TerritoryIntendedUseEnum intendedUse) => intendedUse switch
++    {
++        TerritoryIntendedUseEnum.City_Area => "城市区域",
++        TerritoryIntendedUseEnum.Open_World => "开放世界",
++        TerritoryIntendedUseEnum.Inn => "旅馆",
++        TerritoryIntendedUseEnum.Dungeon => "迷宫",
++        TerritoryIntendedUseEnum.Variant_Dungeon => "多变迷宫",
++        TerritoryIntendedUseEnum.Gaol => "监狱",
++        TerritoryIntendedUseEnum.Starting_Area => "初始区域",
++        TerritoryIntendedUseEnum.Quest_Area => "任务区域",
++        TerritoryIntendedUseEnum.Alliance_Raid => "团队任务",
++        TerritoryIntendedUseEnum.Quest_Battle => "任务战斗",
++        TerritoryIntendedUseEnum.Trial => "讨伐歼灭战",
++        TerritoryIntendedUseEnum.Quest_Area_2 => "任务区域 2",
++        TerritoryIntendedUseEnum.Residential_Area => "住宅区",
++        TerritoryIntendedUseEnum.Housing_Instances => "住宅内部",
++        TerritoryIntendedUseEnum.Quest_Area_3 => "任务区域 3",
++        TerritoryIntendedUseEnum.Raid => "大型任务",
++        TerritoryIntendedUseEnum.Raid_2 => "大型任务 2",
++        TerritoryIntendedUseEnum.Frontline => "纷争前线",
++        TerritoryIntendedUseEnum.Chocobo_Square => "陆行鸟广场",
++        TerritoryIntendedUseEnum.Restoration_Event => "重建活动",
++        TerritoryIntendedUseEnum.Sanctum => "圣堂",
++        TerritoryIntendedUseEnum.Gold_Saucer => "金碟游乐场",
++        TerritoryIntendedUseEnum.Lord_of_Verminion => "萌宠之王",
++        TerritoryIntendedUseEnum.Diadem => "云冠群岛",
++        TerritoryIntendedUseEnum.Hall_of_the_Novice => "初学者学堂",
++        TerritoryIntendedUseEnum.Crystalline_Conflict => "水晶冲突",
++        TerritoryIntendedUseEnum.Quest_Battle_2 => "任务战斗 2",
++        TerritoryIntendedUseEnum.Barracks => "兵营",
++        TerritoryIntendedUseEnum.Deep_Dungeon => "深层迷宫",
++        TerritoryIntendedUseEnum.Seasonal_Event => "季节活动",
++        TerritoryIntendedUseEnum.Treasure_Map_Duty => "宝物库",
++        TerritoryIntendedUseEnum.Seasonal_Event_Duty => "季节活动区域",
++        TerritoryIntendedUseEnum.Battlehall => "对战大厅",
++        TerritoryIntendedUseEnum.Crystalline_Conflict_2 => "水晶冲突 2",
++        TerritoryIntendedUseEnum.Diadem_2 => "云冠群岛 2",
++        TerritoryIntendedUseEnum.Rival_Wings => "烈羽争锋",
++        TerritoryIntendedUseEnum.Unknown_1 => "未知用途 1",
++        TerritoryIntendedUseEnum.Eureka => "禁地优雷卡",
++        TerritoryIntendedUseEnum.Seasonal_Event_2 => "季节活动 2",
++        TerritoryIntendedUseEnum.Leap_of_Faith => "飞跃之巅",
++        TerritoryIntendedUseEnum.Masked_Carnivale => "假面狂欢",
++        TerritoryIntendedUseEnum.Ocean_Fishing => "海钓",
++        TerritoryIntendedUseEnum.Diadem_3 => "云冠群岛 3",
++        TerritoryIntendedUseEnum.Bozja => "博兹雅战线",
++        TerritoryIntendedUseEnum.Island_Sanctuary => "无人岛开拓",
++        TerritoryIntendedUseEnum.Battlehall_2 => "对战大厅 2",
++        TerritoryIntendedUseEnum.Battlehall_3 => "对战大厅 3",
++        TerritoryIntendedUseEnum.Large_Scale_Raid => "女王古殿",
++        TerritoryIntendedUseEnum.Large_Scale_Savage_Raid => "零式女王古殿",
++        TerritoryIntendedUseEnum.Quest_Area_4 => "任务区域 4",
++        TerritoryIntendedUseEnum.Tribal_Instance => "至福乐土",
++        TerritoryIntendedUseEnum.Criterion_Duty => "异闻迷宫",
++        TerritoryIntendedUseEnum.Criterion_Savage_Duty => "零式异闻迷宫",
++        TerritoryIntendedUseEnum.Blunderville => "淘汰赛活动",
++        TerritoryIntendedUseEnum.Occult_Crescent => "蜃景幻界新月岛",
++        _ => $"未知用途（{(uint)intendedUse}）",
++    };
++
+     public static bool Singleton = true;
+     public static Dictionary<Category, TerritoryIntendedUseEnum[]> Categories = new()
+     {
+@@ -79,7 +153,7 @@ public unsafe class TerritorySelector : Window
+ 
+     private void Setup(HashSet<uint> SelectedTerritories, Action<TerritorySelector, HashSet<uint>> Callback, Action<TerritorySelector, uint> CallbackSingle)
+     {
+-        WindowName ??= "Select zones";
++        WindowName ??= "选择区域";
+         IsSingleSelection = CallbackSingle != null;
+         SelectedTerritory = SelectedTerritories.FirstOrDefault();
+         if(Singleton)
+@@ -91,7 +165,7 @@ public unsafe class TerritorySelector : Window
+         {
+             if(Selectors.Any(x => x.WindowName == WindowName))
+             {
+-                Notify.Error("Territory selector is already open");
++                Notify.Error("区域选择器已经打开");
+                 return;
+             }
+         }
+@@ -155,20 +229,21 @@ public unsafe class TerritorySelector : Window
+         {
+             foreach(var x in Cache)
+             {
+-                if(ImGui.BeginTabItem(x.Key.ToString(), SelectedCategory == x.Key ? ImGuiTabItemFlags.SetSelected : ImGuiTabItemFlags.None))
++                var categoryName = GetCategoryName(x.Key);
++                if(ImGui.BeginTabItem(categoryName, SelectedCategory == x.Key ? ImGuiTabItemFlags.SetSelected : ImGuiTabItemFlags.None))
+                 {
+                     ImGui.SetNextItemWidth(200f);
+-                    ImGui.InputTextWithHint($"##search", "Filter...", ref Filter, 50);
++                    ImGui.InputTextWithHint($"##search", "筛选...", ref Filter, 50);
+                     ImGui.SameLine();
+-                    ImGui.Checkbox("Only selected", ref OnlySelected);
++                    ImGui.Checkbox("仅显示已选", ref OnlySelected);
+                     ImGui.SameLine();
+-                    ImGui.Checkbox("Show unnamed", ref ShowUnnamed);
++                    ImGui.Checkbox("显示未命名", ref ShowUnnamed);
+                     if(Player.Available)
+                     {
+                         ImGui.SameLine();
+                         if(!IsSingleSelection)
+                         {
+-                            if(ImGuiEx.CollectionCheckbox($"Current: {ExcelTerritoryHelper.GetName(Svc.ClientState.TerritoryType)}", Svc.ClientState.TerritoryType, SelectedTerritories))
++                            if(ImGuiEx.CollectionCheckbox($"当前：{ExcelTerritoryHelper.GetName(Svc.ClientState.TerritoryType)}", Svc.ClientState.TerritoryType, SelectedTerritories))
+                             {
+                                 try
+                                 {
+@@ -180,19 +255,19 @@ public unsafe class TerritorySelector : Window
+                                 }
+                             }
+                             ImGui.SameLine();
+-                            if(ImGui.Button("Add all visible"))
++                            if(ImGui.Button("添加全部可见项"))
+                             {
+                                 VisibleAction = true;
+                             }
+                             ImGui.SameLine();
+-                            if(ImGui.Button("Remove all visible"))
++                            if(ImGui.Button("移除全部可见项"))
+                             {
+                                 VisibleAction = false;
+                             }
+                         }
+                         else
+                         {
+-                            if(ImGui.RadioButton($"Current zone: {ExcelTerritoryHelper.GetName(Svc.ClientState.TerritoryType)}", SelectedTerritory == Svc.ClientState.TerritoryType))
++                            if(ImGui.RadioButton($"当前区域：{ExcelTerritoryHelper.GetName(Svc.ClientState.TerritoryType)}", SelectedTerritory == Svc.ClientState.TerritoryType))
+                             {
+                                 SelectedTerritory = Svc.ClientState.TerritoryType;
+                                 try
+@@ -212,23 +287,23 @@ public unsafe class TerritorySelector : Window
+                         if(ImGui.BeginTable("##TSelector", 2 + ExtraColumns.Length + (Mode == DisplayMode.PlaceNameAndDuty ? 1 : 0), ImGuiTableFlags.Borders | ImGuiTableFlags.RowBg | ImGuiTableFlags.NoSavedSettings | ImGuiTableFlags.SizingFixedFit))
+                         {
+                             ImGui.TableSetupColumn(" ");
+-                            if(ExtraColumns.Contains(Column.ID)) ImGui.TableSetupColumn("ID");
++                            if(ExtraColumns.Contains(Column.ID)) ImGui.TableSetupColumn("编号");
+                             if(Mode == DisplayMode.PlaceNameDutyUnion)
+                             {
+-                                ImGui.TableSetupColumn("Place Name/Duty", ImGuiTableColumnFlags.WidthStretch);
++                                ImGui.TableSetupColumn("地点名称/任务", ImGuiTableColumnFlags.WidthStretch);
+                             }
+                             else if(Mode == DisplayMode.PlaceNameOnly)
+                             {
+-                                ImGui.TableSetupColumn("Place Name", ImGuiTableColumnFlags.WidthStretch);
++                                ImGui.TableSetupColumn("地点名称", ImGuiTableColumnFlags.WidthStretch);
+                             }
+                             else
+                             {
+-                                ImGui.TableSetupColumn("Place Name", ImGuiTableColumnFlags.WidthStretch);
+-                                ImGui.TableSetupColumn("Duty");
++                                ImGui.TableSetupColumn("地点名称", ImGuiTableColumnFlags.WidthStretch);
++                                ImGui.TableSetupColumn("任务");
+                             }
+-                            if(ExtraColumns.Contains(Column.Zone)) ImGui.TableSetupColumn("Zone");
+-                            if(ExtraColumns.Contains(Column.Region)) ImGui.TableSetupColumn("Region");
+-                            if(ExtraColumns.Contains(Column.IntendedUse)) ImGui.TableSetupColumn("Intended use");
++                            if(ExtraColumns.Contains(Column.Zone)) ImGui.TableSetupColumn("区域");
++                            if(ExtraColumns.Contains(Column.Region)) ImGui.TableSetupColumn("大区");
++                            if(ExtraColumns.Contains(Column.IntendedUse)) ImGui.TableSetupColumn("用途");
+ 
+                             ImGui.TableHeadersRow();
+ 
+@@ -239,7 +314,7 @@ public unsafe class TerritorySelector : Window
+                                 var name = t.PlaceName.ValueNullable?.Name.GetText() ?? "";
+                                 var zone = t.PlaceNameZone.ValueNullable?.Name.GetText() ?? "";
+                                 var region = t.PlaceNameRegion.ValueNullable?.Name.GetText() ?? "";
+-                                var intended = ((TerritoryIntendedUseEnum)t.TerritoryIntendedUse.RowId).ToString().Replace("_", " ") ?? "";
++                                var intended = GetIntendedUseName((TerritoryIntendedUseEnum)t.TerritoryIntendedUse.RowId);
+                                 var col = t.RowId == Svc.ClientState.TerritoryType && Player.Available;
+ 
+                                 if(Filter != ""
+@@ -249,7 +324,7 @@ public unsafe class TerritorySelector : Window
+                                     && !zone.Contains(Filter, StringComparison.OrdinalIgnoreCase)
+                                     && !region.Contains(Filter, StringComparison.OrdinalIgnoreCase)
+                                     && !intended.Contains(Filter, StringComparison.OrdinalIgnoreCase)
+-                                    && !x.Key.ToString().Contains(Filter, StringComparison.OrdinalIgnoreCase)
++                                    && !categoryName.Contains(Filter, StringComparison.OrdinalIgnoreCase)
+                                     && !t.RowId.ToString().Contains(Filter, StringComparison.OrdinalIgnoreCase))
+                                 {
+                                     continue;
+diff --git a/ECommons/Interop/OpenFileDialog.cs b/ECommons/Interop/OpenFileDialog.cs
+index 0b60a8d2bf366e78719ae74ba6fd23f8e6f4dcdf..9d1a83e1c0a3ee663bc4a6d84c7cebb391f31904 100644
+--- a/ECommons/Interop/OpenFileDialog.cs
++++ b/ECommons/Interop/OpenFileDialog.cs
+@@ -24,9 +24,9 @@ public class OpenFileDialog
+     [DllImport("Comdlg32.dll", CharSet = CharSet.Auto)]
+     private static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
+ 
+-    public static void SelectFile(Action<OpenFileName> successCallback, Action cancelCallback = null, string initialDir = null, string title = "Select a file...", IEnumerable<(string Description, IEnumerable<string> Extensions)> fileTypes = null, bool save = false) => SelectFile(new(), successCallback, cancelCallback, initialDir, title, fileTypes, save);
++    public static void SelectFile(Action<OpenFileName> successCallback, Action cancelCallback = null, string initialDir = null, string title = "选择文件...", IEnumerable<(string Description, IEnumerable<string> Extensions)> fileTypes = null, bool save = false) => SelectFile(new(), successCallback, cancelCallback, initialDir, title, fileTypes, save);
+ 
+-    public static void SelectFile(OpenFileName ofn, Action<OpenFileName> successCallback, Action cancelCallback = null, string initialDir = null, string title = "Select a file...", IEnumerable<(string Description, IEnumerable<string> Extensions)> fileTypes = null, bool save = false)
++    public static void SelectFile(OpenFileName ofn, Action<OpenFileName> successCallback, Action cancelCallback = null, string initialDir = null, string title = "选择文件...", IEnumerable<(string Description, IEnumerable<string> Extensions)> fileTypes = null, bool save = false)
+     {
+         if(SelectorSemaphore.Wait(0))
+         {
+@@ -51,7 +51,7 @@ public class OpenFileDialog
+                         {
+                             FileTypes.Add($"{x.Description}\0{x.Extensions.Select(x => $"*.{x}").Join(";")}");
+                         }
+-                        FileTypes.Add("\0All files\0*\0");
++                        FileTypes.Add("\0所有文件\0*\0");
+                     }
+ 
+                     ofn.filter = FileTypes.Join("\0");
+@@ -81,7 +81,7 @@ public class OpenFileDialog
+                     PluginLog.Error(e.Message + "\n" + e.StackTrace ?? "");
+                     new TickScheduler(delegate
+                     {
+-                        Notify.Error($"Error: {e.Message}");
++                        Notify.Error($"错误：{e.Message}");
+                     });
+                 }
+                 SelectorSemaphore.Release();
+@@ -90,7 +90,7 @@ public class OpenFileDialog
+         }
+         else
+         {
+-            Notify.Error("Failed to open file dialog");
++            Notify.Error("无法打开文件选择对话框");
+         }
+     }
+ }
+diff --git a/ECommons/Loader/PluginLoader.cs b/ECommons/Loader/PluginLoader.cs
+index 2cce03dd618cb80bd1fb8a98e280b6a456e30644..213f32e30d402f52b1dfacabcbe5f512c9d5af1b 100644
+--- a/ECommons/Loader/PluginLoader.cs
++++ b/ECommons/Loader/PluginLoader.cs
+@@ -37,7 +37,7 @@ public static class PluginLoader
+         pluginInterface.Create<MicroServices>();
+         Success = success;
+         PluginLoadCommand = $"/load_{MicroServices.PluginInterface.InternalName}";
+-        var cInfo = new CommandInfo(Load) { HelpMessage = $"Load plugin skipping version check" };
++        var cInfo = new CommandInfo(Load) { HelpMessage = $"跳过版本检查并加载插件" };
+         GenericHelpers.Safe(delegate
+         {
+             cInfo.SetFoP("LoaderAssemblyName", MicroServices.PluginInterface.InternalName);
+@@ -166,19 +166,19 @@ public static class PluginLoader
+         ImGui.SetNextWindowSizeConstraints(new(500, 100), new(500, 500));
+         ImGuiHelpers.SetNextWindowPosRelativeMainViewport(Pos);
+         ImGuiHelpers.ForceNextWindowMainViewport();
+-        if(ImGui.Begin($"{MicroServices.PluginInterface.InternalName} - version revoked", ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoSavedSettings))
++        if(ImGui.Begin($"{MicroServices.PluginInterface.InternalName} - 该版本已撤回", ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoSavedSettings))
+         {
+-            ImGuiEx.TextWrapped("Current version of the plugin has been marked as revoked.");
+-            ImGuiEx.TextWrapped("This means that there is an issue that can cause problems. Usually, updated version either already available or will be available as soon as possible. ");
+-            if(ImGui.Button("Open plugin installer"))
++            ImGuiEx.TextWrapped("当前版本的插件已被标记为撤回版本。");
++            ImGuiEx.TextWrapped("这意味着该版本存在可能引发问题的缺陷。通常，更新版本已经可用，或会尽快发布。");
++            if(ImGui.Button("打开插件安装器"))
+             {
+                 MicroServices.PluginInterface.OpenPluginInstallerTo();
+             }
+-            if(ImGui.Button("Close this window"))
++            if(ImGui.Button("关闭此窗口"))
+             {
+                 MicroServices.PluginInterface.UiBuilder.Draw -= Draw;
+             }
+-            if(ImGui.Button("Load the plugin anyway"))
++            if(ImGui.Button("仍然加载插件"))
+             {
+                 MicroServices.Framework.Update += CallLoad;
+             }
+diff --git a/ECommons/Logging/InternalLog.cs b/ECommons/Logging/InternalLog.cs
+index 4627bc6611d18af4531d6eebe457366cdd4e6066..9b8cb4378fc85f478cee913b6106904a22d515aa 100644
+--- a/ECommons/Logging/InternalLog.cs
++++ b/ECommons/Logging/InternalLog.cs
+@@ -15,7 +15,7 @@ public class InternalLog
+ {
+     public static readonly CircularBuffer<InternalLogMessage> Messages = new(1000);
+ 
+-    public static (string, Action, Vector4, bool) ImGuiTab(bool draw = true) => (draw ? "Log" : null, PrintImgui, ImGuiColors.DalamudGrey3, false);
++    public static (string, Action, Vector4, bool) ImGuiTab(bool draw = true) => (draw ? "日志" : null, PrintImgui, ImGuiColors.DalamudGrey3, false);
+ 
+     public static void Information(string s)
+     {
+@@ -89,25 +89,25 @@ public class InternalLog
+     public static void PrintImgui()
+     {
+         ImGui.Checkbox("##Autoscroll", ref Autoscroll);
+-        ImGuiEx.Tooltip("Autoscroll");
++        ImGuiEx.Tooltip("自动滚动");
+         ImGui.SameLine();
+-        if(ImGui.Button("Copy all"))
++        if(ImGui.Button("复制全部"))
+         {
+ #pragma warning disable
+             GenericHelpers.Copy(Messages.Where(x => x.Level >= SelectedLevel).Select(x => $"[{x.Level}@{x.Time}] {x.Message}").Join("\n"));
+ #pragma warning restore
+         }
+         ImGui.SameLine();
+-        if(ImGui.Button("Clear"))
++        if(ImGui.Button("清空"))
+         {
+             Messages.Clear();
+         }
+         ImGui.SameLine();
+         ImGuiEx.SetNextItemFullWidth(-30);
+-        ImGui.InputTextWithHint("##Filter", "Filter...", ref Search, 100);
++        ImGui.InputTextWithHint("##Filter", "筛选...", ref Search, 100);
+         ImGui.SameLine();
+         if(ImGuiEx.IconButton(Dalamud.Interface.FontAwesomeIcon.Filter, "##LogFilter")) ImGui.OpenPopup("filter_window");
+-        ImGuiEx.Tooltip("Log Filter");
++        ImGuiEx.Tooltip("日志级别筛选");
+ 
+         if(ImGui.BeginPopup("filter_window", ImGuiWindowFlags.NoMove | ImGuiWindowFlags.Popup))
+         {
+@@ -147,12 +147,12 @@ public class InternalLog
+             else
+                 Filter &= ~flag;
+         }
+-        FlagCheckbox("Verbose", FilterType.Verbose);
+-        FlagCheckbox("Debug", FilterType.Debug);
+-        FlagCheckbox("Info", FilterType.Info);
+-        FlagCheckbox("Warning", FilterType.Warning);
+-        FlagCheckbox("Error", FilterType.Error);
+-        FlagCheckbox("Fatal", FilterType.Fatal);
++        FlagCheckbox("详细", FilterType.Verbose);
++        FlagCheckbox("调试", FilterType.Debug);
++        FlagCheckbox("信息", FilterType.Info);
++        FlagCheckbox("警告", FilterType.Warning);
++        FlagCheckbox("错误", FilterType.Error);
++        FlagCheckbox("严重错误", FilterType.Fatal);
+     }
+ 
+     private static bool ShouldDisplayLog(LogEventLevel level)
+diff --git a/ECommons/Networking/ProxySettings.cs b/ECommons/Networking/ProxySettings.cs
+index 1e5fae99dd8acc410f75b5e773753ea4664888d5..9b1c146c3415c5befe22d20fa672e25817dc276c 100644
+--- a/ECommons/Networking/ProxySettings.cs
++++ b/ECommons/Networking/ProxySettings.cs
+@@ -21,7 +21,7 @@ public class ProxySettings
+     /// </summary>
+     public void ImGuiDraw()
+     {
+-        ImGuiEx.TreeNodeCollapsingHeader("Proxy Settings", ImGuiDrawNoCollapsingHeader);
++        ImGuiEx.TreeNodeCollapsingHeader("代理设置", ImGuiDrawNoCollapsingHeader);
+     }
+ 
+     /// <summary>
+@@ -33,39 +33,39 @@ public class ProxySettings
+         {
+             ImGui.TableNextRow();
+             ImGui.TableNextColumn();
+-            ImGuiEx.TextV($"Enable proxy:");
++            ImGuiEx.TextV($"启用代理：");
+             ImGui.TableNextColumn();
+             ImGui.Checkbox("##enableProxy", ref UseProxy);
+ 
+             ImGui.TableNextRow();
+             ImGui.TableNextColumn();
+-            ImGuiEx.TextV($"Bypass for local connections:");
++            ImGuiEx.TextV($"本地连接不使用代理：");
+             ImGui.TableNextColumn();
+             ImGui.Checkbox("##bypassLocalConnections", ref BypassLocal);
+ 
+             ImGui.TableNextRow();
+             ImGui.TableNextColumn();
+-            ImGuiEx.TextV($"Proxy address:");
++            ImGuiEx.TextV($"代理地址：");
+             ImGui.TableNextColumn();
+             ImGuiEx.SetNextItemFullWidth();
+             ImGui.InputText("##proxyAddress", ref ProxyAddress, 1000);
+ 
+             ImGui.TableNextRow();
+             ImGui.TableNextColumn();
+-            ImGuiEx.TextV($"Enable authentication:");
++            ImGuiEx.TextV($"启用身份验证：");
+             ImGui.TableNextColumn();
+             ImGui.Checkbox("##enableProxyAuthentication", ref UseProxyAuthentication);
+ 
+             ImGui.TableNextRow();
+             ImGui.TableNextColumn();
+-            ImGuiEx.TextV($"Proxy login:");
++            ImGuiEx.TextV($"代理用户名：");
+             ImGui.TableNextColumn();
+             ImGuiEx.SetNextItemFullWidth();
+             ImGui.InputText("##proxyLogin", ref ProxyLogin, 1000);
+ 
+             ImGui.TableNextRow();
+             ImGui.TableNextColumn();
+-            ImGuiEx.TextV($"Proxy password:");
++            ImGuiEx.TextV($"代理密码：");
+             ImGui.TableNextColumn();
+             ImGuiEx.SetNextItemFullWidth();
+             ImGui.InputText("##proxyPassword", ref ProxyPassword, 1000);
+@@ -73,4 +73,4 @@ public class ProxySettings
+             ImGui.EndTable();
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/SimpleGui/ConfigWindow.cs b/ECommons/SimpleGui/ConfigWindow.cs
+index e675aa23b27d3b0230ffad44ec1ab19061140507..6b27b8919bba153861175261d5ef882dc57302da 100644
+--- a/ECommons/SimpleGui/ConfigWindow.cs
++++ b/ECommons/SimpleGui/ConfigWindow.cs
+@@ -43,12 +43,12 @@ public class ConfigWindow : Window
+         if(EzConfigGui.Config != null)
+         {
+             Svc.PluginInterface.SavePluginConfig(EzConfigGui.Config);
+-            PluginLog.Debug("Configuration saved");
++            PluginLog.Debug("配置已保存");
+         }
+         if(EzConfig.Config != null)
+         {
+             EzConfig.Save();
+-            PluginLog.Debug("Configuration saved");
++            PluginLog.Debug("配置已保存");
+         }
+         EzConfigGui.OnClose?.Invoke();
+     }
+diff --git a/ECommons/SimpleGui/PopupWindow.cs b/ECommons/SimpleGui/PopupWindow.cs
+index ab50c19661dc103eb72a86ede74e28eb2e292534..e202d3ae4114af1472c5046d6ec072a0087efcef 100644
+--- a/ECommons/SimpleGui/PopupWindow.cs
++++ b/ECommons/SimpleGui/PopupWindow.cs
+@@ -16,7 +16,7 @@ public class PopupWindow : Window
+ {
+     private Action drawAction;
+     private WindowSystem WindowSystem;
+-    public PopupWindow(Action content) : base($"{Svc.PluginInterface.Manifest.Name} - Notification##{Guid.NewGuid()}", ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse, true)
++    public PopupWindow(Action content) : base($"{Svc.PluginInterface.Manifest.Name} - 通知##{Guid.NewGuid()}", ImGuiWindowFlags.NoSavedSettings | ImGuiWindowFlags.NoCollapse, true)
+     {
+         Configure(content);
+     }
+diff --git a/ECommons/Throttlers/EzThrottler{T}.cs b/ECommons/Throttlers/EzThrottler{T}.cs
+index 62c65bf918bae80480d60b1b5a62ea1418b92f68..a9675ebff9d9d5c6cc4659b614f89977f3e0697c 100644
+--- a/ECommons/Throttlers/EzThrottler{T}.cs
++++ b/ECommons/Throttlers/EzThrottler{T}.cs
+@@ -62,7 +62,7 @@ public class EzThrottler<T>
+     {
+         foreach(var x in Throttlers)
+         {
+-            ImGuiEx.Text(Check(x.Key) ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, $"{x.Key}: [{GetRemainingTime(x.Key)}ms remains] ({x.Value})");
++            ImGuiEx.Text(Check(x.Key) ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, $"{x.Key}：[剩余 {GetRemainingTime(x.Key)} 毫秒]（{x.Value}）");
+         }
+     }
+ 
+diff --git a/ECommons/Throttlers/FrameThrottler{T}.cs b/ECommons/Throttlers/FrameThrottler{T}.cs
+index d0551e380c343bfc45127ff315416629b5f4210b..a75f4f5205827b280fe07de56d61324d8fd6ac7d 100644
+--- a/ECommons/Throttlers/FrameThrottler{T}.cs
++++ b/ECommons/Throttlers/FrameThrottler{T}.cs
+@@ -62,7 +62,7 @@ public class FrameThrottler<T>
+     {
+         foreach(var x in Throttlers)
+         {
+-            ImGuiEx.Text(Check(x.Key) ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, $"{x.Key}: [{GetRemainingTime(x.Key)} frames remains] ({x.Value})");
++            ImGuiEx.Text(Check(x.Key) ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, $"{x.Key}：[剩余 {GetRemainingTime(x.Key)} 帧]（{x.Value}）");
+         }
+     }
+ 
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/AirShipExploration.cs b/ECommons/UIHelpers/AddonMasterImplementations/AirShipExploration.cs
+index 7877da8e04329b12b53fcafccf5b2391b32baa77..26cba4ca72212221b12e16a584bd16e622eed773 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/AirShipExploration.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/AirShipExploration.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* DeployButton => Addon->GetComponentButtonById(85);
+ 
+-        public override string AddonDescription { get; } = "Submersible/Airship path selection";
++        public override string AddonDescription { get; } = "飞空艇/潜水艇远航探索路线选择窗口";
+ 
+         public void Deploy() => ClickButtonIfEnabled(DeployButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationDetail.cs b/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationDetail.cs
+index db99a663f2572b86ad8712aa1a4c0560363ebab5..766d87bb559da4a45302a1194d1ca5589f3ab70e 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationDetail.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationDetail.cs
+@@ -12,9 +12,9 @@ public partial class AddonMaster
+         public AtkComponentButton* DeployButton => Addon->GetComponentButtonById(26);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(27);
+ 
+-        public override string AddonDescription { get; } = "Submersible/Airship exploration voyage details window";
++        public override string AddonDescription { get; } = "飞空艇/潜水艇远航探索详情窗口";
+ 
+         public void Deploy() => ClickButtonIfEnabled(DeployButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationResult.cs
+index b88c2748876331a9b673dd38d219cc64bb46247b..243df4b49c82a1b1a0308e364a6ef15258d03ad2 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/AirShipExplorationResult.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* RedeployButton => Addon->GetComponentButtonById(47);
+         public AtkComponentButton* FinalizeReportButton => Addon->GetComponentButtonById(48);
+ 
+-        public override string AddonDescription { get; } = "Submersible/Airship exploration result window";
++        public override string AddonDescription { get; } = "飞空艇/潜水艇远航报告窗口";
+ 
+         public void Redeploy() => ClickButtonIfEnabled(RedeployButton);
+         public void FinalizeReport() => ClickButtonIfEnabled(FinalizeReportButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Bank.cs b/ECommons/UIHelpers/AddonMasterImplementations/Bank.cs
+index d5eded7a42e3f721ac580e9bb0e082d712bf8be8..a96de0f9e710ab2561a381229347b7c24bc2b302 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Bank.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Bank.cs
+@@ -14,7 +14,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ProceedButton => Addon->GetComponentButtonById(35);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(36);
+ 
+-        public override string AddonDescription { get; } = "Gil transfer window";
++        public override string AddonDescription { get; } = "金币转移窗口";
+ 
+         public void Proceed() => ClickButtonIfEnabled(ProceedButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/BankaCraftworksSupply.cs b/ECommons/UIHelpers/AddonMasterImplementations/BankaCraftworksSupply.cs
+index d979f87fc00d38cb63669a6074e1c1f1eb367443..3d68d822a29a4d8cdaecd4f65e1f5f9fbddd4846 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/BankaCraftworksSupply.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/BankaCraftworksSupply.cs
+@@ -30,7 +30,7 @@ public partial class AddonMaster
+         public List<int> SlotsFilled => [.. Enumerable.Range(0, 6).Where(i => Addon->GetComponentNodeById((uint)(i + 36))->Component->UldManager.NodeList[1]->IsVisible()).Select(i => i)];
+         public int? FirstUnfilledSlot => SlotsFilled.Count == 6 ? null : Enumerable.Range(0, 6).FirstOrDefault(i => !SlotsFilled.Contains(i));
+ 
+-        public override string AddonDescription { get; } = "Crystarium/Studium/Wachumeqimeqi Deliveries window";
++        public override string AddonDescription { get; } = "中庸工艺馆交易/萨雷安魔法大学交易/珠串万货街交易窗口";
+ 
+         public bool? TryHandOver(int slot)
+         {
+@@ -52,4 +52,3 @@ public partial class AddonMaster
+         }
+     }
+ }
+-
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/BannerEditor.cs b/ECommons/UIHelpers/AddonMasterImplementations/BannerEditor.cs
+index 3be75926cb37135d31e4fcadbdd41a152ee672dd..bf91d8e9886954d6bf2a87a03c9f93df87a920a8 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/BannerEditor.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/BannerEditor.cs
+@@ -8,7 +8,7 @@ public partial class AddonMaster
+     /// </summary>
+     public unsafe class BannerEditor : AddonMasterBase<AddonBannerEditor>
+     {
+-        public override string AddonDescription { get; } = "Portraits editor";
++        public override string AddonDescription { get; } = "肖像编辑器";
+ 
+         public BannerEditor(nint addon) : base(addon) { }
+         public BannerEditor(void* addon) : base(addon) { }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/BannerList.cs b/ECommons/UIHelpers/AddonMasterImplementations/BannerList.cs
+index 14c3c1d2f029a02b98aba3be6296700266d635bf..726575e78800d61afe443f706f9ab7983075e651 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/BannerList.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/BannerList.cs
+@@ -36,7 +36,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Portraits list";
++        public override string AddonDescription { get; } = "肖像列表";
+ 
+         public readonly struct Portraits
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/BannerMIP.cs b/ECommons/UIHelpers/AddonMasterImplementations/BannerMIP.cs
+index e96a609d786ddd62bece4ad8d014bcf23ae32e15..deb76c35117e48af5da649a5cd3aed7e36825c33 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/BannerMIP.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/BannerMIP.cs
+@@ -15,7 +15,7 @@ public partial class AddonMaster
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(21);
+         public AtkComponentButton* SettingsButton => Addon->GetComponentButtonById(22);
+ 
+-        public override string AddonDescription => "Player commendation voting (with portraits) window";
++        public override string AddonDescription => "最优队员推荐（含肖像）窗口";
+ 
+         public void Ok() => ClickButtonIfEnabled(OkButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/BannerPreview.cs b/ECommons/UIHelpers/AddonMasterImplementations/BannerPreview.cs
+index be11fbe271ca46050b0f5d02acdb8061dc8fdcba..9bcab8e7a756ccafa62eeb491f7ec07a965287bf 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/BannerPreview.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/BannerPreview.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(9);
+         public AtkComponentCheckBox* DoNotDisplayAgainCheckbox => Addon->GetComponentNodeById(2)->GetAsAtkComponentCheckBox();
+ 
+-        public override string AddonDescription => "Portrait Update Preview";
++        public override string AddonDescription => "肖像更新预览";
+ 
+         public void Update() => ClickButtonIfEnabled(UpdateButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/CollectablesShop.cs b/ECommons/UIHelpers/AddonMasterImplementations/CollectablesShop.cs
+index 924337ba896fa4e071f280b6e0a18b388dcb997d..da85a83dbd5d9cb1d7706e02e2a7278e1ce67e48 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/CollectablesShop.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/CollectablesShop.cs
+@@ -25,7 +25,7 @@ public partial class AddonMaster
+         public AtkComponentRadioButton* BotanistButton => Addon->GetComponentNodeById(12)->GetAsAtkComponentRadioButton();
+         public AtkComponentRadioButton* FisherButton => Addon->GetComponentNodeById(13)->GetAsAtkComponentRadioButton();
+ 
+-        public override string AddonDescription { get; } = "Collectables";
++        public override string AddonDescription { get; } = "收藏品交易窗口";
+ 
+         public void Trade() => ClickButtonIfEnabled(TradeButton);
+ 
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ColorantColoring.cs b/ECommons/UIHelpers/AddonMasterImplementations/ColorantColoring.cs
+index 7f7e9ac229f1560292bb73e2f48f4d1f02a7206a..86287034b4e71860031b049d72767031d953749c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ColorantColoring.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ColorantColoring.cs
+@@ -19,7 +19,7 @@ public unsafe partial class AddonMaster
+         public AtkComponentButton* ApplyButton => Base->GetComponentButtonById(68);
+         public AtkComponentButton* SelectAnotherButton => Base->GetComponentButtonById(69);
+ 
+-        public override string AddonDescription { get; } = "Item dyeing window";
++        public override string AddonDescription { get; } = "物品染色窗口";
+ 
+         public void Apply() => ClickButtonIfEnabled(ApplyButton);
+         public void SelectAnother() => ClickButtonIfEnabled(SelectAnotherButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftRecipeNoteBook.cs b/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftRecipeNoteBook.cs
+index 33c423460a9d554d815a09dc5d310dde82e35b1b..aa0d07b10c0af98d698f343d9187b65bb65a0cc5 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftRecipeNoteBook.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftRecipeNoteBook.cs
+@@ -10,8 +10,8 @@ public unsafe partial class AddonMaster
+ 
+         public AtkComponentButton* BeginButton => Base->GetComponentButtonById(34);
+ 
+-        public override string AddonDescription { get; } = "Free Company crafting log";
++        public override string AddonDescription { get; } = "部队合建笔记";
+ 
+         public void Begin() => ClickButtonIfEnabled(BeginButton);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftSupply.cs b/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftSupply.cs
+index 723821e66d8ffbd03d836a71eed1cd47a933326e..0a84450ef65893193732da8964e0167aa9979a05 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftSupply.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/CompanyCraftSupply.cs
+@@ -11,8 +11,8 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(41);
+ 
+-        public override string AddonDescription { get; } = "Free Company workshop delivery";
++        public override string AddonDescription { get; } = "部队合建素材交纳窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderConfirm.cs b/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderConfirm.cs
+index 2338f90df027d066b15df422268b8ef740166023..240ace80b4dda91a9f8ded51862447acabc8a69c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderConfirm.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderConfirm.cs
+@@ -6,7 +6,7 @@ public partial class AddonMaster
+ {
+     public unsafe class ContentsFinderConfirm : AddonMasterBase<AddonContentsFinderConfirm>
+     {
+-        public override string AddonDescription { get; } = "Duty finder confirmation window";
++        public override string AddonDescription { get; } = "任务搜索器确认窗口";
+ 
+         public ContentsFinderConfirm(nint addon) : base(addon)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderSetting.cs b/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderSetting.cs
+index 2ccabe1e0019a87ef659566c4c9c26f7351e60d2..c462ace537ddf4f04d8439665fd2b5fe1f1f1b04 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderSetting.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderSetting.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ConfirmButton => Addon->GetComponentButtonById(29);
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(30);
+ 
+-        public override string AddonDescription { get; } = "Duty finder settings window";
++        public override string AddonDescription { get; } = "任务搜索器设置窗口";
+ 
+         public bool Confirm() => ClickButtonIfEnabled(ConfirmButton);
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderStatus.cs b/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderStatus.cs
+index 806eee3704fa5f4959e2c1a97dfc727a36cd2354..16de86a1fde6a00d2e1b41830aaa95b6e03e8b4b 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderStatus.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ContentsFinderStatus.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* WithdrawButton => Addon->GetComponentButtonById(40);
+ 
+-        public override string AddonDescription => "Duty finder status window";
++        public override string AddonDescription => "任务搜索器状态窗口";
+ 
+         public void Withdraw() => ClickButtonIfEnabled(WithdrawButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ContextMenu.cs b/ECommons/UIHelpers/AddonMasterImplementations/ContextMenu.cs
+index e30dae2bf99618bcee61091876d7616a59a49df1..c72c005fb87c8e3938ebe854ccaf9d70b7280345 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ContextMenu.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ContextMenu.cs
+@@ -48,7 +48,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Context menu";
++        public override string AddonDescription { get; } = "快捷菜单";
+ 
+         public readonly struct Entry(ContextMenu am, AddonContextMenu* addon, int index)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/DawnStory.cs b/ECommons/UIHelpers/AddonMasterImplementations/DawnStory.cs
+index 7d752cbc7dd93cfd330a29c8b3fb57605d52a641..311a0e0fabd3ce135d4a88f2f68487250f07630d 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/DawnStory.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/DawnStory.cs
+@@ -21,7 +21,7 @@ public unsafe partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Duty Support window";
++        public override string AddonDescription { get; } = "剧情辅助器窗口";
+         public ReaderDawnStory Reader => new(Base);
+         public IEnumerable<Entry> Entries
+         {
+@@ -51,4 +51,4 @@ public unsafe partial class AddonMaster
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Dialogue.cs b/ECommons/UIHelpers/AddonMasterImplementations/Dialogue.cs
+index d03f48ccc41bfd52b29e59f4b682785515b63cda..6721bc3dd35418121456b7354cda77b61c16aeae 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Dialogue.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Dialogue.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* OkButton => Addon->GetComponentButtonById(4);
+ 
+-        public override string AddonDescription { get; } = "Title screen error code window";
++        public override string AddonDescription { get; } = "标题界面错误代码窗口";
+ 
+         public void Ok() => ClickButtonIfEnabled(OkButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/DifficultySelectYesNo.cs b/ECommons/UIHelpers/AddonMasterImplementations/DifficultySelectYesNo.cs
+index fad6b4663738c2ac198de3f648411fbfd0044643..0acc8da3be98102243a48a0584664fc54bff7962 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/DifficultySelectYesNo.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/DifficultySelectYesNo.cs
+@@ -19,7 +19,7 @@ public partial class AddonMaster
+         public AtkComponentRadioButton* EasyButton => Addon->GetComponentNodeById(6)->GetAsAtkComponentRadioButton(); // which: 65
+         public AtkComponentRadioButton* VeryEasyButton => Addon->GetComponentNodeById(7)->GetAsAtkComponentRadioButton(); // which: 66
+ 
+-        public override string AddonDescription { get; } = "Solo duty difficulty selection window";
++        public override string AddonDescription { get; } = "单人任务难度选择窗口";
+ 
+         public void Proceed() => ClickButtonIfEnabled(ProceedButton);
+         public void Leave() => ClickButtonIfEnabled(LeaveButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/FreeCompanyCreditShop.cs b/ECommons/UIHelpers/AddonMasterImplementations/FreeCompanyCreditShop.cs
+index 685eba90af0f33928f311db2e54f49fd73bfeda7..2f55f7754927c115f9d4ae6828b591d719cf0166 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/FreeCompanyCreditShop.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/FreeCompanyCreditShop.cs
+@@ -29,7 +29,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Free Company credit shop window";
++        public override string AddonDescription { get; } = "部队战绩商店窗口";
+ 
+         public readonly struct Item
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Gathering.cs b/ECommons/UIHelpers/AddonMasterImplementations/Gathering.cs
+index c801752e54204bdd6e1af4e5ee11e9177e0bbb5d..2c40809da747e54e735edf4df0afbd06a32224a6 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Gathering.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Gathering.cs
+@@ -45,7 +45,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Gathering window";
++        public override string AddonDescription { get; } = "采集窗口";
+ 
+         public class GatheredItem
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GatheringMasterpiece.cs b/ECommons/UIHelpers/AddonMasterImplementations/GatheringMasterpiece.cs
+index 94754f6b8dae13801606e939e8b88748ef99e86e..511d7dbb620ac17c8a73b79537fb6a2b3f1bc7ac 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GatheringMasterpiece.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GatheringMasterpiece.cs
+@@ -34,7 +34,7 @@ public partial class AddonMaster
+         public AtkComponentButton* HelpButton => Addon->GetComponentButtonById(182);
+         public AtkComponentButton* ReturnButton => Addon->GetComponentButtonById(183);
+ 
+-        public override string AddonDescription { get; } = "Collectables gathering window";
++        public override string AddonDescription { get; } = "收藏品采集窗口";
+ 
+         public void Help() => ClickButtonIfEnabled(HelpButton);
+         public void Return() => ClickButtonIfEnabled(ReturnButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyChangeClass.cs b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyChangeClass.cs
+index 20b80fb0ec5496f7e80f2b61a7efe605ba6566a4..61d2c30d7fd61ce3a0c638a9f4166b548d887ea1 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyChangeClass.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyChangeClass.cs
+@@ -18,7 +18,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ThaumaturgeButton => Addon->GetComponentButtonById(19);
+         public AtkComponentButton* ArcanistButton => Addon->GetComponentButtonById(20);
+ 
+-        public override string AddonDescription { get; } = "Squadron change class window";
++        public override string AddonDescription { get; } = "冒险者分队转职窗口";
+ 
+         public void Gladiator() => ClickButtonIfEnabled(GladiatorButton);
+         public void Marauder() => ClickButtonIfEnabled(MarauderButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpedition.cs b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpedition.cs
+index 36d072ee75d1bea02b1f356c1225b6bab095aa66..1e5bc97c4f2926374ddc823e105eeae5e8e96517 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpedition.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpedition.cs
+@@ -8,7 +8,7 @@ public partial class AddonMaster
+         public GcArmyExpedition(nint addon) : base(addon) { }
+         public GcArmyExpedition(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Squadron mission assignment window";
++        public override string AddonDescription { get; } = "冒险者分队任务委托窗口";
+ 
+         public void Deploy() => ClickButtonIfEnabled(Addon->DeployButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpeditionResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpeditionResult.cs
+index 5da875199d4ee1c1b88d4f5d072e3cfbd75f414f..a05dcb7dcd2c6897009901589f7a1222c215c00c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpeditionResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyExpeditionResult.cs
+@@ -8,7 +8,7 @@ public partial class AddonMaster
+         public GcArmyExpeditionResult(nint addon) : base(addon) { }
+         public GcArmyExpeditionResult(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Squadron mission result";
++        public override string AddonDescription { get; } = "冒险者分队任务结果";
+ 
+         public void Complete() => ClickButtonIfEnabled(Addon->CompleteButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyMenberProfile.cs b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyMenberProfile.cs
+index 8d82af082a702253ca25efd51a4fe5280d499721..e4f09a925dbd9f94e61efbb67f7b615254120757 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyMenberProfile.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyMenberProfile.cs
+@@ -27,7 +27,7 @@ public partial class AddonMaster
+         public AtkComponentRadioButton* ConfirmChemistryButton => Addon->GetComponentNodeById(33)->GetAsAtkComponentRadioButton();
+         public AtkComponentRadioButton* OutfitButton => Addon->GetComponentNodeById(34)->GetAsAtkComponentRadioButton();
+ 
+-        public override string AddonDescription { get; } = "Squadron member profile window";
++        public override string AddonDescription { get; } = "冒险者分队成员资料窗口";
+ 
+         public void DisplayOrders() => ClickButtonIfEnabled(DisplayOrdersButton);
+         public void ChangeClass() => ClickButtonIfEnabled(ChangeClassButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyTraining.cs b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyTraining.cs
+index b784da50f4d4d62bfc28175ec13b7c829e23db7b..4fb8fd93a54cd058d2edef6b9c9841d5b03c5d80 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GcArmyTraining.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GcArmyTraining.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(39);
+ 
+-        public override string AddonDescription { get; } = "Squadron training window";
++        public override string AddonDescription { get; } = "冒险者分队训练窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GearSetList.cs b/ECommons/UIHelpers/AddonMasterImplementations/GearSetList.cs
+index a13dc5d0384097139de13ea3c685eb2397e6fb26..72cf966e2db45e57e66cd27540ae04851d7a0581 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GearSetList.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GearSetList.cs
+@@ -13,11 +13,11 @@ public unsafe partial class AddonMaster
+         public AtkComponentButton* RefreshButton => Base->GetComponentButtonById(4);
+         public AtkComponentButton* EquipSetButton => Base->GetComponentButtonById(9);
+ 
+-        public override string AddonDescription { get; } = "Gearset window";
++        public override string AddonDescription { get; } = "套装列表窗口";
+ 
+         public void DisplayHelp() => ClickButtonIfEnabled(DisplayHelpButton);
+         public void CreateNewGearset() => ClickButtonIfEnabled(CreateNewGearsetButton);
+         public void Refresh() => ClickButtonIfEnabled(RefreshButton);
+         public void EquipSet() => ClickButtonIfEnabled(EquipSetButton);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/GrandCompanySupplyReward.cs b/ECommons/UIHelpers/AddonMasterImplementations/GrandCompanySupplyReward.cs
+index a27a8848da9dbe6940c39223c1ec8234827b7194..746440b244e9b733c05e2b9f6d0e0101fe0bd290 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/GrandCompanySupplyReward.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/GrandCompanySupplyReward.cs
+@@ -24,7 +24,7 @@ public partial class AddonMaster
+ 
+         public bool IsEnabled => DeliverButton->IsEnabled;
+ 
+-        public override string AddonDescription { get; } = "Grand Company delivery window";
++        public override string AddonDescription { get; } = "大国防联军交纳报酬窗口";
+ 
+         public void Deliver() => ClickButtonIfEnabled(DeliverButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/InclusionShop.cs b/ECommons/UIHelpers/AddonMasterImplementations/InclusionShop.cs
+index fcee82876174b000ac3e9267493916dc6bab5771..198343003bf10653cf28ff772564eb7bdef7fbb3 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/InclusionShop.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/InclusionShop.cs
+@@ -54,6 +54,6 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Crafter/Gathering Script Shop Window";
++        public override string AddonDescription { get; } = "能工巧匠/大地使者工票商店窗口";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/InputNumeric.cs b/ECommons/UIHelpers/AddonMasterImplementations/InputNumeric.cs
+index e686de7132fa2a02727ee69617cf1ca1bae6138f..fd8fea764ec6ba6cc17bd9fcfe39102fccf21e31 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/InputNumeric.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/InputNumeric.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+         public AtkComponentButton* OkButton => Addon->GetComponentButtonById(4);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(5);
+ 
+-        public override string AddonDescription { get; } = "Number input dialogue";
++        public override string AddonDescription { get; } = "数字输入对话框";
+ 
+         public void Ok(int value) => Callback.Fire(Addon, true, value);
+         public void Ok() => ClickButtonIfEnabled(OkButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Inventory.cs b/ECommons/UIHelpers/AddonMasterImplementations/Inventory.cs
+index 8665e01c33ccd9f0b1ae111da806713034f8dda4..d0b310e2bbe289b25a43a8972c1dea9eed5f0f9b 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Inventory.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Inventory.cs
+@@ -19,7 +19,7 @@ public unsafe partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Inventory window";
++        public override string AddonDescription { get; } = "背包窗口";
+ 
+         public void OpenArmoryChest()
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/InventoryExpansion.cs b/ECommons/UIHelpers/AddonMasterImplementations/InventoryExpansion.cs
+index 25f9bb256fe4729daecb216bde2b4956c20760d5..77a4cc566a693e0bbd7bb964dc204ed08c0192ff 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/InventoryExpansion.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/InventoryExpansion.cs
+@@ -19,7 +19,7 @@ public unsafe partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Quadruple Inventory window";
++        public override string AddonDescription { get; } = "四页背包窗口";
+ 
+         public void OpenArmoryChest()
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/InventoryLarge.cs b/ECommons/UIHelpers/AddonMasterImplementations/InventoryLarge.cs
+index d749f80d2efa2c0bebb21adbd720f9424ff6ab23..25c01a1996e14735df60b4d503a8f695228d6b11 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/InventoryLarge.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/InventoryLarge.cs
+@@ -20,7 +20,7 @@ public unsafe partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Double Inventory window";
++        public override string AddonDescription { get; } = "双页背包窗口";
+ 
+         public void OpenArmoryChest()
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ItemDetailCompare.cs b/ECommons/UIHelpers/AddonMasterImplementations/ItemDetailCompare.cs
+index b688533445d36fb5d89f5f1f7ad24525afc23449..6cf6d8c69f5647b15338edbb22a5f94d03be0203 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ItemDetailCompare.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ItemDetailCompare.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(148);
+ 
+-        public override string AddonDescription { get; } = "Item Comparison";
++        public override string AddonDescription { get; } = "物品比较";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ItemFinder.cs b/ECommons/UIHelpers/AddonMasterImplementations/ItemFinder.cs
+index b6e10aaa9bdd2360f3aeb4967d5487f67ceecffe..b4508241888251b07e4e68771b4d349106abc245 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ItemFinder.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ItemFinder.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(14);
+ 
+-        public override string AddonDescription { get; } = "Item search window";
++        public override string AddonDescription { get; } = "物品搜索窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ItemInspectionResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/ItemInspectionResult.cs
+index 93869f35c35848fb753e0136f42fff9fe0d7fe84..15a2da0e5eb725d8919d699ad47f141f9a73e90e 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ItemInspectionResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ItemInspectionResult.cs
+@@ -24,7 +24,7 @@ public partial class AddonMaster
+         public AtkComponentButton* NextButton => Base->GetComponentButtonById(74);
+         public AtkComponentButton* CloseButton => Base->GetComponentButtonById(73);
+ 
+-        public override string AddonDescription { get; } = "Eureka/Bozja lootbox results";
++        public override string AddonDescription { get; } = "优雷卡/博兹雅宝箱鉴定结果窗口";
+ 
+         public void Next() => ClickButtonIfEnabled(NextButton);
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ItemSearchResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/ItemSearchResult.cs
+index 6526aae315deb0bfc973158fa56b7b1a1bd42a98..36734ed22583483e667aca760d0375cf46385a23 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ItemSearchResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ItemSearchResult.cs
+@@ -40,7 +40,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Marketboard Item Listings";
++        public override string AddonDescription { get; } = "市场布告板物品列表";
+ 
+         public readonly struct Entry(ItemSearchResult am, AddonItemSearchResult* addon, int index)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/JournalAccept.cs b/ECommons/UIHelpers/AddonMasterImplementations/JournalAccept.cs
+index 3cdd73e7c8a592b7292882d071cc5f6c15b0b74d..6b2e57362c3a73a23777b4fd8dbb75d278939e03 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/JournalAccept.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/JournalAccept.cs
+@@ -7,7 +7,7 @@ public partial class AddonMaster
+     {
+         public JournalAccept(nint addon) : base(addon) { }
+         public JournalAccept(void* addon) : base(addon) { }
+-        public override string AddonDescription { get; } = "Quest accept window";
++        public override string AddonDescription { get; } = "任务接受窗口";
+         public AtkComponentButton* AcceptButton => Addon->GetComponentButtonById(44);
+         public AtkComponentButton* DeclineButton => Addon->GetComponentButtonById(45);
+ 
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/JournalDetail.cs b/ECommons/UIHelpers/AddonMasterImplementations/JournalDetail.cs
+index f6dbc9891069517926eee2878a8b8b04cc7a4155..c324e692d95de8c858a1360517b6533a2e1537e5 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/JournalDetail.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/JournalDetail.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+ 
+         public bool CanInitiate => Addon->InitiateButton->AtkResNode->IsVisible() && Addon->InitiateButton->IsEnabled;
+ 
+-        public override string AddonDescription { get; } = "Quest detail window";
++        public override string AddonDescription { get; } = "任务详情窗口";
+ 
+         public void AcceptMap() => ClickButtonIfEnabled(Addon->AcceptMapButton);
+         public void Initiate() => ClickButtonIfEnabled(Addon->InitiateButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/JournalResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/JournalResult.cs
+index 0c58acbf8c9c940aefce81a7d825de08149eff33..beffccaf0e06370d0bbcda47b2a8c6b1e7cb6904 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/JournalResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/JournalResult.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+ 
+         public JournalResult(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Quest completion window";
++        public override string AddonDescription { get; } = "任务完成窗口";
+ 
+         public void Complete() => ClickButtonIfEnabled(Addon->CompleteButton);
+         public void Decline() => ClickButtonIfEnabled(Addon->DeclineButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LetterHistory.cs b/ECommons/UIHelpers/AddonMasterImplementations/LetterHistory.cs
+index f1f6d8f26f794e8cbd906660f6d2a40c081a6448..19883680a92dd0bd20767477401fa7f6e36dd359 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LetterHistory.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LetterHistory.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Base->GetComponentButtonById(5);
+ 
+-        public override string AddonDescription { get; } = "Mail history window";
++        public override string AddonDescription { get; } = "邮件历史窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LetterList.cs b/ECommons/UIHelpers/AddonMasterImplementations/LetterList.cs
+index 8a1da463666b631fd5c8294cda89d3429341c769..14a95508249ddbdde6f88b0444184732c7b0caa0 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LetterList.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LetterList.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* SentLetterHistoryButton => Base->GetComponentButtonById(3);
+         public AtkComponentButton* DeliveryRequestButton => Base->GetComponentButtonById(4);
+ 
+-        public override string AddonDescription { get; } = "Mail list window";
++        public override string AddonDescription { get; } = "邮件列表窗口";
+ 
+         public void New() => ClickButtonIfEnabled(NewButton);
+         public void SentLetterHistory() => ClickButtonIfEnabled(SentLetterHistoryButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LetterViewer.cs b/ECommons/UIHelpers/AddonMasterImplementations/LetterViewer.cs
+index b0c87220664fa7a8f0a1c19bc9df3b995725a34e..2e10d1c19fedc86fbd11619f002b5ca435c045bc 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LetterViewer.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LetterViewer.cs
+@@ -29,7 +29,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Open mail window";
++        public override string AddonDescription { get; } = "打开邮件窗口";
+ 
+         public class Item(ReaderLetterViewer.Item handle) : ReaderLetterViewer.Item(handle.AtkReaderParams.UnitBase, handle.AtkReaderParams.BeginOffset);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroup.cs b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroup.cs
+index 193c215ffe9825e72605ec82dc5911df386f2731..c295b8d256577d6efac9497f4733f197a72dd9e2 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroup.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroup.cs
+@@ -20,7 +20,7 @@ public unsafe partial class AddonMaster
+ 
+         public AtkComponentButton* RecruitMembersButton => Base->GetComponentButtonById(46);
+ 
+-        public override string AddonDescription { get; } = "Party finder window";
++        public override string AddonDescription { get; } = "队员招募窗口";
+ 
+         public bool RecruitMembersOrDetails() => ClickButtonIfEnabled(RecruitMembersButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupCondition.cs b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupCondition.cs
+index 8c9e529e769ea58b8c31c13d6399270e1de1d1ff..9989552cdf3536f928310b8df2a72bf0546782a4 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupCondition.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupCondition.cs
+@@ -13,7 +13,7 @@ public unsafe partial class AddonMaster
+         public AtkComponentButton* CancelButton => Base->GetComponentButtonById(114);
+         public AtkComponentButton* ResetButton => Base->GetComponentButtonById(112);
+ 
+-        public override string AddonDescription { get; } = "Party finder creation window";
++        public override string AddonDescription { get; } = "编辑队员招募内容窗口";
+ 
+         public bool Normal() => ClickButtonIfEnabled(Base->GetComponentButtonById(3));
+         public bool Alliance() => ClickButtonIfEnabled(Base->GetComponentButtonById(4));
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupDetail.cs b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupDetail.cs
+index ccc78db1377167ef10038d49ac79d7c3f159d8eb..6c5ee61f3346c00fc7d0bc3d530e42e22c223bf8 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupDetail.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupDetail.cs
+@@ -21,6 +21,6 @@ public unsafe partial class AddonMaster
+         public string Description => Addon->GetTextNodeById(20)->NodeText.GetText();
+         public string World => Addon->GetTextNodeById(33)->NodeText.GetText();
+ 
+-        public override string AddonDescription { get; } = "Party finder details window";
++        public override string AddonDescription { get; } = "队员招募详情窗口";
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupPrivate.cs b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupPrivate.cs
+index 225c0abb1f3ac4c516d13b24fd7551c243f5bef8..8924386efeb858345d40e3c23eb24632631ec97a 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupPrivate.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LookingForGroupPrivate.cs
+@@ -13,7 +13,7 @@ public unsafe partial class AddonMaster
+         public AtkComponentButton* JoinButton => Base->GetComponentButtonById(6);
+         public AtkComponentButton* CancelButton => Base->GetComponentButtonById(7);
+ 
+-        public override string AddonDescription { get; } = "Private party finder password prompt";
++        public override string AddonDescription { get; } = "私人队员招募密码输入窗口";
+ 
+         public void Join(int password) => Callback.Fire(Addon, true, 0, password);
+         public void Join() => ClickButtonIfEnabled(JoinButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyInput.cs b/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyInput.cs
+index db4a1bd4021df050f34d230970839dcc4efca820..f7669be170176aaadb7eedee6fb36753ea030080 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyInput.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyInput.cs
+@@ -16,9 +16,9 @@ public unsafe partial class AddonMaster
+         public AtkComponentButton* PurchaseButton => Base->GetComponentButtonById(31);
+         public AtkComponentButton* RandomButton => Base->GetComponentButtonById(32);
+ 
+-        public override string AddonDescription { get; } = "Jumbo Cactpot ticket purchase window";
++        public override string AddonDescription { get; } = "仙人仙彩号码购买窗口";
+ 
+         public void Purchase() => ClickButtonIfEnabled(PurchaseButton);
+         public void Random() => ClickButtonIfEnabled(RandomButton);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyRewardList.cs b/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyRewardList.cs
+index 23d115dc6beed7ca4c2441da0db17d12c39dd704..93d4ca5ef57b27c5ba178a3230d0c4e978c6ce2d 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyRewardList.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/LotteryWeeklyRewardList.cs
+@@ -27,7 +27,7 @@ public unsafe partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Jumbo Cactpot result window";
++        public override string AddonDescription { get; } = "仙人仙彩结果窗口";
+ 
+         public readonly struct Reward(LotteryWeeklyRewardList am, int index)
+         {
+@@ -42,4 +42,4 @@ public unsafe partial class AddonMaster
+ 
+         // TODO: Particpant Rewards struct
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MJIDisposeShop.cs b/ECommons/UIHelpers/AddonMasterImplementations/MJIDisposeShop.cs
+index 41e8f30c8845e00685b12dafb022ab928d1c95c5..f8128c11eab22b3a6517e6fb117cf78aadea779c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MJIDisposeShop.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MJIDisposeShop.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+     {
+         public MJIDisposeShop(nint addon) : base(addon) { }
+         public MJIDisposeShop(void* addon) : base(addon) { }
+-        public override string AddonDescription => "Island Sanc Export Shop";
++        public override string AddonDescription => "无人岛出口商店";
+ 
+         public uint NumEntries => Addon->AtkValues[8].UInt;
+ 
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MJIHud.cs b/ECommons/UIHelpers/AddonMasterImplementations/MJIHud.cs
+index eba7bd88f889e5e4c0740c9a919f4dda823d090e..0e2378b7c5f389e97ec3d1524261c53fefbd0b09 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MJIHud.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MJIHud.cs
+@@ -8,7 +8,7 @@ public partial class AddonMaster
+         public MJIHud(nint addon) : base(addon) { }
+         public MJIHud(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Island Sanctuary Main Hud";
++        public override string AddonDescription { get; } = "无人岛开拓主界面";
+ 
+         public uint SanctuaryRank => Addon->AtkValues[11].UInt;
+         public uint CurrentIslandXP => Addon->AtkValues[12].UInt;
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MJIRecipeNoteBook.cs b/ECommons/UIHelpers/AddonMasterImplementations/MJIRecipeNoteBook.cs
+index a46acc5d0d3beb8fa6889256800652e62123ae0c..0ae284864d7f6b94b40c16ca323715c90cee4598 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MJIRecipeNoteBook.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MJIRecipeNoteBook.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public MJIRecipeNoteBook(void* addon) : base(addon) { }
+         public AtkComponentButton* CraftButton => Addon->GetComponentButtonById(34);
+ 
+-        public override string AddonDescription => "Island Sanctuary crafting log window";
++        public override string AddonDescription => "无人岛开拓制作笔记窗口";
+ 
+         public void Craft() => ClickButtonIfEnabled(CraftButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ManeuversArmorBoarding.cs b/ECommons/UIHelpers/AddonMasterImplementations/ManeuversArmorBoarding.cs
+index 64971f2e64d7decee9ede637abd5584ae38af8dc..bf8695911c4f95a0e2ce113bc93668d797dfdb2a 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ManeuversArmorBoarding.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ManeuversArmorBoarding.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+         public AtkComponentButton* BruteJusticeButton => Addon->GetComponentButtonById(6);
+         public AtkComponentButton* MountButton => Addon->GetComponentButtonById(11);
+ 
+-        public override string AddonDescription { get; } = "Rival Wings mount choice window";
++        public override string AddonDescription { get; } = "烈羽争锋坐骑选择窗口";
+ 
+         public void CruiseChaser() => ClickButtonIfEnabled(CruiseChaserButton);
+         public void Oppressor() => ClickButtonIfEnabled(OppressorButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ManeuversRecord.cs b/ECommons/UIHelpers/AddonMasterImplementations/ManeuversRecord.cs
+index cd58a44f43290b36925fb7c0b15025c9473ede14..e82b2126d0f005d575da2a0cf1a7f9a93b391c31 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ManeuversRecord.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ManeuversRecord.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* LeaveButton => Addon->GetComponentButtonById(62);
+ 
+-        public override string AddonDescription { get; } = "Rival Wings post-game window";
++        public override string AddonDescription { get; } = "烈羽争锋赛后窗口";
+ 
+         public void Leave() => ClickButtonIfEnabled(LeaveButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MateriaAttachDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/MateriaAttachDialog.cs
+index 9cd8f692b07b8af72fb44cddaa92d3c36f1e011a..a6143cef57fb3f41427773179a1a9f52ee06837b 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MateriaAttachDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MateriaAttachDialog.cs
+@@ -24,7 +24,7 @@ public partial class AddonMaster
+         public AtkComponentButton* MeldButton => Base->GetComponentButtonById(35);
+         public AtkComponentButton* ReturnButton => Base->GetComponentButtonById(36);
+ 
+-        public override string AddonDescription { get; } = "Materia melding window";
++        public override string AddonDescription { get; } = "魔晶石镶嵌窗口";
+ 
+         public void Meld() => ClickButtonIfEnabled(MeldButton);
+         public void Return() => ClickButtonIfEnabled(ReturnButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MateriaRetrieveDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/MateriaRetrieveDialog.cs
+index 2ab1ab00cf3278492a3b7b35f844ee30530d2e7c..84b050b0ad0c46a80800b8ab53315ff52b04a3c1 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MateriaRetrieveDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MateriaRetrieveDialog.cs
+@@ -21,7 +21,7 @@ public partial class AddonMaster
+         public AtkComponentButton* BeginButton => Base->GetComponentButtonById(17);
+         public AtkComponentButton* ReturnButton => Base->GetComponentButtonById(18);
+ 
+-        public override string AddonDescription { get; } = "Materia extraction window";
++        public override string AddonDescription { get; } = "回收魔晶石窗口";
+ 
+         public void Begin() => ClickButtonIfEnabled(BeginButton);
+         public void Return() => ClickButtonIfEnabled(ReturnButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MaterializeDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/MaterializeDialog.cs
+index dbb0ad27a3ad7bff187abf20026985431d2618ce..4802e47a98cca948f0cb3d6c8f031a759235cb33 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MaterializeDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MaterializeDialog.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+ 
+         public MaterializeDialog(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Materia creation window";
++        public override string AddonDescription { get; } = "精制魔晶石窗口";
+ 
+         public void Materialize() => ClickButtonIfEnabled(Addon->YesButton);
+         public void No() => ClickButtonIfEnabled(Addon->NoButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismExecute.cs b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismExecute.cs
+index 701bc794be5ee1da96b9883c31fc5a3f51ad48e2..898922611cd57b379b3d09778bce89c4d56c1153 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismExecute.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismExecute.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+         public AtkComponentButton* CastButton => Addon->GetComponentButtonById(23);
+         public AtkComponentButton* ReturnButton => Addon->GetComponentButtonById(24);
+ 
+-        public override string AddonDescription { get; } = "Cast glamour window";
++        public override string AddonDescription { get; } = "武具投影执行窗口";
+ 
+         public void Cast() => ClickButtonIfEnabled(CastButton);
+         public void Return() => ClickButtonIfEnabled(ReturnButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismMiragePlateConfirm.cs b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismMiragePlateConfirm.cs
+index b60b70c01861432bac6ee1a433960827da7c39f7..597f3701a00a0d64b3dcef879238c7bf4c1a94e2 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismMiragePlateConfirm.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismMiragePlateConfirm.cs
+@@ -18,7 +18,7 @@ public unsafe partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Dye confirmation window";
++        public override string AddonDescription { get; } = "染色确认窗口";
+ 
+         public AtkComponentButton* YesButton => Base->GetComponentButtonById(6);
+         public AtkComponentButton* NoButton => Base->GetComponentButtonById(7);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvert.cs b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvert.cs
+index afceaea043e5d224f4e9375d156d65408af49726..bfd87c539c61c6e3c212e8e80fd1ae67c6ddb3ad 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvert.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvert.cs
+@@ -15,7 +15,7 @@ public partial class AddonMaster
+     {
+         public MiragePrismPrismSetConvert(nint addon) : base(addon) { }
+         public MiragePrismPrismSetConvert(void* addon) : base(addon) { }
+-        public override string AddonDescription { get; } = "Outfit glamour creation";
++        public override string AddonDescription { get; } = "套装幻影化窗口";
+ 
+         public AtkComponentButton* StoreAsGlamourButton => Addon->GetComponentButtonById(27);
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(26);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvertC.cs b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvertC.cs
+index fd945a666e5e64e0d4e0fbe381a9ec83c9650a23..0a7cf9e71ac0d7d214683c038014d4eab669849e 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvertC.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismPrismSetConvertC.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* YesButton => Addon->GetComponentButtonById(6);
+         public AtkComponentButton* NoButton => Addon->GetComponentButtonById(7);
+ 
+-        public override string AddonDescription { get; } = "Outfit glamour creation confirmation";
++        public override string AddonDescription { get; } = "套装幻影化确认窗口";
+ 
+         public void Yes() => ClickButtonIfEnabled(YesButton);
+         public void No() => ClickButtonIfEnabled(NoButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismRemove.cs b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismRemove.cs
+index 2dc4f835f8979f8a13af042d31cad6b203d1b719..f4b36269175a2a076322513e7e50b596f15e7faa 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismRemove.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MiragePrismRemove.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+         public AtkComponentButton* DispelButton => Addon->GetComponentButtonById(14);
+         public AtkComponentButton* ReturnButton => Addon->GetComponentButtonById(15);
+ 
+-        public override string AddonDescription { get; } = "Remove glamour window";
++        public override string AddonDescription { get; } = "解除武具投影窗口";
+ 
+         public void Dispel() => ClickButtonIfEnabled(DispelButton);
+         public void Return() => ClickButtonIfEnabled(ReturnButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/MoogleCollection.cs b/ECommons/UIHelpers/AddonMasterImplementations/MoogleCollection.cs
+index 01fd79243e87a3b38c600030d5ff341ff564014f..de269ee1018df928b16a25738cd13afadaff4ab6 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/MoogleCollection.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/MoogleCollection.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+         public AtkComponentButton* RewardsButton => Addon->GetComponentButtonById(44);
+         public AtkComponentButton* AccessSpecialSiteButton => Addon->GetComponentButtonById(59);
+ 
+-        public override string AddonDescription => "Mogpendium window";
++        public override string AddonDescription => "莫古宝典窗口";
+ 
+         // TODO: claim rewards button
+ 
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/PurifyAutoDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/PurifyAutoDialog.cs
+index 2094903611eb0ece0d860fb93c38c681340fc93b..7af637c5a149f3560e8b7d729b8f57d5e763b2a0 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/PurifyAutoDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/PurifyAutoDialog.cs
+@@ -20,7 +20,7 @@ public partial class AddonMaster
+         public bool PurificationActive => Svc.Data.GetExcelSheet<Addon>()!.GetRow(3868)!.Text.ToString().Equals(CancelExitButtonText);
+         public bool PurificationInactive => Svc.Data.GetExcelSheet<Addon>()!.GetRow(3869)!.Text.ToString().Equals(CancelExitButtonText);
+ 
+-        public override string AddonDescription { get; } = "Aetherial Reduction Dialog";
++        public override string AddonDescription { get; } = "精选对话框";
+ 
+         public void CancelExit() => ClickButtonIfEnabled(CancelExitButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/PurifyResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/PurifyResult.cs
+index 62d3f75e36ce571228dbe5b73feb064d8c4cb0e1..55035e15011800d43073684674a250cc0a6347eb 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/PurifyResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/PurifyResult.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+         public AtkComponentButton* AutomaticButton => Addon->GetComponentButtonById(19);
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(20);
+ 
+-        public override string AddonDescription { get; } = "Aetherial Reduction Result";
++        public override string AddonDescription { get; } = "精选结果窗口";
+ 
+         public void Automatic() => ClickButtonIfEnabled(AutomaticButton);
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/PvpProfile.cs b/ECommons/UIHelpers/AddonMasterImplementations/PvpProfile.cs
+index 4b3b9dd7f3b53035082c5bc19fed34f5c1f41386..ce0f72fde454d9d3ef793e1e4dfc71cf297f4b87 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/PvpProfile.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/PvpProfile.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* SeriesMalmstonesButton => Addon->GetComponentButtonById(21);
+ 
+-        public override string AddonDescription { get; } = "PvP Profile";
++        public override string AddonDescription { get; } = "对战资料窗口";
+ 
+         public void SeriesMalmstones() => ClickButtonIfEnabled(SeriesMalmstonesButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/PvpReward.cs b/ECommons/UIHelpers/AddonMasterImplementations/PvpReward.cs
+index df896edfa8975613247196e04f3c2d45a8bd8fb2..b8a424b13b64e13ffe4d00263e40d8fabe160f7d 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/PvpReward.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/PvpReward.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(124);
+ 
+-        public override string AddonDescription { get; } = "PvP Series rewards window";
++        public override string AddonDescription { get; } = "PvP系列赛奖励窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RecipeNote.cs b/ECommons/UIHelpers/AddonMasterImplementations/RecipeNote.cs
+index f7dd2a3162f691759b0684b3b05b83a3f00dafdb..b7a9e40473677ac979ab4cff991a69b86298270f 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RecipeNote.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RecipeNote.cs
+@@ -10,7 +10,7 @@ public partial class AddonMaster
+ {
+     public unsafe class RecipeNote : AddonMasterBase<AddonRecipeNote>
+     {
+-        public override string AddonDescription { get; } = "Crafting Log";
++        public override string AddonDescription { get; } = "制作笔记";
+ 
+         public RecipeNote(nint addon) : base(addon)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RecommendEquip.cs b/ECommons/UIHelpers/AddonMasterImplementations/RecommendEquip.cs
+index ec10c975296710d5e5058f0d053feb0584660bde..5780326980555eccf70ebf4e2f7bcd11b60334e9 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RecommendEquip.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RecommendEquip.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+         public AtkComponentButton* EquipButton => Addon->GetComponentButtonById(11);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(12);
+ 
+-        public override string AddonDescription { get; } = "Equip recommended gear window";
++        public override string AddonDescription { get; } = "最强装备确认窗口";
+ 
+         public void Equip() => ClickButtonIfEnabled(EquipButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RelicNoteBook.cs b/ECommons/UIHelpers/AddonMasterImplementations/RelicNoteBook.cs
+index 78ac21cf216a59b5ed770f7340798304792f94d8..f4dfe38167a283a8a0abb762257f1464008dea98 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RelicNoteBook.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RelicNoteBook.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+         public RelicNoteBook(nint addon) : base(addon) { }
+         public RelicNoteBook(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription => "ARR Relic Trial of the Braves book";
++        public override string AddonDescription => "上古武器黄道文书笔记";
+ 
+         public RelicNoteBookEnemy[] Enemies
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Repair.cs b/ECommons/UIHelpers/AddonMasterImplementations/Repair.cs
+index 5bbebc9f05faa8bb5009f21aca4b2d1094dd99ee..ac8c7fb2d32adbcc61c9bb92c2a1ac3644b8d58b 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Repair.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Repair.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+ 
+         public Repair(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Repair window";
++        public override string AddonDescription { get; } = "修理窗口";
+ 
+         public void RepairAll() => ClickButtonIfEnabled(Addon->RepairAllButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Request.cs b/ECommons/UIHelpers/AddonMasterImplementations/Request.cs
+index 97ef9c54b29a573aad8a8854b9ad6cee270230dc..f56e4effb6daddec5481784d77a541f0c1aa6e88 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Request.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Request.cs
+@@ -40,6 +40,6 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Item request window";
++        public override string AddonDescription { get; } = "物品请求窗口";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferList.cs b/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferList.cs
+index ae08ebfb10261b656a6ea33b4155f5b9c5383312..764611d9e0a1b18b2b8724ed80e145103fd85b8b 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferList.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferList.cs
+@@ -5,7 +5,7 @@ public partial class AddonMaster
+ {
+     public unsafe class RetainerItemTransferList : AddonMasterBase<AddonRetainerItemTransferList>
+     {
+-        public override string AddonDescription { get; } = "Entrust duplicates window";
++        public override string AddonDescription { get; } = "同类道具合并递交窗口";
+ 
+         public RetainerItemTransferList(nint addon) : base(addon)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferProgress.cs b/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferProgress.cs
+index 6bb69e45009669625ea0d88877e6eee8a5708b3d..50ad37f34e2b1c5054feaca6752c91cad1acc394 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferProgress.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RetainerItemTransferProgress.cs
+@@ -13,7 +13,7 @@ public partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Entrust duplicates progress window";
++        public override string AddonDescription { get; } = "同类道具合并递交进度窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(Addon->CloseWindowButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RetainerList.cs b/ECommons/UIHelpers/AddonMasterImplementations/RetainerList.cs
+index c2c9620ac8efef8658102e652bcf0e5dce9fe8a7..804551cdaf77f5a282c48c24f6a71298862971e7 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RetainerList.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RetainerList.cs
+@@ -36,7 +36,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Retainer list";
++        public override string AddonDescription { get; } = "雇员列表";
+ 
+         public class Entry(AtkUnitBase* Base, ReaderRetainerList.Retainer handle, int index) : ReaderRetainerList.Retainer(handle.AtkReaderParams.UnitBase, handle.AtkReaderParams.BeginOffset)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RetainerSell.cs b/ECommons/UIHelpers/AddonMasterImplementations/RetainerSell.cs
+index 9671d54f367b551a823e779c0061572c7cad5122..3e3252e754a950dfd7d3674e6f43974f7f735d0e 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RetainerSell.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RetainerSell.cs
+@@ -29,7 +29,7 @@ public partial class AddonMaster
+ 
+         public string ItemName => Addon->GetTextNodeById(7)->NodeText.GetText();
+ 
+-        public override string AddonDescription { get; } = "Retainer item sell window";
++        public override string AddonDescription { get; } = "雇员出售物品窗口";
+ 
+         public void ComparePrices() => ClickButtonIfEnabled(ComparePricesButton);
+         public void Confirm() => ClickButtonIfEnabled(ConfirmButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskAsk.cs b/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskAsk.cs
+index 6353c5b58ce4cd998bea4f2edefa284467e74602..3e5292a85a0081d596312684256bd65823a619c6 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskAsk.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskAsk.cs
+@@ -22,7 +22,7 @@ public partial class AddonMaster
+         public AtkComponentButton* AssignButton => Addon->AssignButton;
+         public AtkComponentButton* ReturnButton => Addon->ReturnButton;
+ 
+-        public override string AddonDescription { get; } = "Venture assign window";
++        public override string AddonDescription { get; } = "雇员探险委托窗口";
+ 
+         public void Assign() => ClickButtonIfEnabled(AssignButton);
+         public void Return() => ClickButtonIfEnabled(ReturnButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskResult.cs
+index 4abcbfea6647d54e37b718a59d06347121f178c7..0f0e742cf6d8ed12077479af563870c7fac9917e 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/RetainerTaskResult.cs
+@@ -23,7 +23,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ReassignButton => Addon->ReassignButton;
+         public AtkComponentButton* ConfirmButton => Addon->ConfirmButton;
+ 
+-        public override string AddonDescription { get; } = "Venture result window";
++        public override string AddonDescription { get; } = "雇员探险结果窗口";
+ 
+         public void Confirm() => ClickButtonIfEnabled(ConfirmButton);
+ 
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ReturnerDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/ReturnerDialog.cs
+index a5d7c739f8ac79e64aea42bef45f0215ddf19512..36a0a2e30e1ecf6a497e909996c0ca2fcb2c8b6c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ReturnerDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ReturnerDialog.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* DeclineButton => Addon->GetComponentButtonById(5);
+         public AtkComponentButton* DecideLaterButton => Addon->GetComponentButtonById(6);
+ 
+-        public override string AddonDescription { get; } = "Returner status confirmation window";
++        public override string AddonDescription { get; } = "回归者状态确认窗口";
+ 
+         public void Accept() => ClickButtonIfEnabled(AcceptButton);
+         public void Decline() => ClickButtonIfEnabled(DeclineButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SalvageAutoDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/SalvageAutoDialog.cs
+index 077c253f8ff372d79db10051aec5eadaa381469a..fe6583d05a5d83f92b9b3be15ca22362c2c4e592 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SalvageAutoDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SalvageAutoDialog.cs
+@@ -20,7 +20,7 @@ public partial class AddonMaster
+         public bool DesynthesisActive => Svc.Data.GetExcelSheet<Addon>()!.GetRow(5867)!.Text.ToString().Equals(EndDesynthesisButtonText);
+         public bool DesynthesisInactive => Svc.Data.GetExcelSheet<Addon>()!.GetRow(5868)!.Text.ToString().Equals(EndDesynthesisButtonText);
+ 
+-        public override string AddonDescription { get; } = "Desynthesis Bulk Dialog";
++        public override string AddonDescription { get; } = "道具分解批量对话框";
+ 
+         public void EndDesynthesis() => ClickButtonIfEnabled(EndDesynthesisButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SalvageDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/SalvageDialog.cs
+index 0eaadeddf52cf409a24e64969fb7564c6dbe1b87..4f68e403cbc2567e8f14d4780934dc7406403df0 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SalvageDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SalvageDialog.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+         public AtkComponentButton* DesynthesizeButton => Addon->GetComponentButtonById(25);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(26);
+ 
+-        public override string AddonDescription { get; } = "Desynthesis window";
++        public override string AddonDescription { get; } = "道具分解窗口";
+ 
+         public void Desynthesize() => ClickButtonIfEnabled(DesynthesizeButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SalvageResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/SalvageResult.cs
+index 2b8c9d502d28082d6f6fa0f48cde22404d7eb738..3787c0f09d9385663782b03addc80815899da1b3 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SalvageResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SalvageResult.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CloseButton => Addon->GetComponentButtonById(15);
+ 
+-        public override string AddonDescription { get; } = "Desynthesis result window";
++        public override string AddonDescription { get; } = "道具分解结果窗口";
+ 
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SatisfactionSupplyResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/SatisfactionSupplyResult.cs
+index 5a9a881818a23a3babfcc35bdaf0183c3d4ddd56..2b5f2655615a8819fe5fee2346d05fc7a0723310 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SatisfactionSupplyResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SatisfactionSupplyResult.cs
+@@ -8,7 +8,7 @@ public partial class AddonMaster
+     {
+         public SatisfactionSupplyResult(nint addon) : base(addon) { }
+         public SatisfactionSupplyResult(void* addon) : base(addon) { }
+-        public override string AddonDescription { get; } = "Custom Deliveries Rank Up Window";
++        public override string AddonDescription { get; } = "老主顾交易信赖等级提升窗口";
+ 
+         public uint CurrentLevelXp => Addon->AtkValues[10].UInt;
+         public uint TotalLevelXp => Addon->AtkValues[11].UInt;
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SelectIconString.cs b/ECommons/UIHelpers/AddonMasterImplementations/SelectIconString.cs
+index 444a5c517cd6c2442cc1423b7219ac5367095a1b..381c32b20f5a3ae5ce0651955e771af871b3b66c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SelectIconString.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SelectIconString.cs
+@@ -45,7 +45,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "List selection menu with icons";
++        public override string AddonDescription { get; } = "带图标的列表选择菜单";
+ 
+         public struct Entry(SelectIconString am, AddonSelectIconString* addon, int index)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SelectOk.cs b/ECommons/UIHelpers/AddonMasterImplementations/SelectOk.cs
+index 7ceb5b772cb0e83039f8134d7905041be0ae48e4..c11163170c15eeeef4d37dcf41c51d6ead9acbb5 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SelectOk.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SelectOk.cs
+@@ -16,7 +16,7 @@ public partial class AddonMaster
+         public SeString SeString => GenericHelpers.ReadSeString(&Addon->PromptText->NodeText);
+         public string Text => SeString.GetText();
+ 
+-        public override string AddonDescription { get; } = "Generic confirmation window (OK button)";
++        public override string AddonDescription { get; } = "通用确认窗口（确定按钮）";
+ 
+         public void Ok() => ClickButtonIfEnabled(Addon->OkButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SelectString.cs b/ECommons/UIHelpers/AddonMasterImplementations/SelectString.cs
+index c602fcdae74f319ce8568b823ac31315813ef7b3..36503edf8914ddd85ba99c77c8a8575b8294fef0 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SelectString.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SelectString.cs
+@@ -51,7 +51,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Selection menu";
++        public override string AddonDescription { get; } = "选择菜单";
+ 
+         public struct Entry(SelectString am, AddonSelectString* addon, int index)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SelectYesno.cs b/ECommons/UIHelpers/AddonMasterImplementations/SelectYesno.cs
+index a7b6e268ead59ed4104863f34b48a5a052ca3048..35a9f1259a9ea31e31c321e2c65012317fd716cd 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SelectYesno.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SelectYesno.cs
+@@ -33,7 +33,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* ThirdButton => Addon->GetComponentButtonById(14);
+ 
+-        public override string AddonDescription { get; } = "Yes or No selection menu";
++        public override string AddonDescription { get; } = "是/否选择菜单";
+ 
+         public void Yes()
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Shop.cs b/ECommons/UIHelpers/AddonMasterImplementations/Shop.cs
+index 92ba3c68154d01ef23a37ef80d1fbd2f59b7d88e..131fdfd7c133f32d7e4ceafa44844cae1e0fef21 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Shop.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Shop.cs
+@@ -56,6 +56,6 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Basic Gil Shop Window";
++        public override string AddonDescription { get; } = "基础金币商店窗口";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ShopCardDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/ShopCardDialog.cs
+index e0ac8eb15a0736b95db1fac9fc2329e1cec3e93f..d64655ff66fd0d32053c95638462c9a1a5d419c4 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ShopCardDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ShopCardDialog.cs
+@@ -24,7 +24,7 @@ public partial class AddonMaster
+         public AtkComponentButton* SellButton => Base->GetComponentButtonById(16);
+         public AtkComponentButton* CancelButton => Base->GetComponentButtonById(17);
+ 
+-        public override string AddonDescription { get; } = "Triple triad card exchange window";
++        public override string AddonDescription { get; } = "九宫幻卡交换窗口";
+ 
+         public void Sell() => ClickButtonIfEnabled(SellButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrency.cs b/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrency.cs
+index db44486b01a72aa578f1060d7f1893af9e3d8279..6e252950cd5cac747031f47c772f42d5263ca1af 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrency.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrency.cs
+@@ -82,6 +82,6 @@ public partial class AddonMaster
+         }
+ 
+ 
+-        public override string AddonDescription { get; } = "Item Exchange Window";
++        public override string AddonDescription { get; } = "物品交换窗口";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrencyDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrencyDialog.cs
+index ac918c13f71f2a138db87e2faf68f51edc3ad78e..dbb360c45a25cb2e9a54fc82ff815712b6ef6de3 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrencyDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeCurrencyDialog.cs
+@@ -14,7 +14,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ExchangeButton => Addon->GetComponentButtonById(17);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(18);
+ 
+-        public override string AddonDescription { get; } = "Venture purchase window";
++        public override string AddonDescription { get; } = "探险币购买窗口";
+ 
+         public void Exchange() => ClickButtonIfEnabled(ExchangeButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeItemDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeItemDialog.cs
+index 99615cf8b829fb2f75ef373352f6e0b6ddeacb3f..37a0f4579f48ade03af11d5f72498d1d63986457 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeItemDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/ShopExchangeItemDialog.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ExchangeButton => Addon->GetComponentButtonById(18);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(19);
+ 
+-        public override string AddonDescription { get; } = "Non-Gilshop Item Exchange Confirmation Dialog";
++        public override string AddonDescription { get; } = "非金币商店物品交换确认对话框";
+ 
+         public void Exchange() => ClickButtonIfEnabled(ExchangeButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SubmarineExplorationMapSelect.cs b/ECommons/UIHelpers/AddonMasterImplementations/SubmarineExplorationMapSelect.cs
+index ab83a244c77f5c7d0fcea16c953ab12bdf6594af..03a842a587c155d1b50519bcb84b31731b6fa009 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SubmarineExplorationMapSelect.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SubmarineExplorationMapSelect.cs
+@@ -51,7 +51,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Submarine map selection menu";
++        public override string AddonDescription { get; } = "潜水艇航海图选择菜单";
+ 
+         public struct Entry(SubmarineExplorationMapSelect am, AtkUnitBase* addon, int index)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Synthesis.cs b/ECommons/UIHelpers/AddonMasterImplementations/Synthesis.cs
+index e052cba3695e2662ff063daa905bfb040a559f48..ef19cf4319131c3aab343acd9af64045e638c1ce 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Synthesis.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Synthesis.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+ 
+         public ReaderSynthesis Reader => new(Base);
+ 
+-        public override string AddonDescription { get; } = "Crafting synthesis window";
++        public override string AddonDescription { get; } = "制作窗口";
+ 
+         public enum Condition
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/SynthesisSimpleDialog.cs b/ECommons/UIHelpers/AddonMasterImplementations/SynthesisSimpleDialog.cs
+index 45b7e55ec4ba3f7366ad5df5f6632fb97085826a..7efb3df7d55058a737984517f3f32efb35643988 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/SynthesisSimpleDialog.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/SynthesisSimpleDialog.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* SynthesizeButton => Addon->GetComponentButtonById(7);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(8);
+ 
+-        public override string AddonDescription => "Quick synthesis in progress window";
++        public override string AddonDescription => "简易制作进行中窗口";
+ 
+         public void Synthesize() => ClickButtonIfEnabled(SynthesizeButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/Talk.cs b/ECommons/UIHelpers/AddonMasterImplementations/Talk.cs
+index 748b13e2658cbc1c80c81ecfb8ec424583cab5d9..4608e6923fd569d9e26511dc8b169ed7715f278c 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/Talk.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/Talk.cs
+@@ -19,7 +19,7 @@ public partial class AddonMaster
+         {
+         }
+ 
+-        public override string AddonDescription { get; } = "Subtitle box";
++        public override string AddonDescription { get; } = "字幕框";
+ 
+         public void Click()
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/TitleDCWorldMap.cs b/ECommons/UIHelpers/AddonMasterImplementations/TitleDCWorldMap.cs
+index a733d5b0d91261db689b136b8eae0b4a174f8fa0..561598c2ce7736c031f842389dd5888cf637f9b1 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/TitleDCWorldMap.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/TitleDCWorldMap.cs
+@@ -24,7 +24,7 @@ public unsafe partial class AddonMaster
+ 
+         public static int[] PublicDC = [1, 2, 3, 10, 4, 5, 8, 11, 6, 7, 12, 9,];
+ 
+-        public override string AddonDescription { get; } = "Data center selection menu";
++        public override string AddonDescription { get; } = "数据中心选择菜单";
+ 
+         public bool Select(int dc)
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/TreasureHighLow.cs b/ECommons/UIHelpers/AddonMasterImplementations/TreasureHighLow.cs
+index 55615c198315cb11f1e1d59ebf7aca7485fc0c17..acf67fdfec6fdca781dbe2d30287411f2dceaa4d 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/TreasureHighLow.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/TreasureHighLow.cs
+@@ -8,7 +8,7 @@ public partial class AddonMaster
+         public TreasureHighLow(nint addon) : base(addon) { }
+         public TreasureHighLow(void* addon) : base(addon) { }
+ 
+-        public override string AddonDescription { get; } = "Treasure map dungeon Gambler's Lure";
++        public override string AddonDescription { get; } = "宝物库“强欲陷阱”窗口";
+ 
+         /// <remarks>
+         /// Only visible when it's your chest
+@@ -36,4 +36,4 @@ public partial class AddonMaster
+         /// </remarks>
+         public void Close() => ClickButtonIfEnabled(CloseButton);
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadRequest.cs b/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadRequest.cs
+index 8c2a3888070db5942376baf041e800097d6d4932..9fe2c390abe5a0a0f5153e3d71b33eba97523790 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadRequest.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadRequest.cs
+@@ -29,7 +29,7 @@ public partial class AddonMaster
+         public AtkComponentButton* ChallengeButton => Addon->GetComponentButtonById(41);
+         public AtkComponentButton* QuitButton => Addon->GetComponentButtonById(42);
+ 
+-        public override string AddonDescription { get; } = "Triple triad challenge window";
++        public override string AddonDescription { get; } = "九宫幻卡挑战窗口";
+ 
+         public void Challenge() => ClickButtonIfEnabled(ChallengeButton);
+         public void Quit() => ClickButtonIfEnabled(QuitButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadResult.cs
+index 8af209419876d5823543dce5abe5751ca4834bcf..a0d186e1b2da6a901693ebd095ed9b4ce60eb4b7 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/TripleTriadResult.cs
+@@ -18,7 +18,7 @@ public partial class AddonMaster
+         public AtkComponentButton* RematchButton => Addon->GetComponentButtonById(21);
+         public AtkComponentButton* QuitButton => Addon->GetComponentButtonById(22);
+ 
+-        public override string AddonDescription { get; } = "Triple triad result window";
++        public override string AddonDescription { get; } = "九宫幻卡结果窗口";
+ 
+         public void Rematch() => ClickButtonIfEnabled(RematchButton);
+         public void Quit() => ClickButtonIfEnabled(QuitButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/VVDVoteRoute.cs b/ECommons/UIHelpers/AddonMasterImplementations/VVDVoteRoute.cs
+index c36b9e5ef8ea3ea716dc14b541585dfdb045c920..24309a2484fa40d0cdf6dc0b0e19e31c12209643 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/VVDVoteRoute.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/VVDVoteRoute.cs
+@@ -59,7 +59,7 @@ public partial class AddonMaster
+         private const int step = 3;
+         private const int offset = 4;
+ 
+-        public override string AddonDescription { get; } = "VoteRoute menu";
++        public override string AddonDescription { get; } = "多变迷宫路线投票菜单";
+ 
+         public struct Entry(VVDVoteRoute am, AtkUnitBase* addon, int index)
+         {
+@@ -94,4 +94,4 @@ public partial class AddonMaster
+         private void Entry11() => Entries[10].Select();
+         private void Entry12() => Entries[11].Select();
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/VoteMvp.cs b/ECommons/UIHelpers/AddonMasterImplementations/VoteMvp.cs
+index 7b2096bb6523d53932e3243625e8c7a38020979d..881d3c7328d09636df4381a85b3f22ad8ef4ab72 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/VoteMvp.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/VoteMvp.cs
+@@ -12,7 +12,7 @@ public partial class AddonMaster
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(11);
+         public AtkComponentButton* SettingsButton => Addon->GetComponentButtonById(12);
+ 
+-        public override string AddonDescription { get; } = "Player commendations simple voting window";
++        public override string AddonDescription { get; } = "最优队员推荐窗口";
+ 
+         public void Ok() => ClickButtonIfEnabled(OkButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WKSHud.cs b/ECommons/UIHelpers/AddonMasterImplementations/WKSHud.cs
+index a78a2e0ce36437e93d5932c510bcbd428589d0b8..d9603fbfcd095597899644f2b2cbf48d26f970fe 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WKSHud.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WKSHud.cs
+@@ -22,7 +22,7 @@ public partial class AddonMaster
+         public int CosmoCredit => Addon->AtkValues[2].Int;
+         public int LunarCredit => Addon->AtkValues[6].Int;
+ 
+-        public override string AddonDescription => "Cosmic Exploration Main Hud Menu";
++        public override string AddonDescription => "宇宙探索主界面菜单";
+ 
+         public void Mission() => ClickButtonIfEnabled(StellerMissionsButton);
+         public void Mech() => ClickButtonIfEnabled(MechOpsButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WKSLottery.cs b/ECommons/UIHelpers/AddonMasterImplementations/WKSLottery.cs
+index 29b0094d52cd2a780d8a0a6aab15c39771fb899d..1e021847ea277cec8dc85547eae5c9bb8a756bef 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WKSLottery.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WKSLottery.cs
+@@ -104,6 +104,6 @@ public partial class AddonMaster
+         public void ConfirmButton() => ClickButtonIfEnabled(SpinWheelButton);
+ 
+ 
+-        public override string AddonDescription => "Steller Missions Lottery Ui";
++        public override string AddonDescription => "宇宙探索任务抽选界面";
+     }
+ }
+\ No newline at end of file
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WKSMission.cs b/ECommons/UIHelpers/AddonMasterImplementations/WKSMission.cs
+index afc6b3f59586dcdb9e366fdc0cebe9d801b5d032..0e21f211b80372919963d15a27477e8355570cbf 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WKSMission.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WKSMission.cs
+@@ -120,7 +120,7 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription => "Steller Missions Ui";
++        public override string AddonDescription => "宇宙探索任务界面";
+ 
+         public void Help() => ClickButtonIfEnabled(HelpButton);
+         public void MissionSelection() => ClickButtonIfEnabled(MissionSelectionButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WKSMissionInfomation.cs b/ECommons/UIHelpers/AddonMasterImplementations/WKSMissionInfomation.cs
+index 1f13a11d0a56f4567c230eb32ee7fb6ccc9d5bdb..911215aad0676092ea5408945e03a468ef9f8f3a 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WKSMissionInfomation.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WKSMissionInfomation.cs
+@@ -135,6 +135,6 @@ public partial class AddonMaster
+         public void Report() => ClickButtonIfEnabled(ReportResultsButton);
+         public void Abandon() => ClickButtonIfEnabled(AbandonMissionButton);
+ 
+-        public override string AddonDescription => "Cosmic Exploration Mission Information";
++        public override string AddonDescription => "宇宙探索任务信息";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WKSRecipeNotebook.cs b/ECommons/UIHelpers/AddonMasterImplementations/WKSRecipeNotebook.cs
+index b40446af61f9016e7f61da968ddbaf05e8de50e1..a543671ded4d28d7bf93bc135587e410b6a0a0a2 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WKSRecipeNotebook.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WKSRecipeNotebook.cs
+@@ -64,6 +64,6 @@ public partial class AddonMaster
+         public void HQItemInput() => ClickButtonIfEnabled(HQItemsButton);
+         public void Synthesize() => ClickButtonIfEnabled(SynthesizeButton);
+ 
+-        public override string AddonDescription => "Crafting Addon for Cosmic Exploration";
++        public override string AddonDescription => "宇宙探索制作笔记";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WKSToolCustomize.cs b/ECommons/UIHelpers/AddonMasterImplementations/WKSToolCustomize.cs
+index 57c8741ac865f9b2812a181d5d44927fcf696de5..b164e2eb1663a5059b6e5f3070360046451e2afe 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WKSToolCustomize.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WKSToolCustomize.cs
+@@ -51,6 +51,6 @@ public partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription => "Cosmic Relic Tool Ui";
++        public override string AddonDescription => "宇宙工具界面";
+     }
+ }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WeeklyBingoResult.cs b/ECommons/UIHelpers/AddonMasterImplementations/WeeklyBingoResult.cs
+index 4170c001ef343357b9f0b22f21929cee2c2c1edd..724c13ec0b6bb77a1633d877057b9944d73da0df 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WeeklyBingoResult.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WeeklyBingoResult.cs
+@@ -11,7 +11,7 @@ public partial class AddonMaster
+         public AtkComponentButton* AcceptButton => Addon->GetComponentButtonById(93);
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(94);
+ 
+-        public override string AddonDescription { get; } = "Jumbo Cactpot Results";
++        public override string AddonDescription { get; } = "天书奇谈结果窗口";
+ 
+         public void Accept() => ClickButtonIfEnabled(AcceptButton);
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/WorldTravelFinderStatus.cs b/ECommons/UIHelpers/AddonMasterImplementations/WorldTravelFinderStatus.cs
+index 1f4fd2b17df54fe779a1c772347318d209eb7e6a..5c48de587aa99dcdaa8d069ca199d833e4937c6f 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/WorldTravelFinderStatus.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/WorldTravelFinderStatus.cs
+@@ -21,7 +21,7 @@ public partial class AddonMaster
+ 
+         public AtkComponentButton* CancelButton => Addon->GetComponentButtonById(13);
+ 
+-        public override string AddonDescription => "In-game world travel status window";
++        public override string AddonDescription => "游戏内跨界传送状态窗口";
+ 
+         public void Cancel() => ClickButtonIfEnabled(CancelButton);
+     }
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectListMenu.cs b/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectListMenu.cs
+index 9e8d3751c0d8bcc6344e7d3f301d59c9a36f69fe..f84d481c6c069f34969231c0f38e017ce8cac307 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectListMenu.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectListMenu.cs
+@@ -45,7 +45,7 @@ public unsafe partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "Character select menu";
++        public override string AddonDescription { get; } = "角色选择菜单";
+ 
+         public class Character
+         {
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectWorldServer.cs b/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectWorldServer.cs
+index 2ed22195b0bdf494a3eeffff2f3cdc5e8c047a97..0aa9df3b17271fc0284e9dc967c988882a0fb42f 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectWorldServer.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/_CharaSelectWorldServer.cs
+@@ -40,7 +40,7 @@ public unsafe partial class AddonMaster
+             }
+         }
+ 
+-        public override string AddonDescription { get; } = "World selection menu on login screen";
++        public override string AddonDescription { get; } = "登录界面服务器选择菜单";
+ 
+         public class World
+         {
+@@ -69,4 +69,4 @@ public unsafe partial class AddonMaster
+             }
+         }
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/ECommons/UIHelpers/AddonMasterImplementations/_TitleMenu.cs b/ECommons/UIHelpers/AddonMasterImplementations/_TitleMenu.cs
+index 85ee5a45719b702da1305f079b84044bb7095920..19e2451d6c9d81d579726526c601100234587697 100644
+--- a/ECommons/UIHelpers/AddonMasterImplementations/_TitleMenu.cs
++++ b/ECommons/UIHelpers/AddonMasterImplementations/_TitleMenu.cs
+@@ -34,7 +34,7 @@ public partial class AddonMaster
+         public AtkComponentButton* LicenseButton => Base->GetComponentButtonById(8);
+         public AtkComponentButton* ExitButton => Base->GetComponentButtonById(9);
+ 
+-        public override string AddonDescription { get; } = "Title menu";
++        public override string AddonDescription { get; } = "标题菜单";
+ 
+         public void Start() => ClickButtonIfEnabled(StartButton);
+         public void DataCenter() => ClickButtonIfEnabled(DataCenterButton);

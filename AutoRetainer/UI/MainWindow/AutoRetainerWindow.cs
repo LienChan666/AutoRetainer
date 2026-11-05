@@ -21,7 +21,7 @@ internal unsafe class AutoRetainerWindow : Window
             Click = OnLockButtonClick,
             Icon = C.PinWindow ? FontAwesomeIcon.Lock : FontAwesomeIcon.LockOpen,
             IconOffset = new(3, 2),
-            ShowTooltip = () => ImGui.SetTooltip("Lock window position and size"),
+            ShowTooltip = () => ImGui.SetTooltip("锁定窗口位置与大小"),
         };
         SizeConstraints = new()
         {
@@ -35,7 +35,7 @@ internal unsafe class AutoRetainerWindow : Window
             Click = (m) => { if(m == ImGuiMouseButton.Left) S.NeoWindow.IsOpen = true; },
             Icon = FontAwesomeIcon.Cog,
             IconOffset = new(2, 2),
-            ShowTooltip = () => ImGui.SetTooltip("Open settings window"),
+            ShowTooltip = () => ImGui.SetTooltip("打开设置窗口"),
         });
         TitleBarButtons.Add(LockButton);
     }
@@ -55,7 +55,7 @@ internal unsafe class AutoRetainerWindow : Window
 
     public override void PreDraw()
     {
-        var prefix = SchedulerMain.PluginEnabled ? $" [{SchedulerMain.Reason}]" : "";
+        var prefix = SchedulerMain.PluginEnabled ? $" [{Lang.PluginEnableReasonNames[SchedulerMain.Reason]}]" : "";
         var tokenRem = TimeSpan.FromMilliseconds(Utils.GetRemainingSessionMiliSeconds());
         WindowName = $"{P.Name} {P.GetType().Assembly.GetName().Version}{prefix} | {FormatToken(tokenRem)}###AutoRetainer";
         if(C.PinWindow)
@@ -71,46 +71,45 @@ internal unsafe class AutoRetainerWindow : Window
         {
             if(time.Days > 0)
             {
-                return $"Session expires in {time.Days} day{(time.Days == 1 ? "" : "s")}" + (time.Hours > 0 ? $" {time.Hours} hours" : "");
+                return $"会话将在 {time.Days} 天" + (time.Hours > 0 ? $" {time.Hours} 小时后过期" : "后过期");
             }
             else
             {
                 if(time.Hours > 0)
                 {
-                    return $"Session expires in {time.Hours} hours";
+                    return $"会话将在 {time.Hours} 小时后过期";
                 }
                 else
                 {
-                    return $"Session expires in less than an hour";
+                    return $"会话将在 1 小时内过期";
                 }
             }
         }
         else
         {
-            return "Session expired";
+            return "会话已过期";
         }
     }
     public override void Draw()
     {
-        //ImGuiEx.Text(GradientColor.Get(EColor.RedBright, EColor.YellowBright), "This version MUST NOT BE RUNNING UNATTENDED.");
         try
         {
             if(!C.AcceptedDisclamer)
             {
                 new NuiBuilder()
-                    .Section("Disclaimer")
-                    .TextWrapped(ImGuiColors.DalamudYellow, "Please note that using AutoRetainer for RMT purposes is strictly prohibited. ")
-                    .TextWrapped(ImGuiColors.DalamudRed, "To avoid unnecessary consequences please follow these rules when using AutoRetainer:")
-                    .TextWrapped("1. Do not acknowledge your use of AutoRetainer in game chat;")
-                    .TextWrapped("2. Do not leave AutoRetainer unattended for prolonged period of time;")
-                    .TextWrapped("3. Ensure that your total playing+AutoRetainer usage time does not exceeds 16 hours per day; ensure that periods of inactivity exist between your retainer/submersible checking routine;")
-                    .TextWrapped("4. Never reply back to players that are trying to do so-called bot checks by trading or chatting with you; instead, blacklist these players immediately;")
-                    .TextWrapped("5. If questioned by game master, always claim that you are doing all actions manually and never admit plugin usage.")
-                    .TextWrapped("Failure to follow these guidelines may put your account at risk.")
-                    .TextWrapped(GradientColor.Get(ImGuiColors.DalamudYellow, ImGuiColors.DalamudRed), "You may not use AutoRetainer for Real Money Trading or other commercial purposes. No support will be provided if you are using it for these purposes.")
+                    .Section("声明")
+                    .TextWrapped(ImGuiColors.DalamudYellow, "请注意，严禁将 AutoRetainer 用于 RMT（现实货币交易）用途。")
+                    .TextWrapped(ImGuiColors.DalamudRed, "为避免不必要后果，请在使用 AutoRetainer 时遵守以下规则：")
+                    .TextWrapped("1. 不要在游戏聊天中承认使用了 AutoRetainer；")
+                    .TextWrapped("2. 不要长时间无人值守运行 AutoRetainer；")
+            .TextWrapped("3. 请确保每天“游戏游玩 + AutoRetainer”总时长不超过 16 小时，并在每轮雇员/远航探索检查之间留出空档时间；")
+                    .TextWrapped("4. 不要回复试图通过交易或聊天进行所谓“机器人检查”的玩家；请直接将其拉黑；")
+                    .TextWrapped("5. 如被 GM 询问，请始终表示你是手动操作，且不要承认插件使用。")
+                    .TextWrapped("不遵守上述规则可能导致账号风险。")
+                    .TextWrapped(GradientColor.Get(ImGuiColors.DalamudYellow, ImGuiColors.DalamudRed), "禁止将 AutoRetainer 用于现实货币交易（RMT）或其他商业用途。若用于此类用途，将不提供任何支持。")
                     .Widget(() =>
                     {
-                        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Check, "Accept and continue"))
+                        if(ImGuiEx.IconButtonWithText(FontAwesomeIcon.Check, "接受并继续"))
                         {
                             C.AcceptedDisclamer = true;
                             EzConfig.Save();
@@ -126,7 +125,7 @@ internal unsafe class AutoRetainerWindow : Window
             {
                 ImGui.BeginDisabled();
             }
-            if(ImGui.Checkbox($"Enable {P.Name}", ref e))
+            if(ImGui.Checkbox($"启用 {P.Name}", ref e))
             {
                 P.WasEnabled = false;
                 if(e)
@@ -141,22 +140,22 @@ internal unsafe class AutoRetainerWindow : Window
             if(C.ShowDeployables && (VoyageUtils.Workshops.Contains(Svc.ClientState.TerritoryType) || VoyageScheduler.Enabled))
             {
                 ImGui.SameLine();
-                ImGui.Checkbox($"Deployables", ref VoyageScheduler.Enabled);
+            ImGui.Checkbox($"远航探索", ref VoyageScheduler.Enabled);
             }
             if(disabled)
             {
                 ImGui.EndDisabled();
-                ImGuiComponents.HelpMarker($"MultiMode controls this option. Hold CTRL to override.");
+                ImGuiComponents.HelpMarker($"此选项由多角色模式控制。按住 CTRL 可临时覆盖。");
             }
 
             if(P.WasEnabled)
             {
                 ImGui.SameLine();
-                ImGuiEx.Text(GradientColor.Get(ImGuiColors.DalamudGrey, ImGuiColors.DalamudGrey3, 500), $"Paused");
+                ImGuiEx.Text(GradientColor.Get(ImGuiColors.DalamudGrey, ImGuiColors.DalamudGrey3, 500), $"已暂停");
             }
 
             ImGui.SameLine();
-            if(ImGui.Checkbox("Multi", ref MultiMode.Enabled))
+            if(ImGui.Checkbox("多角色", ref MultiMode.Enabled))
             {
                 MultiMode.OnMultiModeEnabled();
             }
@@ -164,7 +163,7 @@ internal unsafe class AutoRetainerWindow : Window
             if(C.ShowNightMode)
             {
                 ImGui.SameLine();
-                if(ImGui.Checkbox("Night", ref C.NightMode))
+                if(ImGui.Checkbox("夜间", ref C.NightMode))
                 {
                     MultiMode.BailoutNightMode();
                 }
@@ -173,12 +172,12 @@ internal unsafe class AutoRetainerWindow : Window
             {
                 ImGui.SameLine();
                 ImGuiEx.SetNextItemWidthScaled(100f);
-                ImGuiEx.EnumCombo("##mode", ref C.MultiModeType);
+                ImGuiEx.EnumCombo("##mode", ref C.MultiModeType, Lang.MultiModeTypeNames);
             }
             if(C.CharEqualize && MultiMode.Enabled)
             {
                 ImGui.SameLine();
-                if(ImGui.Button("Reset counters"))
+                if(ImGui.Button("重置计数"))
                 {
                     MultiMode.CharaCnt.Clear();
                 }
@@ -188,9 +187,9 @@ internal unsafe class AutoRetainerWindow : Window
 
             if(IPC.Suppressed)
             {
-                ImGuiEx.Text(ImGuiColors.DalamudRed, $"Plugin operation is suppressed by other plugin.");
+                ImGuiEx.Text(ImGuiColors.DalamudRed, $"插件运行被其他插件抑制。");
                 ImGui.SameLine();
-                if(ImGui.SmallButton("Cancel"))
+                if(ImGui.SmallButton("取消"))
                 {
                     IPC.Suppressed = false;
                 }
@@ -199,7 +198,7 @@ internal unsafe class AutoRetainerWindow : Window
             if(P.TaskManager.IsBusy)
             {
                 ImGui.SameLine();
-                if(ImGui.Button($"Abort {P.TaskManager.NumQueuedTasks} tasks"))
+                if(ImGui.Button($"中止 {P.TaskManager.NumQueuedTasks} 个任务"))
                 {
                     P.TaskManager.Abort();
                 }
@@ -207,11 +206,11 @@ internal unsafe class AutoRetainerWindow : Window
 
             PatreonBanner.DrawRight();
             ImGuiEx.EzTabBar("tabbar", PatreonBanner.Text,
-                            ("Retainers", MultiModeUI.Draw, null, true),
-                            ("Deployables", WorkshopUI.Draw, null, true),
-                            ("Troubleshooting", TroubleshootingUI.Draw, null, true),
-                            ("Statistics", DrawStats, null, true),
-                            ("About", CustomAboutTab.Draw, null, true)
+                            ("雇员", MultiModeUI.Draw, null, true),
+            ("远航探索", WorkshopUI.Draw, null, true),
+                            ("故障排查", TroubleshootingUI.Draw, null, true),
+                            ("统计", DrawStats, null, true),
+                            ("关于", CustomAboutTab.Draw, null, true)
                             );
             if(!C.PinWindow)
             {
@@ -227,7 +226,7 @@ internal unsafe class AutoRetainerWindow : Window
 
     private void DrawStats()
     {
-        NuiTools.ButtonTabs([[C.RecordStats ? new("Ventures", S.VentureStats.DrawVentures) : null, new("Gil", S.GilDisplay.Draw), new("FC Data", S.FCData.Draw)]]);
+        NuiTools.ButtonTabs([[C.RecordStats ? new("探险", S.VentureStats.DrawVentures) : null, new("金币", S.GilDisplay.Draw), new("部队数据", S.FCData.Draw)]]);
     }
 
     public override void OnClose()

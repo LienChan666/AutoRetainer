@@ -36,7 +36,7 @@ public static unsafe class PartSwapperScheduler
                                               Data.AdditionalSubmarineData[next].SelectedPointPlan = plan.SelectedPointPlan;
                                           }
                                       }
-                                  }, "Changing submersible plan");
+                                  }, "正在更改潜水艇方案");
         }
     }
 
@@ -44,11 +44,11 @@ public static unsafe class PartSwapperScheduler
     {
         var neededParts = new[] { (uint)Hull.Shark, (uint)Stern.Shark, (uint)Bow.Shark, (uint)Bridge.Shark };
         PluginLog.Information($"""
-            EnqueueSubmersibleRegistrationIfPossible:
-            Enabled: {C.EnableAutomaticSubRegistration}
-            Count check: {Data.OfflineSubmarineData.Count} < {Data.NumSubSlots}
-            Part check: {neededParts.Select(part => $"{part}: x{InventoryManager.Instance()->GetInventoryItemCount((uint)part)}").Print()}
-            Dive credit check: {InventoryManager.Instance()->GetInventoryItemCount((uint)Items.DiveCredits)} >= {(2 * Data.NumSubSlots) - 1}
+            EnqueueSubmersibleRegistrationIfPossible：
+            已启用：{C.EnableAutomaticSubRegistration}
+            数量检查：{Data.OfflineSubmarineData.Count} < {Data.NumSubSlots}
+            配件检查：{neededParts.Select(part => $"{part}: ×{InventoryManager.Instance()->GetInventoryItemCount((uint)part)}").Print()}
+            潜水艇登记票检查：{InventoryManager.Instance()->GetInventoryItemCount((uint)Items.DiveCredits)} >= {(2 * Data.NumSubSlots) - 1}
             """);
         if(C.EnableAutomaticSubRegistration
             && Data.OfflineSubmarineData.Count < Data.NumSubSlots
@@ -61,7 +61,7 @@ public static unsafe class PartSwapperScheduler
                 for(var i = 0; i < 4; i++)
                 {
                     var slot = i;
-                    P.TaskManager.Enqueue(() => PartSwapperTasks.ChangeComponent(slot, neededParts[slot]), $"ChangeTo {neededParts[slot]}");
+                    P.TaskManager.Enqueue(() => PartSwapperTasks.ChangeComponent(slot, neededParts[slot]), $"更换为 {neededParts[slot]}");
                 }
 
                 P.TaskManager.Enqueue(PartSwapperTasks.RegisterSub);
@@ -72,7 +72,7 @@ public static unsafe class PartSwapperScheduler
         }
         else
         {
-            PluginLog.Information($"Sub registration is not needed");
+            PluginLog.Information($"无需登记潜水艇");
             return false;
         }
     }

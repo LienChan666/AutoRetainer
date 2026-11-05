@@ -16,7 +16,7 @@ internal static class TextAdvanceManager
             {
                 WasChanged = false;
                 UnlockTA();
-                DebugLog($"TextAdvance unlocked");
+                DebugLog($"已解锁 TextAdvance。");
             }
         }
         else
@@ -25,7 +25,7 @@ internal static class TextAdvanceManager
             {
                 WasChanged = true;
                 LockTA();
-                DebugLog($"TextAdvance locked");
+                DebugLog($"已锁定 TextAdvance。");
             }
         }
     }

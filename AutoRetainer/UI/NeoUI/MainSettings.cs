@@ -1,41 +1,41 @@
 ﻿namespace AutoRetainer.UI.NeoUI;
 public class MainSettings : NeoUIEntry
 {
-    public override string Path => "General";
+    public override string Path => "通用";
 
     public override NuiBuilder Builder { get; init; } = new NuiBuilder()
-        .Section("Delays")
-        .Widget(100f, "Time Desynchronization Compensation", (x) => ImGuiEx.SliderInt(x, ref C.UnsyncCompensation.ValidateRange(-60, 0), -10, 0), "Additional amount of seconds that will be subtracted from venture ending time to help mitigate possible issues of time desynchronization between the game and your PC.")
-        .Widget(100f, "Additional Interaction Delay, frames", (x) => ImGuiEx.SliderInt(x, ref C.ExtraFrameDelay.ValidateRange(-10, 100), 0, 50), "The lower this value is the faster plugin will use actions. When dealing with low FPS or high latency you may want to increase this value. If you want the plugin to operate faster you may decrease it.")
-        .Widget("Extra Logging", (x) => ImGui.Checkbox(x, ref C.ExtraDebug), "This option enables excessive logging for debugging purposes. It will spam your log and cause performance issues while enabled. This option will disable itself upon plugin reload or game restart.")
+        .Section("延迟")
+        .Widget(100f, "时间不同步补偿（秒）", (x) => ImGuiEx.SliderInt(x, ref C.UnsyncCompensation.ValidateRange(-60, 0), -10, 0), "为缓解游戏时间与本机时间不同步问题，在探险结束时间基础上额外提前扣除的秒数。")
+        .Widget(100f, "额外交互延迟（帧）", (x) => ImGuiEx.SliderInt(x, ref C.ExtraFrameDelay.ValidateRange(-10, 100), 0, 50), "该值越小，插件执行动作越快。若帧率较低或延迟较高，建议适当增大；若希望插件更快，可适当减小。")
+        .Widget("额外日志", (x) => ImGui.Checkbox(x, ref C.ExtraDebug), "启用详细调试日志。开启后会产生大量日志并影响性能；重载插件或重启游戏后会自动关闭。")
 
-            .Section("Operation")
-        .Widget("Assign + Reassign", (x) =>
+            .Section("操作")
+        .Widget("委托并重新委托", (x) =>
         {
             if(ImGui.RadioButton(x, C.EnableAssigningQuickExploration && !C._dontReassign))
             {
                 C.EnableAssigningQuickExploration = true;
                 C.DontReassign = false;
             }
-        }, "Automatically assigns enabled retainers to a Quick Venture if they have none already in progress and reassigns current venture.")
-        .Widget("Collect", (x) =>
+        }, "当已启用雇员没有进行中的探险时，会自动执行“自由探索委托”；若已有进行中的探险，则会重新委托当前探险。")
+        .Widget("仅领取", (x) =>
         {
             if(ImGui.RadioButton(x, !C.EnableAssigningQuickExploration && C._dontReassign))
             {
                 C.EnableAssigningQuickExploration = false;
                 C.DontReassign = true;
             }
-        }, "Only collect venture rewards from the retainer, and will not reassign them.\nHold CTRL when interacting with the Summoning Bell to apply this mode temporarily.")
-        .Widget("Reassign", (x) =>
+        }, "仅领取雇员探险奖励，不会重新委托。\n与传唤铃交互时按住 CTRL，可临时应用此模式。")
+        .Widget("仅重新委托", (x) =>
         {
-            if(ImGui.RadioButton("Reassign", !C.EnableAssigningQuickExploration && !C._dontReassign))
+            if(ImGui.RadioButton("仅重新委托", !C.EnableAssigningQuickExploration && !C._dontReassign))
             {
                 C.EnableAssigningQuickExploration = false;
                 C.DontReassign = false;
             }
-        }, "Only reassign ventures that retainers are undertaking.")
-        .Widget("RetainerSense", (x) => ImGui.Checkbox(x, ref C.RetainerSense), "AutoRetainer will automatically enable itself when the player is within interaction range of a Summoning Bell. You must remain stationary or the activation will be cancelled.")
-        .Widget(200f, "Activation Time", (x) => ImGuiEx.SliderIntAsFloat(x, ref C.RetainerSenseThreshold, 1000, 100000));
+        }, "仅重新委托雇员当前正在进行的探险。")
+        .Widget("雇员感知", (x) => ImGui.Checkbox(x, ref C.RetainerSense), "当玩家进入传唤铃交互范围时，AutoRetainer 会自动启用。你需要保持静止，否则会取消启用。")
+        .Widget(200f, "激活时间（秒）", (x) => ImGuiEx.SliderIntAsFloat(x, ref C.RetainerSenseThreshold, 1000, 100000));
 
 
 }

@@ -13,7 +13,7 @@ internal static class YesAlready
     {
         if(DalamudReflector.TryGetDalamudPlugin("Yes Already", out var pl, false, true))
         {
-            PluginLog.Information("Disabling Yes Already");
+            PluginLog.Information("正在禁用 Yes Already");
             pl.GetStaticFoP("YesAlready.Service", "Configuration").SetFoP("Enabled", false);
             Reenable = true;
         }
@@ -23,7 +23,7 @@ internal static class YesAlready
     {
         if(Reenable && DalamudReflector.TryGetDalamudPlugin("Yes Already", out var pl, false, true))
         {
-            PluginLog.Information("Enabling Yes Already");
+            PluginLog.Information("正在启用 Yes Already");
             pl.GetStaticFoP("YesAlready.Service", "Configuration").SetFoP("Enabled", true);
             Reenable = false;
         }

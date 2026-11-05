@@ -54,7 +54,7 @@ internal unsafe class Memory : IDisposable
     {
         try
         {
-            DebugLog($"RetainerItemCommandDetour: {AgentRetainerItemCommandModule:X16}, slot={slot}, type={inventoryType}, a4={a4}, command={command}");
+            DebugLog($"雇员物品命令钩子：{AgentRetainerItemCommandModule:X16}，栏位={slot}，类型={inventoryType}，参数4={a4}，命令={command}");
         }
         catch(Exception e)
         {
@@ -117,7 +117,7 @@ internal unsafe class Memory : IDisposable
 
     private void SellItemDetour(uint inventorySlot, InventoryType a2, uint a3)
     {
-        DebugLog($"SellItemDetour: {inventorySlot}, {a2}, {a3}");
+        DebugLog($"出售物品钩子：栏位={inventorySlot}，类型={a2}，参数3={a3}");
         SellItemHook.Original(inventorySlot, a2, a3);
     }
 
@@ -128,17 +128,17 @@ internal unsafe class Memory : IDisposable
             var slotPtr = InventoryManager.Instance()->GetInventoryContainer(type)->GetInventorySlot(slot);
             if(slotPtr->ItemId != 0)
             {
-                if(Data.GetIMSettings().IMProtectList.Contains(slotPtr->ItemId)) throw new InvalidOperationException($"Attempted to sell protected item: {ExcelItemHelper.GetName(slotPtr->ItemId)}");
+                if(Data.GetIMSettings().IMProtectList.Contains(slotPtr->ItemId)) throw new InvalidOperationException($"尝试出售受保护物品：{ExcelItemHelper.GetName(slotPtr->ItemId)}");
                 SellItemDetour((uint)slot, type, 0);
             }
             else
             {
-                PluginLog.Warning($"Requested inventory slot {type}({slot}) had no item in it to sell.");
+                PluginLog.Warning($"请求出售的背包栏位 {type}({slot}) 中没有物品。");
             }
         }
         else
         {
-            throw new InvalidOperationException("Could not find Shop.");
+            throw new InvalidOperationException("未找到商店窗口。");
         }
     }
 }

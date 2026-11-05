@@ -9,7 +9,7 @@ public enum Items : uint
     Kits = 10373,
     DiveCredits = 22317,
 
-    // Frames
+    // 框架
     SharkClassBoFrame = 26508,
     SharkClassBrFrame = 26509,
     SharkClassHuFrame = 26510,
@@ -35,7 +35,7 @@ public enum Items : uint
     SyldraClassHuFrame = 26526,
     SyldraClassStrFrame = 26527,
 
-    // Parts
+    // 部件
     SharkClassBow = 21792,
     SharkClassBridge = 21793,
     SharkClassHull = 21794,
@@ -107,37 +107,37 @@ internal static class ImportantItemsMethods
 
     public static readonly Dictionary<ushort, uint> PartIdToItemId = new()
 {
-    // Shark
-    { 1, 21792 }, // Bow
-    { 2, 21793 }, // Bridge
-    { 3, 21794 }, // Hull
-    { 4, 21795 }, // Stern
+    // 鲨鱼级
+    { 1, 21792 }, // 船首
+    { 2, 21793 }, // 舰桥
+    { 3, 21794 }, // 船体
+    { 4, 21795 }, // 船尾
 
-    // Ubiki
+    // 甲鲎级
     { 5, 21796 },
     { 6, 21797 },
     { 7, 21798 },
     { 8, 21799 },
 
-    // Whale
+    // 须鲸级
     { 9, 22526 },
     { 10, 22527 },
     { 11, 22528 },
     { 12, 22529 },
 
-    // Coelacanth
+    // 腔棘鱼级
     { 13, 23903 },
     { 14, 23904 },
     { 15, 23905 },
     { 16, 23906 },
 
-    // Syldra
+    // 希尔德拉级
     { 17, 24344 },
     { 18, 24345 },
     { 19, 24346 },
     { 20, 24347 },
 
-    // Modified same order
+    // 改级部件，顺序同上
     { 21, 24348 },
     { 22, 24349 },
     { 23, 24350 },

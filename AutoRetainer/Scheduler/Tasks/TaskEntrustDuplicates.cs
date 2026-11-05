@@ -21,16 +21,16 @@ internal static unsafe class TaskEntrustDuplicates
 
     public static void EnqueueNew(EntrustPlan plan)
     {
-        P.TaskManager.Enqueue((System.Action)(() => WasOpen = false), "Set WasOpen = false");
-        P.TaskManager.Enqueue(() => TryGetAddonByName<AtkUnitBase>("SelectString", out var addon) && IsAddonReady(addon), "Wait until addon SelectString ready");
-        P.TaskManager.Enqueue(() => RecursivelyEntrustItems(plan), $"Recursivelty entrust items ({plan.Guid} | {plan.Name})", new(timeLimitMS: 60 * 60 * 1000));
+        P.TaskManager.Enqueue((System.Action)(() => WasOpen = false), "将 WasOpen 设置为 false");
+        P.TaskManager.Enqueue(() => TryGetAddonByName<AtkUnitBase>("SelectString", out var addon) && IsAddonReady(addon), "等待 SelectString 界面就绪");
+        P.TaskManager.Enqueue(() => RecursivelyEntrustItems(plan), $"递归转存物品（{plan.Guid} | {plan.Name}）", new(timeLimitMS: 60 * 60 * 1000));
         P.TaskManager.Enqueue(() => !WasOpen || TaskVendorItems.CloseInventory() == true);
     }
     public static void EnqueueNewReverse(EntrustPlan plan)
     {
-        P.TaskManager.Enqueue((System.Action)(() => WasOpen = false), "Set WasOpen = false");
-        P.TaskManager.Enqueue(() => TryGetAddonByName<AtkUnitBase>("SelectString", out var addon) && IsAddonReady(addon), "Wait until addon SelectString ready");
-        P.TaskManager.Enqueue(() => RecursivelyReverseEntrustItems(plan), $"Recursivelty reverse entrust items ({plan.Guid} | {plan.Name})", new(timeLimitMS: 60 * 60 * 1000));
+        P.TaskManager.Enqueue((System.Action)(() => WasOpen = false), "将 WasOpen 设置为 false");
+        P.TaskManager.Enqueue(() => TryGetAddonByName<AtkUnitBase>("SelectString", out var addon) && IsAddonReady(addon), "等待 SelectString 界面就绪");
+        P.TaskManager.Enqueue(() => RecursivelyReverseEntrustItems(plan), $"递归从雇员处取回物品（{plan.Guid} | {plan.Name}）", new(timeLimitMS: 60 * 60 * 1000));
         P.TaskManager.Enqueue(() => !WasOpen || TaskVendorItems.CloseInventory() == true);
     }
 
@@ -53,7 +53,7 @@ internal static unsafe class TaskEntrustDuplicates
                     var result = Math.Clamp(RequestEntrustQuantity, 1, maxAmount);
                     if(EzThrottler.Throttle("EntrustItemInputNumeric", 200))
                     {
-                        InternalLog.Information($"Processing input numeric: {result} (max: {maxAmount})");
+                        InternalLog.Information($"正在处理数字输入：{result}（最大值：{maxAmount}）");
                         Callback.Fire(numeric, true, (int)result);
                     }
                 }
@@ -72,7 +72,7 @@ internal static unsafe class TaskEntrustDuplicates
                     if(plan.ExcludeProtected && s.IMProtectList.Contains(add.Item1)) continue;
                     if(S.CabinetManager.ShouldExcludeItemFromProcessing(add.Item1)) continue;
                     itemList.Add(add);
-                    InternalLog.Debug($"[TED] From EntrustItems added item: {ExcelItemHelper.GetName(add.Item1, true)} toKeep={add.Item2}");
+                    InternalLog.Debug($"[TED] 已从 EntrustItems 添加物品：{ExcelItemHelper.GetName(add.Item1, true)}，保留数量={add.Item2}");
                 }
                 foreach(var x in Utils.GetItemsInInventory(allowedPlayerInventories))
                 {
@@ -85,7 +85,7 @@ internal static unsafe class TaskEntrustDuplicates
                     {
                         var add = (item.Value.RowId, info.AmountToKeep);
                         itemList.Add(add);
-                        InternalLog.Debug($"[TED] From EntrustCategories added item: {ExcelItemHelper.GetName(add.Item1, true)} toKeep={add.Item2}");
+                        InternalLog.Debug($"[TED] 已从 EntrustCategories 添加物品：{ExcelItemHelper.GetName(add.Item1, true)}，保留数量={add.Item2}");
                     }
                 }
                 if(plan.Duplicates && plan.DuplicatesMultiStack)
@@ -104,12 +104,12 @@ internal static unsafe class TaskEntrustDuplicates
                                 if(itemList.Any(s => s.ItemID == item->ItemId)) continue;
                                 var data = ExcelItemHelper.Get(item->ItemId);
                                 itemList.Add((item->ItemId, 0));
-                                InternalLog.Debug($"[TED] From retainer multistack duplicate added: {ExcelItemHelper.GetName(item->ItemId, true)}");
+                                InternalLog.Debug($"[TED] 已添加雇员多堆叠同类道具：{ExcelItemHelper.GetName(item->ItemId, true)}");
                             }
                         }
                     }
                 }
-                //processing unconditional entrusts
+                // 处理无条件委托
                 foreach(var type in allowedPlayerInventories)
                 {
                     var inv = InventoryManager.Instance()->GetInventoryContainer(type);
@@ -121,14 +121,14 @@ internal static unsafe class TaskEntrustDuplicates
                             if(plan.ExcludeProtected && s.IMProtectList.Contains(item->ItemId)) continue;
                             if(S.CabinetManager.ShouldExcludeItemFromProcessing(item->ItemId)) continue;
                             var itemCount = Utils.GetItemCount(allowedPlayerInventories, item->ItemId);
-                            InternalLog.Debug($"[TED] Item count for {ExcelItemHelper.GetName(item->ItemId, true)} = {itemCount}");
+                            InternalLog.Debug($"[TED] 物品 {ExcelItemHelper.GetName(item->ItemId, true)} 的数量 = {itemCount}");
                             var data = ExcelItemHelper.Get(item->ItemId);
                             if(itemList.TryGetFirst(s => s.ItemID == item->ItemId, out var entrustInfo))
                             {
                                 var toKeep = entrustInfo.ToKeep;
                                 var toEntrust = itemCount - toKeep;
                                 var canFit = Utils.GetAmountThatCanFit(Utils.RetainerInventoriesWithCrystals, item->ItemId, item->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality), out var debugData);
-                                InternalLog.Debug($"[TED] For {ExcelItemHelper.GetName(item->ItemId, true)} toEntrust={toEntrust}, toKeep={toKeep}, canFit={canFit}\n{debugData.Print("\n")}");
+                                InternalLog.Debug($"[TED] 物品 {ExcelItemHelper.GetName(item->ItemId, true)}：待委托={toEntrust}，保留={toKeep}，可容纳={canFit}\n{debugData.Print("\n")}");
                                 if(toEntrust > canFit) toEntrust = (int)canFit;
                                 if(toEntrust > 0)
                                 {
@@ -145,11 +145,11 @@ internal static unsafe class TaskEntrustDuplicates
                 }
                 if(plan.Duplicates && !plan.DuplicatesMultiStack)
                 {
-                    //and now processing duplicates
+                // 现在处理同类道具合并递交
                     foreach(var type in Utils.RetainerInventoriesWithCrystals)
                     {
                         if(type.EqualsAny(InventoryType.Crystals, InventoryType.RetainerCrystals)) continue;
-                        //find incomplete stacks, then query them from player inventory
+                        // 查找未满堆叠，然后从玩家背包中查询
                         var inv = InventoryManager.Instance()->GetInventoryContainer(type);
                         for(var i = 0; i < inv->Size; i++)
                         {
@@ -206,7 +206,7 @@ internal static unsafe class TaskEntrustDuplicates
                     var result = Math.Clamp(RequestEntrustQuantity, 1, maxAmount);
                     if(EzThrottler.Throttle("EntrustItemInputNumeric", 200))
                     {
-                        InternalLog.Information($"Processing input numeric: {result} (max: {maxAmount})");
+                        InternalLog.Information($"正在处理数字输入：{result}（最大值：{maxAmount}）");
                         Callback.Fire(numeric, true, (int)result);
                     }
                 }
@@ -224,7 +224,7 @@ internal static unsafe class TaskEntrustDuplicates
                     var add = (x, plan.EntrustItemsAmountToKeep.SafeSelect(x));
                     if(plan.ExcludeProtected && s.IMProtectList.Contains(add.Item1)) continue;
                     itemList.Add(add);
-                    InternalLog.Debug($"[TED] From EntrustItems added item: {ExcelItemHelper.GetName(add.Item1, true)} toKeep={add.Item2}");
+                    InternalLog.Debug($"[TED] 已从 EntrustItems 添加物品：{ExcelItemHelper.GetName(add.Item1, true)}，保留数量={add.Item2}");
                 }
                 foreach(var x in Utils.GetItemsInInventory(allowedRetainerInventories))
                 {
@@ -236,7 +236,7 @@ internal static unsafe class TaskEntrustDuplicates
                     {
                         var add = (item.Value.RowId, info.AmountToKeep);
                         itemList.Add(add);
-                        InternalLog.Debug($"[TED] From EntrustCategories added item: {ExcelItemHelper.GetName(add.Item1, true)} toKeep={add.Item2}");
+                        InternalLog.Debug($"[TED] 已从 EntrustCategories 添加物品：{ExcelItemHelper.GetName(add.Item1, true)}，保留数量={add.Item2}");
                     }
                 }
                 if(plan.Duplicates && plan.DuplicatesMultiStack)
@@ -254,12 +254,12 @@ internal static unsafe class TaskEntrustDuplicates
                                 if(itemList.Any(s => s.ItemID == item->ItemId)) continue;
                                 var data = ExcelItemHelper.Get(item->ItemId);
                                 itemList.Add((item->ItemId, 0));
-                                InternalLog.Debug($"[TED] From retainer multistack duplicate added: {ExcelItemHelper.GetName(item->ItemId, true)}");
+                                InternalLog.Debug($"[TED] 已添加雇员多堆叠同类道具：{ExcelItemHelper.GetName(item->ItemId, true)}");
                             }
                         }
                     }
                 }
-                //processing unconditional entrusts
+                // 处理无条件委托
                 foreach(var type in allowedRetainerInventories)
                 {
                     var inv = InventoryManager.Instance()->GetInventoryContainer(type);
@@ -270,14 +270,14 @@ internal static unsafe class TaskEntrustDuplicates
                         {
                             if(plan.ExcludeProtected && s.IMProtectList.Contains(item->ItemId)) continue;
                             var itemCount = Utils.GetItemCount(allowedRetainerInventories, item->ItemId);
-                            InternalLog.Debug($"[TED] Item count for {ExcelItemHelper.GetName(item->ItemId, true)} = {itemCount}");
+                            InternalLog.Debug($"[TED] 物品 {ExcelItemHelper.GetName(item->ItemId, true)} 的数量 = {itemCount}");
                             var data = ExcelItemHelper.Get(item->ItemId);
                             if(itemList.TryGetFirst(s => s.ItemID == item->ItemId, out var entrustInfo))
                             {
                                 var toKeep = entrustInfo.ToKeep;
                                 var toEntrust = itemCount - toKeep;
                                 var canFit = Utils.GetAmountThatCanFit(Utils.PlayerInvetoriesWithCrystals, item->ItemId, item->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality), out var debugData);
-                                InternalLog.Debug($"[TED] For {ExcelItemHelper.GetName(item->ItemId, true)} toEntrust={toEntrust}, toKeep={toKeep}, canFit={canFit}\n{debugData.Print("\n")}");
+                                InternalLog.Debug($"[TED] 物品 {ExcelItemHelper.GetName(item->ItemId, true)}：待取回={toEntrust}，保留={toKeep}，可容纳={canFit}\n{debugData.Print("\n")}");
                                 if(toEntrust > canFit) toEntrust = (int)canFit;
                                 if(toEntrust > 0)
                                 {
@@ -294,11 +294,11 @@ internal static unsafe class TaskEntrustDuplicates
                 }
                 if(plan.Duplicates && !plan.DuplicatesMultiStack)
                 {
-                    //and now processing duplicates
+                // 现在处理同类道具合并递交
                     foreach(var type in (InventoryType[])[.. Utils.PlayerArmory, .. Utils.PlayerInvetoriesWithCrystals])
                     {
                         if(type.EqualsAny(InventoryType.Crystals, InventoryType.RetainerCrystals)) continue;
-                        //find incomplete stacks, then query them from player inventory
+                        // 查找未满堆叠，然后从玩家背包中查询
                         var inv = InventoryManager.Instance()->GetInventoryContainer(type);
                         for(var i = 0; i < inv->Size; i++)
                         {
@@ -345,7 +345,7 @@ internal static unsafe class TaskEntrustDuplicates
     /// </summary>
     /// <param name="item"></param>
     /// <param name="toEntrustFromStack"></param>
-    /// <param name="i">slot id</param>
+    /// <param name="i">栏位 ID</param>
     /// <param name="type"></param>
     private static void MoveSlotFromToRetainerInventoryUnsafe(InventoryItem* item, int toEntrustFromStack, int i, InventoryType type, InventoryType[] allowedSourceInventories)
     {
@@ -369,7 +369,7 @@ internal static unsafe class TaskEntrustDuplicates
         {
             if(EzThrottler.Throttle("REI SelectEntrust", 2000))
             {
-                DebugLog($"SelectEntrust triggered");
+                DebugLog($"已触发 SelectEntrust");
                 WasOpen = true;
                 RetainerHandlers.SelectEntrustItems();
             }
@@ -377,16 +377,17 @@ internal static unsafe class TaskEntrustDuplicates
         else
         {
             var slot = InventoryManager.Instance()->GetInventoryContainer(type)->GetInventorySlot(i);
+            var action = command == RetainerItemCommand.RetrieveFromRetainer ? "从雇员处取回" : "交给雇员保管";
             void printToChat()
             {
-                if(C.EnableEntrustChat && ExcelItemHelper.Get(slot->ItemId) != null) Svc.Chat.Print(new SeStringBuilder().Append("Entrusting: ").Append([new ItemPayload(slot->ItemId, slot->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality))]).Append(ExcelItemHelper.GetName(slot->ItemId)).Append([RawPayload.LinkTerminator]).Build());
+                if(C.EnableEntrustChat && ExcelItemHelper.Get(slot->ItemId) != null) Svc.Chat.Print(new SeStringBuilder().Append($"正在{action}：").Append([new ItemPayload(slot->ItemId, slot->Flags.HasFlag(InventoryItem.ItemFlags.HighQuality))]).Append(ExcelItemHelper.GetName(slot->ItemId)).Append([RawPayload.LinkTerminator]).Build());
             }
             if(type == InventoryType.Crystals || type == InventoryType.RetainerCrystals)
             {
                 RequestEntrustQuantity = (int)toEntrustFromStack;
                 CapturedInventoryState = Utils.GetCapturedInventoryState(allowedSourceInventories);
                 EzThrottler.Throttle("InventoryTimeout", 5000, true);
-                InternalLog.Debug($"Entrusting crystals from slot: {i}/{type} - {ExcelItemHelper.GetName(slot->ItemId, true)} quantuity = {toEntrustFromStack}");
+                InternalLog.Debug($"正在{action}水晶，栏位：{i}/{type} - {ExcelItemHelper.GetName(slot->ItemId, true)}，数量 = {toEntrustFromStack}");
                 printToChat();
                 P.Memory.RetainerItemCommandDetour(InventorySpaceManager.AgentRetainerItemCommandModule, (uint)i, type, 0, command);
             }
@@ -396,17 +397,17 @@ internal static unsafe class TaskEntrustDuplicates
                 {
                     CapturedInventoryState = Utils.GetCapturedInventoryState(allowedSourceInventories);
                     EzThrottler.Throttle("InventoryTimeout", 5000, true);
-                    InternalLog.Debug($"Entrusting from slot: {i}/{type} - {ExcelItemHelper.GetName(slot->ItemId, true)} quantuity = all");
+                    InternalLog.Debug($"正在{action}，栏位：{i}/{type} - {ExcelItemHelper.GetName(slot->ItemId, true)}，数量 = 全部");
                     printToChat();
                     P.Memory.RetainerItemCommandDetour(InventorySpaceManager.AgentRetainerItemCommandModule, (uint)i, type, 0, command);
                 }
                 else
                 {
-                    //partial entrust
+                    // 部分委托
                     RequestEntrustQuantity = (int)toEntrustFromStack;
                     CapturedInventoryState = Utils.GetCapturedInventoryState(allowedSourceInventories);
                     EzThrottler.Throttle("InventoryTimeout", 5000, true);
-                    InternalLog.Debug($"Entrusting from slot: {i}/{type} - {ExcelItemHelper.GetName(slot->ItemId, true)} quantuity = {toEntrustFromStack}");
+                    InternalLog.Debug($"正在{action}，栏位：{i}/{type} - {ExcelItemHelper.GetName(slot->ItemId, true)}，数量 = {toEntrustFromStack}");
                     printToChat();
                     P.Memory.RetainerItemCommandDetour(InventorySpaceManager.AgentRetainerItemCommandModule, (uint)i, type, 0, quantityCommand);
                 }

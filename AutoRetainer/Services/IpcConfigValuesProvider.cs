@@ -29,7 +29,7 @@ public class IpcConfigValuesProvider : IDisposable
 
             var funcType = typeof(Func<>).MakeGenericType(fieldType);
 
-            // Use a helper method that creates the correctly typed lambda
+            // 通过辅助方法创建类型正确的 Lambda
             var helperMethod = typeof(Utils)
                 .GetMethod("CreateGetter", BindingFlags.Public | BindingFlags.Static)
                 .MakeGenericMethod(fieldType);

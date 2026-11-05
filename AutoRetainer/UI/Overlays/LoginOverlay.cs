@@ -7,7 +7,7 @@ internal unsafe class LoginOverlay : Window
     internal float bWidth = 0f;
     private string Search = "";
 
-    public LoginOverlay() : base("AutoRetainer login overlay", ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoFocusOnAppearing, true)
+    public LoginOverlay() : base("AutoRetainer 登录覆盖层", ImGuiWindowFlags.AlwaysAutoResize | ImGuiWindowFlags.NoCollapse | ImGuiWindowFlags.NoTitleBar | ImGuiWindowFlags.NoFocusOnAppearing, true)
     {
         P.WindowSystem.AddWindow(this);
         RespectCloseHotkey = false;
@@ -28,7 +28,7 @@ internal unsafe class LoginOverlay : Window
         };
         if(!Utils.IsLifestreamInstalled())
         {
-            Utils.DrawLifestreamWarning("Multi Mode");
+            Utils.DrawLifestreamWarning("多角色模式");
         }
         var num = 1;
         ref var sacc = ref Ref<int>.Get("ServAcc", -1);
@@ -38,17 +38,16 @@ internal unsafe class LoginOverlay : Window
             ImGuiEx.LineCentered(() =>
             {
                 ImGui.SetNextItemWidth(100f);
-                ImGui.InputTextWithHint("##search", "Search...", ref Search, 50);
+                ImGui.InputTextWithHint("##search", "搜索...", ref Search, 50);
                 if(userServiceAccounts.Count() > 2)
                 {
                     ImGui.SameLine();
                     ImGui.SetNextItemWidth(100f);
-                    ImGuiEx.Combo("##sacc", ref Ref<int>.Get("ServAcc", -1), userServiceAccounts, names: userServiceAccounts.ToDictionary(x => x, x => x == -1 ? "All service accounts" : $"Service account {x + 1}"));
+                    ImGuiEx.Combo("##sacc", ref Ref<int>.Get("ServAcc", -1), userServiceAccounts, names: userServiceAccounts.ToDictionary(x => x, x => x == -1 ? "所有服务账号" : $"服务账号 {x + 1}"));
                 }
             });
         }
         ImGui.SetWindowFontScale(C.LoginOverlayScale);
-        //ImGui.PushFont(Svc.PluginInterface.UiBuilder.GetGameFontHandle(new GameFontStyle(GameFontFamilyAndSize.MiedingerMid18)).ImFont);
         int cnt = 0;
         foreach(var x in C.OfflineData.Where(x => !x.Name.IsNullOrEmpty() && (!x.ExcludeOverlay || (C.LoginOverlayAllSearch && Search != ""))))
         {
@@ -63,16 +62,14 @@ internal unsafe class LoginOverlay : Window
             if(ImGui.Button(n, new(bWidth * C.LoginOverlayBPadding, dim.Y * C.LoginOverlayBPadding)))
             {
                 MultiMode.Relog(x, out _, RelogReason.Overlay);
-                //AutoLogin.Instance.Login(x.CurrentWorld, x.Name, ExcelWorldHelper.GetWorldByName(x.World).RowId, x.ServiceAccount);
             }
             cnt++;
             if(cnt % C.NumLoginOverlayCols.ValidateRange(1, 10) != 0) ImGui.SameLine();
         }
         if(cnt % C.NumLoginOverlayCols.ValidateRange(1, 10) != 0) ImGui.NewLine();
-            //ImGui.PopFont();
-            ImGuiEx.LineCentered("LoginCenter", delegate
+        ImGuiEx.LineCentered("LoginCenter", delegate
         {
-            if(ImGui.Checkbox("Multi Mode", ref MultiMode.Enabled))
+            if(ImGui.Checkbox("多角色模式", ref MultiMode.Enabled))
             {
                 MultiMode.OnMultiModeEnabled();
             }

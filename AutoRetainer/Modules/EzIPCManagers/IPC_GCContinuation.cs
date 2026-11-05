@@ -20,7 +20,7 @@ public class IPC_GCContinuation
     {
         if(EzThrottler.Throttle("IPCInformObsoleteFunction", 10000))
         {
-            PluginLog.Warning($"Don't use GetGCInfo IPC method, it is now obsolete.");
+            PluginLog.Warning($"请勿使用 GetGCInfo IPC 方法，该方法已废弃。");
         }
         return GCContinuation.GetGCInfo();
     }

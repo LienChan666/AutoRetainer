@@ -10,10 +10,10 @@ public sealed unsafe class DebugNeoGCDelivery : DebugSectionBase
 {
     public override void Draw()
     {
-        if(ImGui.Button("BeginNewPurchase")) GCContinuation.BeginNewPurchase();
+        if(ImGui.Button("开始新一轮购买")) GCContinuation.BeginNewPurchase();
         foreach(var x in Utils.SharedGCExchangeListings.Values)
         {
-            ImGuiEx.Text($"{x.Data.Name} / {x.ItemID} / {x.Category} / Min rank {x.MinPurchaseRank} {x.Rank} / {x.Seals} seals | can purchase: x{new GCExchangeItem(x.ItemID, int.MaxValue).GetAmountThatCanBePurchased()}");
+            ImGuiEx.Text($"{x.Data.Name} / {x.ItemID} / {Lang.GCExchangeCategoryNames[x.Category]} / 最低军衔 {x.MinPurchaseRank} {Utils.GCRanks[x.MinPurchaseRank]} / {x.Seals} 军票 | 可购买：×{new GCExchangeItem(x.ItemID, int.MaxValue).GetAmountThatCanBePurchased()}");
         }
     }
 }

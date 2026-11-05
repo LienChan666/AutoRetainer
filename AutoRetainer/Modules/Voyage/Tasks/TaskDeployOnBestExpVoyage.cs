@@ -9,7 +9,7 @@ internal static unsafe class TaskDeployOnBestExpVoyage
 {
     internal static void Enqueue(string name, VoyageType type, SubmarineUnlockPlan unlock = null)
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskCalculateAndPickBestExpRoute)} (plan: {unlock})");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskCalculateAndPickBestExpRoute)}（方案：{unlock}）");
         TaskIntelligentRepair.Enqueue(name, type);
         P.TaskManager.Enqueue(SelectDeploy);
         TaskCalculateAndPickBestExpRoute.Enqueue(unlock);

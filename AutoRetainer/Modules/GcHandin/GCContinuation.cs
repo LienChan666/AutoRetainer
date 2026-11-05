@@ -24,11 +24,11 @@ namespace AutoRetainer.Modules.GcHandin;
 
 internal static unsafe class GCContinuation
 {
-    [Obsolete("Don't use it")]
+    [Obsolete("请勿使用")]
     public static readonly GCInfo Maelstrom = new(1002387, 1002388, new(92.751045f, 40.27537f, 75.468185f));
-    [Obsolete("Don't use it")]
+    [Obsolete("请勿使用")]
     public static readonly GCInfo ImmortalFlames = new(1002390, 1002391, new(-141.44354f, 4.109951f, -106.125496f));
-    [Obsolete("Don't use it")]
+    [Obsolete("请勿使用")]
     public static readonly GCInfo TwinAdder = new(1002393, 1002394, new(-67.464386f, -0.5018193f, -8.161054f));
 
     public static readonly uint VentureItem = 21072;
@@ -75,8 +75,8 @@ internal static unsafe class GCContinuation
             {
                 var numeric = (AtkComponentNumericInput*)addon->UldManager.NodeList[8]->GetComponent();
                 var set = Math.Min(amount, (int)(num.Value / 200));
-                if(set < 1) throw new Exception($"Venture amount is too low, is {set}, expected 1 or more");
-                DebugLog($"Setting {set} ventures");
+                if(set < 1) throw new Exception($"探险币数量过低：当前 {set}，应至少为 1");
+                DebugLog($"正在设置探险币数量：{set}");
                 numeric->SetValue((int)set);
                 return true;
             }
@@ -382,7 +382,7 @@ internal static unsafe class GCContinuation
 
 
     /// <summary>
-    /// Default search in: Utils.PlayerInventories
+    /// 默认搜索范围：Utils.PlayerInventories
     /// </summary>
     /// <param name="types"></param>
     /// <returns></returns>
@@ -451,7 +451,7 @@ internal static unsafe class GCContinuation
                                 }
                                 else
                                 {
-                                    DuoLog.Information($"Purchasing {i}'th item {itemInfo.Name} (venture)");
+                                    DuoLog.Information($"正在购买第 {i} 项物品 {itemInfo.Name}（探险币）");
                                 }
                                 ContinuePurchase(meta, amount, currentSealsCount, item);
                                 return true;
@@ -468,7 +468,7 @@ internal static unsafe class GCContinuation
                                 }
                                 else
                                 {
-                                    DuoLog.Information($"Purchasing {i}'th item {itemInfo.Name}");
+                                    DuoLog.Information($"正在购买第 {i} 项物品 {itemInfo.Name}");
                                 }
                                 ContinuePurchase(meta, amount, currentSealsCount, item);
                                 return true;

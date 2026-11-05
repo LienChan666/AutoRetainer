@@ -26,7 +26,7 @@ internal unsafe class ReaderAirShipExploration(AtkUnitBase* UnitBase, int BeginO
 
         public override string ToString()
         {
-            return $"(\"{NameFull}\"/\"{NameShort}\", RequiredRank={RequiredRank}, StatusFlag={StatusFlag}, CanBeSelected={CanBeSelected})";
+            return $"（\"{NameFull}\"/\"{NameShort}\"，所需等级={RequiredRank}，状态标志={StatusFlag}，可选={Lang.Bool(CanBeSelected)}）";
         }
     }
 }

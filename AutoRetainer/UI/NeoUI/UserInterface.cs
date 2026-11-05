@@ -7,36 +7,35 @@ using System.Threading.Tasks;
 namespace AutoRetainer.UI.NeoUI;
 public sealed unsafe class UserInterface : NeoUIEntry
 {
-    public override string Path => "User Interface";
+    public override string Path => "用户界面";
 
     public override NuiBuilder Builder => new NuiBuilder()
 
-        .Section("User Interface")
-        .Checkbox("Anonymise Retainers", () => ref C.NoNames, "Retainer names will be redacted from general UI elements. They will not be hidden in debug menus and plugin logs however. While this option is on, character and retainer numbers are not guaranteed to be equal in different sections of a plugin (for example, retainer 1 in retainers view is not guaranteed to be the same retainer as in statistics view).")
-        .Checkbox("Display Quick Menu in Retainer UI", () => ref C.UIBar)
-        .Checkbox("Display Extended Retainer Info", () => ref C.ShowAdditionalInfo, "Displays retainer item level/gathering/perception and the name of their current venture in the main UI.")
-        .Widget("Do not close AutoRetainer windows on ESC key press", (x) =>
+        .Section("用户界面")
+        .Checkbox("匿名化雇员", () => ref C.NoNames, "开启后会在常规界面中隐藏雇员名称，但不会影响调试菜单与插件日志。启用期间，插件不同页面中的角色/雇员编号不保证一一对应（例如雇员页的 1 号不一定是统计页中的同一位雇员）。")
+        .Checkbox("在雇员界面显示快捷菜单", () => ref C.UIBar)
+        .Checkbox("显示扩展雇员信息", () => ref C.ShowAdditionalInfo, "在主界面显示雇员平均品级/获得力/鉴别力以及当前探险名称。")
+        .Widget("按 ESC 时不关闭 AutoRetainer 窗口", (x) =>
         {
             if(ImGui.Checkbox(x, ref C.IgnoreEsc)) Utils.ResetEscIgnoreByWindows();
         })
-        .Checkbox("Display only most significant icon in status bar", () => ref C.StatusBarMSI)
-        .SliderInt(120f, "Status bar icon size", () => ref C.StatusBarIconWidth, 32, 128)
-        .Checkbox("Open AutoRetainer window on game start", () => ref C.DisplayOnStart)
-        //.Checkbox("Skip item sell/trade confirmation while plugin is active", () => ref C.SkipItemConfirmations)
-        .Checkbox("Enable title screen button (requires plugin restart)", () => ref C.UseTitleScreenButton)
-        .Checkbox("Hide character search", () => ref C.NoCharaSearch)
-        .Checkbox("Don't flash background of characters that are complete", () => ref C.NoGradient)
-        .Checkbox("Do not warn about second game instance running from same directory", () => ref C.No2ndInstanceNotify, "This will automatically skip AutoRetainer's loading on second instance of the game and you will have no way of loading it until you disable this option in primary instance")
+        .Checkbox("状态栏仅显示最关键图标", () => ref C.StatusBarMSI)
+        .SliderInt(120f, "状态栏图标大小", () => ref C.StatusBarIconWidth, 32, 128)
+        .Checkbox("游戏启动时打开 AutoRetainer 窗口", () => ref C.DisplayOnStart)
+        .Checkbox("启用标题界面按钮（需重启插件）", () => ref C.UseTitleScreenButton)
+        .Checkbox("隐藏角色搜索", () => ref C.NoCharaSearch)
+        .Checkbox("已完成角色不闪烁背景色", () => ref C.NoGradient)
+        .Checkbox("不提示同目录运行第二个游戏实例", () => ref C.No2ndInstanceNotify, "启用后会在第二个同目录游戏实例中自动跳过 AutoRetainer 加载；在主实例关闭此选项前，无法在该实例中加载插件。")
 
-        .Section("Character sorting in Retainer tab")
-        .Checkbox("Enable", () => ref C.EnableRetainerSort)
-        .TextWrapped("This is purely visual order and does not affects character processing in any way.")
-        .Widget(() => UIUtils.DrawSortableEnumList("rorder", C.RetainersVisualOrders))
+        .Section("雇员页的角色排序")
+        .Checkbox("启用", () => ref C.EnableRetainerSort)
+        .TextWrapped("这只是界面显示顺序，不会影响角色处理逻辑。")
+        .Widget(() => UIUtils.DrawSortableEnumList("雇员顺序", C.RetainersVisualOrders, Lang.RetainersVisualOrderNames))
 
-        .Section("Character sorting in Deployables tab")
-        .Checkbox("Enable", () => ref C.EnableDeployablesSort)
-        .TextWrapped("This is purely visual order and does not affects character processing in any way.")
-        .Widget(() => UIUtils.DrawSortableEnumList("dorder", C.DeployablesVisualOrders));
+        .Section("远航探索页的角色排序")
+        .Checkbox("启用", () => ref C.EnableDeployablesSort)
+        .TextWrapped("这只是界面显示顺序，不会影响角色处理逻辑。")
+        .Widget(() => UIUtils.DrawSortableEnumList("远航探索顺序", C.DeployablesVisualOrders, Lang.DeployablesVisualOrderNames));
 
 
 

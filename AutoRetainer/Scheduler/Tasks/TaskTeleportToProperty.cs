@@ -12,12 +12,12 @@ public static class TaskTeleportToProperty
     {
         if(Player.Territory.EqualsAny(VoyageUtils.Workshops))
         {
-            PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Already in workshop");
+            PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 已在部队工房");
             return false;
         }
         if(!isSubmersibleOperation && C.NoTeleportHetWhenNextToBell && Utils.GetReachableRetainerBell(false) != null)
         {
-            PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Fail because already next to retainer bell");
+            PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 因已在传唤铃旁而失败");
             return false;
         }
         var fcTeleportEnabled = (Data.GetAllowFcTeleportForRetainers() && !isSubmersibleOperation) || (Data.GetAllowFcTeleportForSubs() && isSubmersibleOperation);
@@ -27,29 +27,29 @@ public static class TaskTeleportToProperty
         {
             var canPrivate = Data.GetAllowPrivateTeleportForRetainers() && data.Private != null && data.Private.PathToEntrance.Count > 0;
             var canShared = Data.GetAllowSharedTeleportForRetainers() && sharedData != null && sharedData.PathToEntrance.Count > 0;
-            PluginLog.Information($"CanShared: {canShared}");
+            PluginLog.Information($"可用共享房屋：{Lang.Bool(canShared)}");
             var canFc = (fcTeleportEnabled && data.FC != null && data.FC.PathToEntrance.Count > 0);
             var shouldTeleportToFc = (isSubmersibleOperation || !(canPrivate || canShared)) && canFc;
             PluginLog.Debug($"""
-                Teleport to FC:
-                fcTeleportEnabled={fcTeleportEnabled}
-                GetAllowFcTeleportForSubs={Data.GetAllowFcTeleportForSubs()}
-                isSubmersibleOperation={isSubmersibleOperation}
-                FC={data.FC}
-                PathToEntrance={data.FC?.PathToEntrance.Print()}
-                shouldTeleportToFc={shouldTeleportToFc}
-                canPrivate={canPrivate}
-                canShared={canShared}
-                canFc={canFc}
+                传送至部队房屋：
+                已启用部队房屋传送={Lang.Bool(fcTeleportEnabled)}
+                允许远航探索传送到部队房屋={Lang.Bool(Data.GetAllowFcTeleportForSubs())}
+                远航探索操作={Lang.Bool(isSubmersibleOperation)}
+                部队房屋={data.FC}
+                入口路径={data.FC?.PathToEntrance.Print()}
+                应传送至部队房屋={Lang.Bool(shouldTeleportToFc)}
+                可用个人房屋={Lang.Bool(canPrivate)}
+                可用共享房屋={Lang.Bool(canShared)}
+                可用部队房屋={Lang.Bool(canFc)}
                 """);
             if(shouldTeleportToFc)
             {
-                PluginLog.Information($"Teleport: fc=true, canShared={canShared}");
+                PluginLog.Information($"传送：部队房屋=是，共享房屋={Lang.Bool(canShared)}");
                 return Process(true, canShared);
             }
             if(!isSubmersibleOperation && (canPrivate || canShared))
             {
-                PluginLog.Information($"Teleport: fc=false, canShared={canShared}");
+                PluginLog.Information($"传送：部队房屋=否，共享房屋={Lang.Bool(canShared)}");
                 return Process(false, canShared);
             }
         }
@@ -61,19 +61,19 @@ public static class TaskTeleportToProperty
             var canShared = Data.GetAllowSharedTeleportForRetainers() && Lifestream.HasSharedEstate() != false;
             if((isSubmersibleOperation || !(canPrivate || canShared)) && canFc)
             {
-                PluginLog.Information($"Simple Teleport: fc=true, canShared={canShared}");
+                PluginLog.Information($"简单传送：部队房屋=是，共享房屋={Lang.Bool(canShared)}");
                 return ProcessSimple(true, canShared);
             }
             if(!isSubmersibleOperation && (canPrivate || canShared))
             {
-                PluginLog.Information($"Simple Teleport: fc=false, canShared={canShared}");
+                PluginLog.Information($"简单传送：部队房屋=否，共享房屋={Lang.Bool(canShared)}");
                 return ProcessSimple(false, canShared);
             }
         }
 
         if(!isSubmersibleOperation && Data.GetIsTeleportEnabledForRetainers())
         {
-            //apartment logic
+            // 公寓逻辑
             if(Data.GetAllowApartmentTeleportForRetainers())
             {
                 if(Lifestream.HasApartment() == true && Apartments.Contains(Player.Territory)) return false;
@@ -84,12 +84,12 @@ public static class TaskTeleportToProperty
                     {
                         if(!Svc.ClientState.IsLoggedIn)
                         {
-                            PluginLog.Warning($"Logout while waiting to return to home; expecting DC travel. Aborting and waiting for relogging.");
+                            PluginLog.Warning($"等待返回住宅时已登出；预计正在进行大区旅行。中止并等待重新登录。");
                             return null;
                         }
                         if(Player.Interactable && Lifestream.HasApartment() == false)
                         {
-                            PluginLog.Warning("Upon returning home, apartment not found. Aborting and retrying.");
+                            PluginLog.Warning("返回住宅后未找到公寓。中止并重试。");
                             return null;
                         }
                         return IsScreenReady() && Player.Interactable && Apartments.Contains(Player.Territory) && !Lifestream.IsBusy();
@@ -97,7 +97,7 @@ public static class TaskTeleportToProperty
                     return true;
                 }
             }
-            //inn logic
+            // 旅馆逻辑
             if(!Inns.List.Contains((ushort)Player.Territory))
             {
                 P.TaskManager.Enqueue(() => Lifestream.EnqueueInnShortcut(null));
@@ -105,35 +105,35 @@ public static class TaskTeleportToProperty
                 {
                     if(!Svc.ClientState.IsLoggedIn)
                     {
-                        PluginLog.Warning($"Logout while waiting to return to home; expecting DC travel. Aborting and waiting for relogging.");
+                        PluginLog.Warning($"等待返回住宅时已登出；预计正在进行大区旅行。中止并等待重新登录。");
                         return null;
                     }
                     return IsScreenReady() && Player.Interactable && Inns.List.Contains((ushort)Player.Territory) && !Lifestream.IsBusy();
                 }, new(timeLimitMS: 5 * 60 * 1000));
-                PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Success, going to inn");
+                PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 成功，前往旅馆");
                 return true;
             }
         }
 
-        //if at this point no decision was made, just invoke HET if needed, enter any house and don't care about it
+        // 如果前面没有做出决定，则按需调用 HET，进入任意住宅即可
 
         if(ExcelTerritoryHelper.Get(Player.Territory)?.TerritoryIntendedUse.RowId == (uint)TerritoryIntendedUseEnum.Residential_Area)
         {
             if(TaskNeoHET.IsInMarkerHousingPlot([.. TaskNeoHET.PrivateMarkers, .. TaskNeoHET.FcMarkers, .. (C.SharedHET ? TaskNeoHET.SharedMarkers : [])]))
             {
                 TaskNeoHET.Enqueue(null);
-                PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Success, fallback enqueue HET into house");
+                PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 成功，改为加入房屋进入任务");
                 return true;
             }
             else if(TaskNeoHET.GetApartmentEntrance() != null && Player.DistanceTo(TaskNeoHET.GetApartmentEntrance()) < 40f)
             {
                 TaskNeoHET.Enqueue(null);
-                PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Success, fallback enqueue HET into apartment");
+                PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 成功，改为加入公寓进入任务");
                 return true;
             }
         }
 
-        PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Failed, completely fell through logic");
+        PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 失败，所有处理分支均未命中");
 
         return false;
 
@@ -147,13 +147,13 @@ public static class TaskTeleportToProperty
             {
                 if(Player.Territory.EqualsAny([.. Houses.List]))
                 {
-                    PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Failed, already in house");
+                    PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 失败，已在房屋内");
                     return false;
                 }
                 else
                 {
                     TaskNeoHET.Enqueue(null);
-                    PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Success, enter house and skip teleport");
+                    PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 成功，进入房屋并跳过传送");
                     return true; //already here
                 }
             }
@@ -162,7 +162,7 @@ public static class TaskTeleportToProperty
             {
                 if(!Svc.ClientState.IsLoggedIn)
                 {
-                    PluginLog.Warning($"Logout while waiting to return to home; expecting DC travel. Aborting and waiting for relogging.");
+                    PluginLog.Warning($"等待返回住宅时已登出；预计正在进行大区旅行。中止并等待重新登录。");
                     return null;
                 }
                 return Player.Interactable
@@ -172,7 +172,7 @@ public static class TaskTeleportToProperty
                 && !Lifestream.IsBusy();
             }, new(timeLimitMS: 5 * 60 * 1000));
             TaskNeoHET.Enqueue(null);
-            PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Success, full sequence");
+            PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 成功，完整流程已加入队列");
             return true;
         }
 
@@ -182,18 +182,18 @@ public static class TaskTeleportToProperty
             var noProperty = !(fc ? Lifestream.HasFreeCompanyHouse() : (shared?Lifestream.HasSharedEstate() != false:Lifestream.HasPrivateHouse()));
             if(noProperty == true)
             {
-                PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Simple failed, no property found");
+                PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 简单传送失败，未找到住宅");
                 return false;
             }
             if(Player.Territory.EqualsAny([.. Houses.List]) && (!fc || TaskNeoHET.GetWorkshopEntrance() != null))
             {
-                PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Simple failed, already in house");
+                PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 简单传送失败，已在房屋内");
                 return false;
             }
             else if(isHere)
             {
                 TaskNeoHET.Enqueue(null);
-                PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Simple success, enqueued HET");
+                PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 简单传送成功，已加入房屋进入任务");
                 return true; //already here
             }
             P.TaskManager.Enqueue(() => Lifestream.EnqueuePropertyShortcut(fc ? PropertyType.FC : (shared ? PropertyType.Shared_Estate : PropertyType.Home), HouseEnterMode.Walk_to_door));
@@ -201,7 +201,7 @@ public static class TaskTeleportToProperty
             {
                 if(!Svc.ClientState.IsLoggedIn)
                 {
-                    PluginLog.Warning($"Logout while waiting to return to home; expecting DC travel. Aborting and waiting for relogging.");
+                    PluginLog.Warning($"等待返回住宅时已登出；预计正在进行大区旅行。中止并等待重新登录。");
                     return null;
                 }
                 return Player.Interactable
@@ -209,7 +209,7 @@ public static class TaskTeleportToProperty
                 && !Lifestream.IsBusy();
             }, new(timeLimitMS: 5 * 60 * 1000));
             TaskNeoHET.Enqueue(null);
-            PluginLog.Debug($"TeleportTask: {isSubmersibleOperation} | Simple success, full sequence");
+            PluginLog.Debug($"TeleportTask：{Lang.Bool(isSubmersibleOperation)} | 简单传送成功，完整流程已加入队列");
             return true;
         }
     }

@@ -8,7 +8,7 @@ internal static unsafe class TaskDeployOnUnlockRoute
 {
     internal static void Enqueue(string name, VoyageType type, SubmarineUnlockPlan unlock, UnlockMode mode)
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskDeployOnUnlockRoute)} (plan: {unlock})");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskDeployOnUnlockRoute)}（方案：{unlock}）");
         TaskIntelligentRepair.Enqueue(name, type);
         P.TaskManager.Enqueue(TaskDeployOnBestExpVoyage.SelectDeploy);
         EnqueuePickOrCalc(unlock, mode);
@@ -17,7 +17,7 @@ internal static unsafe class TaskDeployOnUnlockRoute
     }
     internal static void EnqueuePickOrCalc(SubmarineUnlockPlan unlock, UnlockMode mode)
     {
-        P.TaskManager.Enqueue(() => PickFromPlanOrCalc(unlock, mode), $"PickFromPlanOrCalc({unlock}, {mode})");
+        P.TaskManager.Enqueue(() => PickFromPlanOrCalc(unlock, mode), $"选择方案或计算航线（{unlock}，{mode}）");
         TaskCalculateAndPickBestExpRoute.Enqueue(unlock);
     }
 
@@ -34,7 +34,7 @@ internal static unsafe class TaskDeployOnUnlockRoute
     internal static (uint point, string justification)[] GetUnlockPointsFromPlan(SubmarineUnlockPlan unlock, UnlockMode mode)
     {
         var points = unlock.GetPrioritizedPointList();
-        VoyageUtils.Log($"GetPrioritizedPointList: {points.Select(x => $"{x.point}/{x.justification}").Join("\n")}");
+        VoyageUtils.Log($"优先目的地列表：{points.Select(x => $"{x.point}/{x.justification}").Join("\n")}");
         var numPoints = mode == UnlockMode.SpamOne ? 1 : 5;
         var subLevel = CurrentSubmarine.Get()->RankId;
         var adjustedPoints = points.Where(x => subLevel >= VoyageUtils.GetSubmarineExploration(x.point)?.RankReq).Take(numPoints);

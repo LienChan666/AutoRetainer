@@ -15,7 +15,7 @@ public static unsafe class PartSwapperUtils
         log = [];
         var workshop = HousingManager.Instance()->WorkshopTerritory;
 
-        DebugLog($"Change - Num: {num}");
+        DebugLog($"更换配件 - 编号：{num}");
         var vesselLevel = (int)workshop->Submersible.Data[num].RankId;
 
         CheckAndLogParts(num, type, GetPlanInLevelRange(vesselLevel), log, out var requiredChanges);
@@ -29,7 +29,7 @@ public static unsafe class PartSwapperUtils
         {
             if(IsLevelInRange(vesselLevel, partsData.MinLevel, partsData.MaxLevel))
             {
-                DebugLog($"Change - {partsData.GUID}");
+                DebugLog($"更换配件 - {partsData.GUID}");
 
                 return partsData;
             }
@@ -53,7 +53,7 @@ public static unsafe class PartSwapperUtils
 
             if(slot->ItemId != requiredPart)
             {
-                log.Add($"index: {slotIndex}, id: {slot->ItemId}, swap: {requiredPart}");
+                log.Add($"索引：{slotIndex}，ID：{slot->ItemId}，更换为：{requiredPart}");
                 changes.Add((slotIndex, requiredPart));
             }
         }
@@ -67,7 +67,7 @@ public static unsafe class PartSwapperUtils
             1 => (uint)partsData.Part2,
             2 => (uint)partsData.Part3,
             3 => (uint)partsData.Part4,
-            _ => throw new ArgumentOutOfRangeException(nameof(slotIndex), "Invalid slot index")
+            _ => throw new ArgumentOutOfRangeException(nameof(slotIndex), "栏位索引无效")
         };
     }
 
@@ -79,7 +79,7 @@ public static unsafe class PartSwapperUtils
             1 => (uint)Data.AdditionalSubmarineData[name].Part2,
             2 => (uint)Data.AdditionalSubmarineData[name].Part3,
             3 => (uint)Data.AdditionalSubmarineData[name].Part4,
-            _ => throw new ArgumentOutOfRangeException(nameof(slotIndex), "Invalid slot index")
+            _ => throw new ArgumentOutOfRangeException(nameof(slotIndex), "栏位索引无效")
         };
     }
 

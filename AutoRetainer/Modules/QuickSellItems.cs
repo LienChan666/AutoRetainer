@@ -16,7 +16,7 @@ namespace AutoRetainer.Modules;
 #pragma warning disable CS0649
 public unsafe class QuickSellItems : IDisposable
 {
-    //TODO: just remake this
+    // TODO：直接重写此功能
     [Signature("83 B9 ?? ?? ?? ?? ?? 7E 11 39 91", DetourName = nameof(OpenInventoryContextDetour), Fallibility = Fallibility.Fallible)]
     internal Hook<AgentInventoryContext.Delegates.OpenForItemSlot> openInventoryContextHook;
 
@@ -70,7 +70,7 @@ public unsafe class QuickSellItems : IDisposable
         if(openInventoryContextHook?.IsEnabled == false)
         {
             openInventoryContextHook?.Enable();
-            PluginLog.Information("QuickSellItems enabled");
+            PluginLog.Information("快速出售功能已启用");
         }
     }
 
@@ -115,7 +115,7 @@ public unsafe class QuickSellItems : IDisposable
     private void OpenInventoryContextDetour(AgentInventoryContext* agent, InventoryType inventoryType, int slot, int a4, uint a5)
     {
         openInventoryContextHook.Original(agent, inventoryType, slot, a4, a5);
-        InternalLog.Verbose($"Inventory hook: {inventoryType}, {slot}");
+        InternalLog.Verbose($"背包钩子：{inventoryType}，{slot}");
         try
         {
             if(CanSellFrom.Contains(inventoryType) && IsReadyToUse() && GetAction(out var text) && TryGetAddonMaster<AddonMaster.ContextMenu>(out var m) && m.IsAddonReady)
@@ -146,7 +146,7 @@ public unsafe class QuickSellItems : IDisposable
         if(openInventoryContextHook?.IsEnabled == true)
         {
             openInventoryContextHook?.Disable();
-            PluginLog.Information("QuickSellItems disabled");
+            PluginLog.Information("快速出售功能已禁用");
         }
     }
 

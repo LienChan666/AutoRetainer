@@ -6,20 +6,20 @@ internal class SuperSecret : DebugSectionBase
 {
     public override void Draw()
     {
-        ImGuiEx.TextWrapped(ImGuiColors.ParsedOrange, "Anything can happen here.");
-        ImGui.Checkbox("Old RetainerSense", ref C.OldRetainerSense);
-        ImGuiComponents.HelpMarker("Detect and use the closest Summoning Bell within valid distance of the player.");
-        ImGuiEx.TextWrapped(ImGuiColors.DalamudGrey, "RetainerSense is enforced to be active during MultiMode operation.");
+        ImGuiEx.TextWrapped(ImGuiColors.ParsedOrange, "此处可能发生任何事情。");
+        ImGui.Checkbox("旧版雇员感知", ref C.OldRetainerSense);
+        ImGuiComponents.HelpMarker("检测并使用玩家有效距离内最近的传唤铃。");
+        ImGuiEx.TextWrapped(ImGuiColors.DalamudGrey, "多角色模式运行期间会强制启用雇员感知。");
         ImGui.Separator();
-        ImGui.Checkbox($"Unsafe options protection", ref C.UnsafeProtection);
+        ImGui.Checkbox($"不安全选项保护", ref C.UnsafeProtection);
         ImGui.SameLine();
-        if(ImGui.Button($"Write to registry"))
+        if(ImGui.Button($"写入注册表"))
         {
             Safety.Set(C.UnsafeProtection);
         }
         var g = Safety.Get();
-        ImGuiEx.Text(g ? ImGuiColors.ParsedGreen : ImGuiColors.DalamudRed, $"Safety flag: {(g ? "Present" : "Absent")}");
+        ImGuiEx.Text(g ? ImGuiColors.ParsedGreen : ImGuiColors.DalamudRed, $"安全标记：{(g ? "存在" : "不存在")}");
         ImGui.Separator();
-        ImGuiEx.Checkbox("Ignore GC rank check for MM delivery", ref C.IgnoreGCRankCheck);
+        ImGuiEx.Checkbox("多角色模式交纳时忽略军衔检查", ref C.IgnoreGCRankCheck);
     }
 }

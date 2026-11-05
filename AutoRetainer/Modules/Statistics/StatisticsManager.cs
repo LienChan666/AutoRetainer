@@ -48,12 +48,12 @@ internal static unsafe class StatisticsManager
                     {
                         if(x.ToString().TryMatch(@"([0-9]+)", out var match) && uint.TryParse(match.Groups[1].ToString(), out var amt))
                         {
-                            DebugLog($"Amount parsed: {amt}");
+                            DebugLog($"已解析数量：{amt}");
                             amount = amt;
                         }
                         else
                         {
-                            DebugLog($"Single item {x}");
+                            DebugLog($"单个物品：{x}");
                         }
                         textProcessed = true;
                     }

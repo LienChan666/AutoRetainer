@@ -28,7 +28,7 @@ public static unsafe class PartSwapperTasks
     {
         if(TryGetAddonByName<AtkUnitBase>("SelectYesno", out var _))
         {
-            Log("Found yesno, register request success");
+            Log("已找到确认窗口，登记请求成功");
             return true;
         }
         if(GenericHelpers.TryGetAddonMaster<AddonMaster.CompanyCraftSupply>(out var addon) && addon.IsAddonReady)
@@ -37,7 +37,7 @@ public static unsafe class PartSwapperTasks
             {
                 if(addon.CloseButton->IsEnabled)
                 {
-                    Log("Registering sub");
+                    Log("正在登记潜水艇");
                     addon.Close();
                 }
             }
@@ -53,12 +53,6 @@ public static unsafe class PartSwapperTasks
             {
                 if(plans.MinLevel == 1)
                 {
-                    /*if(Data.OfflineSubmarineData.Count != Data.NumSubSlots)
-                    {
-                        PluginLog.Warning($"OfflineSubmarineData has a size of {Data.OfflineSubmarineData.Count} but expected {Data.NumSubSlots}.");
-                        return false;
-                    }*/ //???????????????????????????????????????????
-
                     var newSubName = Data.OfflineSubmarineData[^1].Name;
                     Data.AdditionalSubmarineData[newSubName].VesselBehavior = Data.NumSubSlots == 1 && plans.FirstSubDifferent ? plans.FirstSubVesselBehavior : plans.VesselBehavior;
                     Data.AdditionalSubmarineData[newSubName].UnlockMode = Data.NumSubSlots == 1 && plans.FirstSubDifferent ? plans.FirstSubUnlockMode : plans.UnlockMode;
@@ -94,7 +88,7 @@ public static unsafe class PartSwapperTasks
                     {
                         Callback.Fire(&addon->AtkUnitBase, true, Utils.ZeroAtkValue, i, componentId, Utils.ZeroAtkValue, Utils.ZeroAtkValue);
                         EzThrottler.Throttle(t, 1500, true);
-                        Log($"Executing ContextIconMenu change request on slot {slot} ");
+                        Log($"正在对栏位 {slot} 发起配件更换请求（界面：ContextIconMenu）");
 
                         if(string.IsNullOrEmpty(name))
                             return true;
@@ -110,7 +104,7 @@ public static unsafe class PartSwapperTasks
             {
                 Callback.Fire(addon2, true, (int)2, (int)1, (int)slot, Utils.ZeroAtkValue, Utils.ZeroAtkValue, Utils.ZeroAtkValue);
                 EzThrottler.Throttle(t, 1500, true);
-                Log($"Executing CompanyCraftSupply request on slot {slot} ");
+                Log($"正在对栏位 {slot} 发起配件更换请求（界面：CompanyCraftSupply）");
             }
             else
             {
@@ -127,7 +121,7 @@ public static unsafe class PartSwapperTasks
         {
             if(Utils.GenericThrottle)
             {
-                Log("Closing components window (CompanyCraftSupply)");
+                Log("正在关闭配件窗口（界面：CompanyCraftSupply）");
                 Callback.Fire(addon, true, 5);
                 return true;
             }

@@ -21,6 +21,6 @@ public class SellSlotTask
 
     public override string ToString()
     {
-        return $"[InventoryType={InventoryType},Slot={Slot},Item={ExcelItemHelper.GetName(ItemID, true)} x{Quantity}]";
+        return $"[背包类型={InventoryType}，栏位={Slot}，物品={ExcelItemHelper.GetName(ItemID, true)} ×{Quantity}]";
     }
 }

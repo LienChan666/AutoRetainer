@@ -6,13 +6,13 @@ internal static class TaskInteractWithNearestPanel
 {
     internal static void Enqueue(bool interact = true)
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskInteractWithNearestPanel)} interact={interact}");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskInteractWithNearestPanel)}，交互={interact}");
         if(!VoyageUtils.Workshops.Contains(Svc.ClientState.TerritoryType))
         {
             TaskNeoHET.TryEnterWorkshop(() =>
             {
                 Data.WorkshopEnabled = false;
-                DuoLog.Error($"Due to failure to find workshop, character is excluded from processing deployables");
+                DuoLog.Error($"未能找到部队工房，已排除该角色的远航探索处理");
                 P.TaskManager.Abort();
             });
         }

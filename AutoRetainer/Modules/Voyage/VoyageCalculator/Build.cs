@@ -319,15 +319,15 @@ public static class Build
                 var cur = PartArray[i];
                 var org = original.PartArray[i];
 
-                // current is shark part and always valid
+                // 当前为鲨鱼级部件，始终有效
                 if(!ignoreShark && cur <= 3)
                     continue;
 
-                // current is same
+                // 当前部件相同
                 if(cur == org)
                     continue;
 
-                // original is modded, so we try unmodded part
+                // 原部件为改级，因此尝试未改级部件
                 if(!ignoreUnmodded && org > 20 && cur == org - 20)
                     continue;
 
@@ -353,7 +353,7 @@ public static class Build
             7 => $"{ToIdentifier((ushort)(partId - 20))}+",
             8 => $"{ToIdentifier((ushort)(partId - 20))}+",
             9 => $"{ToIdentifier((ushort)(partId - 20))}+",
-            _ => "Unknown"
+            _ => "未知"
         };
     }
 

@@ -18,13 +18,13 @@ namespace AutoRetainer.UI
 
             ImGuiEx.LineCentered("About0", () =>
             {
-                ImGuiEx.Text($"Published and developed with ");
+                ImGuiEx.Text($"由");
                 ImGui.PushFont(UiBuilder.IconFont);
                 ImGui.SameLine(0, 0);
                 ImGuiEx.Text(ImGuiColors.DalamudRed, FontAwesomeIcon.Heart.ToIconString());
                 ImGui.PopFont();
                 ImGui.SameLine(0, 0);
-                ImGuiEx.Text($" by Puni.sh and NightmareXIV");
+                ImGuiEx.Text($" Puni.sh 与 NightmareXIV");
             });
 
             ImGuiHelpers.ScaledDummy(10f);
@@ -38,7 +38,7 @@ namespace AutoRetainer.UI
             ImGuiHelpers.ScaledDummy(10f);
             ImGuiEx.LineCentered("About3", delegate
             {
-                ImGui.TextWrapped("Join our Discord community for project announcements, updates, and support.");
+                ImGui.TextWrapped("加入我们的 Discord 社区，获取项目公告、更新和支持。");
             });
             ImGuiEx.LineCentered("About4", delegate
             {
@@ -51,13 +51,13 @@ namespace AutoRetainer.UI
                     });
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Repository"))
+                if(ImGui.Button("仓库"))
                 {
                     ImGui.SetClipboardText("https://love.puni.sh/ment.json");
-                    Notify.Success("Link copied to clipboard");
+                    Notify.Success("链接已复制到剪贴板");
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Source Code"))
+                if(ImGui.Button("源码"))
                 {
                     Process.Start(new ProcessStartInfo()
                     {
@@ -66,7 +66,7 @@ namespace AutoRetainer.UI
                     });
                 }
                 ImGui.SameLine();
-                if(ImGui.Button("Donate to Puni.sh platform"))
+                if(ImGui.Button("向 Puni.sh 平台捐助"))
                 {
                     Process.Start(new ProcessStartInfo()
                     {

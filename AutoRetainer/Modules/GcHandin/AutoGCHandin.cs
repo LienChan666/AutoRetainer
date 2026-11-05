@@ -65,13 +65,11 @@ internal static unsafe class AutoGCHandin
             Safety.Check();
             if(Operation && HandleConfirmation())
             {
-                DebugLog($"Handle 1");
-                //
+                DebugLog($"处理阶段 1");
             }
             else if(Operation && HandleYesno())
             {
-                DebugLog($"Handle 2");
-                //
+                DebugLog($"处理阶段 2");
             }
             else
             {
@@ -93,13 +91,9 @@ internal static unsafe class AutoGCHandin
             if(addon->DeliverButton->IsEnabled && FrameThrottler.Throttle(Throttler, 10))
             {
                 new AddonMaster.GrandCompanySupplyReward(addon).Deliver();
-                DebugLog($"Delivering Item");
+                DebugLog($"正在交纳物品");
                 return true;
             }
-        }
-        else
-        {
-            //FrameThrottler.Throttle(Throttler, 4, true);
         }
         return false;
     }
@@ -112,25 +106,17 @@ internal static unsafe class AutoGCHandin
             if(addon->YesButton->IsEnabled)
             {
                 var str = addon->PromptText->NodeText.GetText().Cleanup();
-                DebugLog($"SelectYesno encountered: {str}");
+                DebugLog($"遇到 SelectYesno：{str}");
                 //102434	Do you really want to trade a high-quality item?
                 if(str.Equals(GenericHelpers.GetText(Svc.Data.GetExcelSheet<Lumina.Excel.Sheets.Addon>().GetRow(102434).Text).Cleanup()))
                 {
                     if(FrameThrottler.Throttle(Throttler, 10))
                     {
                         new AddonMaster.SelectYesno((IntPtr)addon).Yes();
-                        DebugLog($"Selecting yes");
+                        DebugLog($"正在选择“是”");
                     }
                 }
             }
-            else
-            {
-                //FrameThrottler.Throttle(Throttler, 4, true);
-            }
-        }
-        else
-        {
-            //FrameThrottler.Throttle(Throttler, 4, true);
         }
         return false;
     }
@@ -144,7 +130,7 @@ internal static unsafe class AutoGCHandin
                 EzThrottler.Throttle($"GcBusy", 60000, true);
                 if(IsDone(addon))
                 {
-                    var s = $"Automatic handin has been completed";
+                    var s = $"自动筹备稀有品已完成";
                     DuoLog.Information(s);
                     if(C.GCHandinNotify)
                     {
@@ -181,12 +167,12 @@ internal static unsafe class AutoGCHandin
                                 {
                                     var has = AutoGCHandin.HasInInventory(nextItem.Value.ItemID);
                                     var itemName = ExcelItemHelper.GetName(nextItem.Value.ItemID);
-                                    DebugLog($"Seals: {GetSeals()}/{GetMaxSeals()}, for item {nextItem.Value.Seals} | {ExcelItemHelper.GetName(nextItem.Value.ItemID)}: {has}");
+                                    DebugLog($"军票：{GetSeals()}/{GetMaxSeals()}；物品 {ExcelItemHelper.GetName(nextItem.Value.ItemID)} 可兑换 {nextItem.Value.Seals} 军票；持有={Lang.Bool(has)}");
                                     if(!has)
                                     {
-                                        throw new GCHandinInterruptedException($"Item {itemName} was not found in inventory");
+                                        throw new GCHandinInterruptedException($"背包中未找到物品 {itemName}");
                                     }
-                                    DebugLog($"Handing in item {itemName} for {nextItem.Value.Seals} seals (index={nextItem.Value.Index})");
+                                    DebugLog($"正在交纳物品 {itemName}，可获得 {nextItem.Value.Seals} 军票（索引={nextItem.Value.Index}）");
                                     InvokeHandin(addon, nextItem.Value.Index);
                                 }
                                 else
@@ -195,7 +181,7 @@ internal static unsafe class AutoGCHandin
                                     {
                                         GCContinuation.EnqueueDeliveryClose();
                                         EzThrottler.Reset($"GcBusy");
-                                        throw new GCHandinInterruptedException("Auto GC handin completed");
+                                        throw new GCHandinInterruptedException("自动筹备稀有品已完成");
                                     }
                                     else
                                     {
@@ -204,7 +190,7 @@ internal static unsafe class AutoGCHandin
                                         {
                                             GCContinuation.EnqueueInitiation(true);
                                         }
-                                        throw new GCHandinInterruptedException("Too many seals, please spend them");
+                                        throw new GCHandinInterruptedException("军票过多，请先使用军票");
                                     }
                                 }
                             }

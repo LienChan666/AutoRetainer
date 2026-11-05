@@ -1,4 +1,4 @@
-Code in this folder originates from https://github.com/Infiziert90/SubmarineTracker which is licensed under:
+此目录中的代码源自 https://github.com/Infiziert90/SubmarineTracker，其许可证如下：
 
 MIT License
 

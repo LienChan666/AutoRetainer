@@ -4,7 +4,7 @@ internal static class TaskQuitMenu
 {
     internal static void Enqueue()
     {
-        VoyageUtils.Log($"Task enqueued: {nameof(TaskQuitMenu)}");
+        VoyageUtils.Log($"任务已加入队列：{nameof(TaskQuitMenu)}");
         P.TaskManager.Enqueue(VoyageScheduler.SelectQuitVesselSelectorMenu);
     }
 }

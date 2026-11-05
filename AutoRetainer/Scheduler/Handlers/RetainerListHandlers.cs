@@ -13,7 +13,7 @@ internal static unsafe class RetainerListHandlers
         InventorySpaceManager.SellSlotTasks.Clear();
         if(name.IsNullOrEmpty())
         {
-            throw new Exception($"Name can not be null or empty");
+            throw new Exception($"名称不能为空");
         }
         if(TryGetAddonByName<AtkUnitBase>("RetainerList", out var retainerList) && IsAddonReady(retainerList))
         {
@@ -24,7 +24,7 @@ internal static unsafe class RetainerListHandlers
                 {
                     if(Utils.GenericThrottle)
                     {
-                        DebugLog($"Selecting retainer {retainer.Name} with index {retainer.Index}");
+                        DebugLog($"正在选择雇员 {retainer.Name}，索引 {retainer.Index}");
                         retainer.Select();
                         return true;
                     }
@@ -51,7 +51,7 @@ internal static unsafe class RetainerListHandlers
                 };
                 P.IsCloseActionAutomatic = true;
                 retainerList->FireCallback(1, v);
-                DebugLog($"Closing retainer window");
+                DebugLog($"正在关闭雇员窗口");
                 return true;
             }
         }

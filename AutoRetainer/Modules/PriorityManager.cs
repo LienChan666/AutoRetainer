@@ -12,7 +12,7 @@ internal static class PriorityManager
         {
             PriorityChanged = true;
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.High;
-            DebugLog($"Setting FFXIV process priority to high.");
+            DebugLog($"正在将 FFXIV 进程优先级设置为高。");
         }
     }
 
@@ -22,7 +22,7 @@ internal static class PriorityManager
         {
             PriorityChanged = false;
             Process.GetCurrentProcess().PriorityClass = ProcessPriorityClass.Normal;
-            DebugLog($"Restoring FFXIV process priority.");
+            DebugLog($"正在恢复 FFXIV 进程优先级。");
         }
     }
 

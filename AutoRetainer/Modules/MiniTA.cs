@@ -59,7 +59,7 @@ internal static unsafe class MiniTA
         var x = Utils.GetSpecificYesno((s) => s.ContainsAny(StringComparison.OrdinalIgnoreCase, Lang.WorkshopRepairConfirm));
         if(x != null && Utils.GenericThrottle)
         {
-            VoyageUtils.Log("Confirming repair");
+            VoyageUtils.Log("正在确认修理");
             new AddonMaster.SelectYesno((nint)x).Yes();
         }
     }
@@ -69,7 +69,7 @@ internal static unsafe class MiniTA
         var x = Utils.GetSpecificYesno((s) => s.ContainsAny(StringComparison.OrdinalIgnoreCase, Lang.WorkshopRegisterConfirm));
         if(x != null && Utils.GenericThrottle)
         {
-            VoyageUtils.Log("Confirming registration");
+            VoyageUtils.Log("正在确认登记");
             new AddonMaster.SelectYesno((nint)x).Yes();
         }
     }
@@ -83,11 +83,10 @@ internal static unsafe class MiniTA
         {
             return;
         }
-        //DebugLog($"1: {selectStrAddon->AtkUnitBase.UldManager.NodeList[3]->GetAsAtkTextNode()->NodeText.ToString()}");
         if(!Lang.SkipCutsceneStr.Contains(selectStrAddon->AtkUnitBase.UldManager.NodeList[3]->GetAsAtkTextNode()->NodeText.ToString())) return;
         if(EzThrottler.Throttle("SkipCutsceneConfirm"))
         {
-            DebugLog("Selecting cutscene skipping");
+            DebugLog("正在选择跳过过场动画");
             new AddonMaster.SelectString(addon).Entries[0].Select();
         }
     }
@@ -101,7 +100,7 @@ internal static unsafe class MiniTA
     {
         if(TryGetAddonMaster<AddonMaster.SelectOk>(out var m) && m.IsAddonReady)
         {
-            PluginLog.Debug($"Ok: {m.Text} || {m.Text.ContainsPartOf(Svc.Data.GetExcelSheet<Lobby>().GetRow(618).Text)}");
+            PluginLog.Debug($"结果：{m.Text} || {m.Text.ContainsPartOf(Svc.Data.GetExcelSheet<Lobby>().GetRow(618).Text)}");
             if(m.Text.ContainsPartOf(Svc.Data.GetExcelSheet<Lobby>().GetRow(618).Text)
                 || m.Text.ContainsPartOf(Svc.Data.GetExcelSheet<Lobby>().GetRow(1237).Text))
             {

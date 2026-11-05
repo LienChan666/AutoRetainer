@@ -30,40 +30,40 @@ public static unsafe class InventorySpaceManager
             var inv = InventoryManager.Instance()->GetInventoryContainer(Task.InventoryType);
             if(inv == null)
             {
-                DuoLog.Warning($"Inventory {Task.InventoryType} is null");
+                DuoLog.Warning($"背包 {Task.InventoryType} 不存在");
                 return true;
             }
             if(Data.GetIMSettings().IMProtectList.Contains(Task.ItemID))
             {
-                DuoLog.Warning($"Item {Task} is protected and won't be sold.");
+                DuoLog.Warning($"物品 {Task} 受保护，不会出售。");
                 return true;
             }
             var slot = inv->Items[Task.Slot];
             if(Task.ItemID != slot.ItemId || slot.ItemId == 0 || slot.Quantity != Task.Quantity)
             {
-                DuoLog.Warning($"Slot contains different item {ExcelItemHelper.GetName(slot.ItemId)}x{slot.Quantity}, should be {Task}");
+                DuoLog.Warning($"栏位中的物品为 {ExcelItemHelper.GetName(slot.ItemId)}×{slot.Quantity}，与预期的 {Task} 不同");
                 return true;
             }
             if(!IsRetainerInventoryLoaded())
             {
-                DuoLog.Warning($"Could not find retainer inventory");
+                DuoLog.Warning($"未找到雇员背包");
                 return true;
             }
             if(!IsAgentRetainerActive)
             {
-                DuoLog.Warning($"AgentRetainer is not active");
+                DuoLog.Warning($"雇员代理未激活");
                 return true;
             }
             if(!Data.GetIMSettings().IMDry)
             {
                 P.Memory.RetainerItemCommandDetour(AgentRetainerItemCommandModule, Task.Slot, Task.InventoryType, 0, RetainerItemCommand.HaveRetainerSellItem);
-                DebugLog($"Sold slot {Task}");
+                DebugLog($"已出售栏位 {Task}");
             }
             else
             {
-                DuoLog.Warning($"> IMDry > Would sell slot {Task}");
+                DuoLog.Warning($"> 背包管理试运行 > 将出售栏位 {Task}");
             }
-            Log.Add($"[{DateTime.Now}] Sold {Task} on {Data.Name}");
+            Log.Add($"[{DateTime.Now}] 已在 {Data.Name} 上出售 {Task}");
             return true;
         }
         return false;
@@ -101,7 +101,7 @@ public static unsafe class InventorySpaceManager
                     if(Data.GetIMSettings().IMAutoVendorSoft.Contains(item.ItemId))
                     {
                         var task = new SellSlotTask(invType, (uint)i, item.ItemId, item.Quantity);
-                        PluginLog.Information($"Enqueueing {task} for soft sale");
+                        PluginLog.Information($"将 {task} 加入自由探索委托出售队列");
                         InventorySpaceManager.SellSlotTasks.Add(task);
                         return;
                     }
@@ -126,7 +126,7 @@ public static unsafe class InventorySpaceManager
                         && !S.CabinetManager.ShouldExcludeItemFromProcessing(item.ItemId))
                     {
                         var task = new SellSlotTask(invType, (uint)i, item.ItemId, item.Quantity);
-                        PluginLog.Information($"Enqueueing {task} for hard sale");
+                        PluginLog.Information($"将 {task} 加入无条件出售队列");
                         InventorySpaceManager.SellSlotTasks.Add(task);
                     }
                 }

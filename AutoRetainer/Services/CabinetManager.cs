@@ -43,7 +43,7 @@ public unsafe class CabinetManager : IDisposable
     }
 
     /// <summary>
-    /// Returns item IDs, not cabinet IDs
+    /// 返回物品 ID，而非收藏柜 ID
     /// </summary>
     /// <param name="cached"></param>
     /// <param name="items"></param>
@@ -164,7 +164,7 @@ public unsafe class CabinetManager : IDisposable
                                 if(cabItem != null && cabItem.Value.RowId != 0 && !UIState.Instance()->Cabinet.IsItemInCabinet(cabItem.Value.RowId) && TryGetAddonByName<AtkUnitBase>("Cabinet", out var addon) && addon->IsReady())
                                 {
                                     var result = UIState.Instance()->Cabinet.StoreCabinetItem(cabItem.Value.RowId);
-                                    PluginLog.Debug($"Store cabinet item {ExcelItemHelper.GetName(cabItem.Value.Item.RowId, true)}, result={result}");
+                                    PluginLog.Debug($"存入收藏柜物品 {ExcelItemHelper.GetName(cabItem.Value.Item.RowId, true)}，结果={result}");
                                     if(EzThrottler.Check("StoreCabinet") && EzThrottler.Throttle($"StoreCabinet{cabItem}", 2000))
                                     {
                                         EzThrottler.Throttle("StoreCabinet", 333, true);
@@ -174,8 +174,8 @@ public unsafe class CabinetManager : IDisposable
                                             P.TaskManager.InsertTask(new(() =>
                                             {
                                                 return !Utils.GetCapturedInventoryState(Utils.PlayerInventoryWithArmory).SequenceEqual(snapshot);
-                                            }, "Wait until inventory update", new(timeLimitMS: 5000, abortOnTimeout: false)));
-                                        }, $"Store Item {ExcelItemHelper.GetName(id, true)} in cabinet")
+                                            }, "等待背包更新", new(timeLimitMS: 5000, abortOnTimeout: false)));
+                                        }, $"将物品 {ExcelItemHelper.GetName(id, true)} 存入收藏柜")
                                         );
                                         return true;
                                     }
@@ -185,7 +185,7 @@ public unsafe class CabinetManager : IDisposable
                                 {
                                     return true;
                                 }
-                            }, $"Store Item {ExcelItemHelper.GetName(id, true)} in cabinet master task");
+                            }, $"将物品 {ExcelItemHelper.GetName(id, true)} 存入收藏柜主任务");
                         }
                     }
                 }

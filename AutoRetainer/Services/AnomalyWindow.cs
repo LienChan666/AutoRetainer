@@ -8,7 +8,7 @@ namespace AutoRetainer.Services;
 public class AnomalyWindow : Window
 {
     List<Anomaly> Anomalieis = [];
-    public AnomalyWindow() : base("AutoRetainer has detected anomalies")
+    public AnomalyWindow() : base("AutoRetainer 检测到异常")
     {
         this.SetSizeConstraints(new(300, 200), new(float.MaxValue));
         this.RespectCloseHotkey = false;
@@ -17,7 +17,7 @@ public class AnomalyWindow : Window
 
     public override void Draw()
     {
-        if(ImGuiEx.BeginDefaultTable("Anomanies", ["Date", "~Description", "Character"]))
+        if(ImGuiEx.BeginDefaultTable("Anomanies", ["日期", "~描述", "角色"]))
         {
             foreach(var x in Anomalieis)
             {

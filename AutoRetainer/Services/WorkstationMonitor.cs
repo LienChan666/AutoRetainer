@@ -18,12 +18,12 @@ public unsafe sealed class WorkstationMonitor : IDisposable
     {
         if(e.Reason == SessionSwitchReason.SessionLock)
         {
-            PluginLog.Debug($"Workstation locked ({DateTimeOffset.Now})");
+            PluginLog.Debug($"工作站已锁定（{DateTimeOffset.Now}）");
             Locked = true;
         }
         else if(e.Reason == SessionSwitchReason.SessionUnlock)
         {
-            PluginLog.Debug($"Workstation unlocked ({DateTimeOffset.Now})");
+            PluginLog.Debug($"工作站已解锁（{DateTimeOffset.Now}）");
             Locked = false;
         }
     }

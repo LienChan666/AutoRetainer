@@ -23,7 +23,7 @@ public class AetherBagsManager : IDisposable
             if(Token == null)
             {
                 AcquireLock();
-                PluginLog.Debug($"AetherBags locked");
+                PluginLog.Debug($"AetherBags 已锁定");
             }
             else
             {
@@ -31,7 +31,7 @@ public class AetherBagsManager : IDisposable
                 {
                     AetherBags.ReleaseVanillaInventoryBypass(Token);
                     AcquireLock();
-                    PluginLog.Debug($"AetherBags lock refresh");
+                    PluginLog.Debug($"AetherBags 已刷新锁定状态");
                 }
             }
         }
@@ -41,7 +41,7 @@ public class AetherBagsManager : IDisposable
             {
                 AetherBags.ReleaseVanillaInventoryBypass(Token);
                 Token = null;
-                PluginLog.Debug($"AetherBags unlocked");
+                PluginLog.Debug($"AetherBags 已解锁");
             }
         }
     }
@@ -59,7 +59,7 @@ public class AetherBagsManager : IDisposable
             if(Token != null)
             {
                 AetherBags.ReleaseVanillaInventoryBypass(Token);
-                PluginLog.Debug($"AetherBags force unlocked due to plugin disposal");
+                PluginLog.Debug($"由于插件释放，AetherBags 已强制解锁");
             }
         });
     }

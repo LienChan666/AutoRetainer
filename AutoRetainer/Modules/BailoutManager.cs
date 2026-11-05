@@ -15,7 +15,7 @@ internal static unsafe class BailoutManager
     internal static long NoSelectString = long.MaxValue;
     internal static long CharaSelectStuck = long.MaxValue;
     internal static bool IsLogOnTitleEnabled = false;
-    public static MonitoredAddon[] MonitoredAddons => field ??= 
+    public static MonitoredAddon[] MonitoredAddons => field ??=
         [
         new("SelectYesno", TimeSpan.FromSeconds(30)),
         new("SelectString", TimeSpan.FromMinutes(7)),
@@ -55,7 +55,7 @@ internal static unsafe class BailoutManager
                 if(AddonOpenedAt.TryGetValue(x.Name, out var value) && value != 0 && Environment.TickCount64 - value > x.Timeout.TotalMilliseconds)
                 {
                     Utils.CleanupOperations();
-                    S.AnomalyWindow.Add($"UI stuck during multi mode ({x}). Cleaning up operations and trying to resume.");
+                    S.AnomalyWindow.Add($"多角色模式运行期间界面卡住（{x}）。正在清理操作并尝试恢复。");
                     AddonOpenedAt.Clear();
                     break;
                 }
@@ -71,7 +71,7 @@ internal static unsafe class BailoutManager
                     {
                         if(Utils.GenericThrottle)
                         {
-                            DuoLog.Warning($"[Bailout] Closing stuck SelectString window");
+                            DuoLog.Warning($"[脱困] 正在关闭卡住的选项窗口");
                             Callback.Fire(addon, true, -1);
                             NoSelectString = Environment.TickCount64;
                         }
@@ -94,12 +94,12 @@ internal static unsafe class BailoutManager
                         {
                             if(Utils.GenericThrottle)
                             {
-                                DuoLog.Warning($"[Bailout] Backing out of CharaSelect");
+                                DuoLog.Warning($"[脱困] 正在退出角色选择界面");
                                 addon->GetComponentButtonById(4)->ClickAddonButton(addon);
                                 CharaSelectStuck = Environment.TickCount64;
                                 EzThrottler.Throttle("MultiModeAfkOnTitleLogin", 60000, true);
                                 IsLogOnTitleEnabled = true;
-                                S.AnomalyWindow.Add("Stuck character select encountered. Retrying login...");
+                                S.AnomalyWindow.Add("角色选择界面卡住，正在重试登录……");
                             }
                         }
                     }
@@ -126,13 +126,13 @@ internal static unsafe class BailoutManager
                             addon->GetComponentButtonById(4)->ClickAddonButton(addon);
                             EzThrottler.Throttle("MultiModeAfkOnTitleLogin", 60000, true);
                             IsLogOnTitleEnabled = true;
-                            S.AnomalyWindow.Add("Disconnected. Trying to log back in...");
+                            S.AnomalyWindow.Add("连接已断开，正在尝试重新登录……");
                         }
                     }
                 }
                 else if(EzThrottler.Throttle("NotifyRestart", TimeSpan.FromDays(10)))
                 {
-                    S.AnomalyWindow.Add("You need to restart your game to continue playing.");
+                    S.AnomalyWindow.Add("需要重启游戏才能继续游玩。");
                 }
             }
         }
@@ -145,18 +145,18 @@ internal static unsafe class BailoutManager
             if(WrathCombo.Available && WrathCombo.GetAutoRotationState())
             {
                 Svc.Commands.ProcessCommand("/wrath auto off");
-                S.AnomalyWindow.Add("Wrath Combo autorotation is on. Autoretainer has turned it off.");
+                S.AnomalyWindow.Add("Wrath Combo 自动循环已开启，AutoRetainer 已将其关闭。");
             }
             if(BossMod.Available && BossMod.Presets_GetActiveList().Count > 0)
             {
                 BossMod.Presets_ClearActive();
                 Svc.Commands.ProcessCommand("/vbm ai off");
-                S.AnomalyWindow.Add("Boss mod was active. Autoretainer has turned it off.");
+                S.AnomalyWindow.Add("Boss Mod 正在运行，AutoRetainer 已将其关闭。");
             }
             if(Questionable.Available && Questionable.IsRunning())
             {
                 Questionable.Stop(Svc.PluginInterface.InternalName);
-                S.AnomalyWindow.Add("Questionable was active. Autoretainer has turned it off.");
+                S.AnomalyWindow.Add("Questionable 正在运行，AutoRetainer 已将其关闭。");
             }
         }
     }
@@ -194,7 +194,7 @@ internal static unsafe class BailoutManager
                         Lifestream.Abort();
                         Chat.ExecuteCommand("/automove off");
                         Utils.CleanupOperations();
-                        S.AnomalyWindow.Add($"Movement stuck. Character excluded from submarines and retainers. Check your house registration.");
+                        S.AnomalyWindow.Add($"移动卡住。已将该角色排除出潜水艇和雇员操作，请检查住宅登记。");
                     }
                 }
             }

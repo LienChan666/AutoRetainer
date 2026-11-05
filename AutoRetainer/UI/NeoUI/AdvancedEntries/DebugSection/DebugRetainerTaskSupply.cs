@@ -18,7 +18,7 @@ public unsafe class DebugRetainerTaskSupply : DebugSectionBase
             }
         }
         ref var vid = ref Ref<int>.Get("DTRSID");
-        ImGui.InputInt("vid", ref vid);
-        if(ImGui.Button("OpenAssignVentureWindow")) DuoLog.Information($"{TaskAssignHuntingVenture.OpenAssignVentureWindow((uint)vid)}");
+        ImGui.InputInt("探险 ID", ref vid);
+        if(ImGui.Button("打开探险委托窗口")) DuoLog.Information($"{TaskAssignHuntingVenture.OpenAssignVentureWindow((uint)vid)}");
     }
 }
